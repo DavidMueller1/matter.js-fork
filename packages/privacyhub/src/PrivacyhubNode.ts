@@ -22,3 +22,105 @@ import {
     singleton,
 } from "@project-chip/matter-node.js/util";
 
+export default class PrivacyhubNode {
+    private readonly logger: Logger;
+    private readonly storage;
+
+    private matterServer: MatterServer;
+    private commissioningController: CommissioningController;
+
+    constructor() {
+        this.logger = Logger.get("PrivacyhubNode");
+
+        // Use storage for now. TODO: Remove later and replace with something else maybe
+        const storageLocation = process.env.STORAGE_LOCATION || ".privacyhub-storage-dafault";
+        this.storage = new StorageBackendDisk(storageLocation, true);
+        this.logger.info(`Storage location: ${storageLocation} (Directory)`);
+    }
+
+    async start() {
+        this.logger.info("Starting PrivacyhubNode...");
+
+        const storageManager = new StorageManager(this.storage);
+        await storageManager.initialize();
+
+        const controllerStorage = storageManager.createContext("Controller");
+        const ip = controllerStorage.has("ip") ? controllerStorage.get<string>("ip") : undefined;
+        const port = controllerStorage.has("port") ? controllerStorage.get<number>("port") : undefined;
+
+        this.matterServer = new MatterServer(storageManager);
+        this.commissioningController = new CommissioningController({
+            autoConnect: false,
+        });
+
+        return new Promise<void>((resolve, reject) => {
+            this.matterServer.addCommissioningController(this.commissioningController).then(() => {
+                this.logger.info("Commissioning controller added");
+                this.matterServer.start().then(() => {
+                    this.logger.info("Matter server started");
+                    resolve();
+                }).catch((error) => { // Error starting matter server
+                    this.logger.error(`Error starting matter server: ${error}`);
+                    reject(error);
+                });
+            }).catch((error) => { // Error adding commissioning controller
+                this.logger.error(`Error adding commissioning controller: ${error}`);
+                reject(error);
+            });
+        });
+    }
+
+    commissionNodeBLEThread(
+        pairingCode: string,
+        threadNetworkName: string,
+        threadNetworkOperationalDataset: string
+    ) {
+        return new Promise<void>((resolve, reject) => {
+            // Extract data from pairing code
+            const pairingCodeCodec = ManualPairingCodeCodec.decode(pairingCode);
+            const shortDiscriminator = pairingCodeCodec.shortDiscriminator;
+            const longDiscriminator = undefined;
+            const setupPin = pairingCodeCodec.passcode;
+            this.logger.debug(`Data extracted from pairing code: ${Logger.toJSON(pairingCodeCodec)}`);
+
+            // Collect commissionning options
+            const commissioningOptions: CommissioningOptions = {
+                regulatoryLocation: GeneralCommissioning.RegulatoryLocationType.IndoorOutdoor,
+                regulatoryCountryCode: "XX",
+            };
+
+            commissioningOptions.threadNetwork = {
+                networkName: threadNetworkName,
+                operationalDataset: threadNetworkOperationalDataset,
+            }
+
+            const ble = true
+            const options = {
+                commissioning: commissioningOptions,
+                discovery: {
+                    // knownAddress: ip !== undefined && port !== undefined ? { ip, port, type: "udp" } : undefined,
+                    knownAddress: undefined,
+                    identifierData:
+                        longDiscriminator !== undefined
+                            ? { longDiscriminator }
+                            : shortDiscriminator !== undefined
+                                ? { shortDiscriminator }
+                                : {},
+                    discoveryCapabilities: {
+                        ble,
+                    },
+                },
+                passcode: setupPin,
+            } as NodeCommissioningOptions;
+            this.logger.info(`Commissioning ...`);
+            this.logger.info(JSON.stringify(options));
+            this.commissioningController.commissionNode(options).then((pairedNode) => {
+                this.logger.info(`Commissioning successfully done with nodeId ${pairedNode.nodeId}`);
+                resolve();
+            }).catch((error) => {
+                this.logger.error(`Error commissioning node: ${error}`);
+                reject(error);
+            })
+        });
+    }
+}

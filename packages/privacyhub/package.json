@@ -28,6 +28,7 @@
     "build-clean": "matter-build --clean",
     "matter-controller": "matter-run src/ControllerNode.ts",
     "privacyhub-backend": "matter-run src/PrivacyhubBackend.ts",
+    "privacyhub-app": "matter-run src/app.ts",
     "privacyhub-apidoc": "apidoc -i src/ -o doc/",
     "bundle-device": "esbuild src/examples/DeviceNode.ts --bundle --platform=node --conditions=esbuild --external:@abandonware/bleno --external:@abandonware/bluetooth-hci-socket --sourcemap --minify --outfile=build/bundle/DeviceNode.cjs",
     "matter-device-bundled": "node --enable-source-maps build/bundle/DeviceNode.cjs"
