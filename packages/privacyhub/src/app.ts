@@ -9,12 +9,11 @@ import {
 
 import dotenv from "dotenv";
 import PrivacyhubNode from "./PrivacyhubNode.js";
+import NeoPixelController from "./NeoPixelController.js";
 
 dotenv.config()
 
 requireMinNodeVersion(16);
-
-import "./NeoPixelController.js"
 
 // Configure logging
 switch (process.env.LOG_LEVEL || "debug") {
@@ -51,6 +50,8 @@ switch (process.env.LOG_FORMAT || "plain") {
     default:
         if (process.stdin?.isTTY) Logger.format = Format.ANSI;
 }
+
+new NeoPixelController()
 
 // // Initialize BLE
 // Ble.get = singleton(
