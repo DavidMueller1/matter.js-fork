@@ -2,6 +2,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode from "./PrivacyhubNode.js";
+import { stringifyWithBigint } from "./Util.js";
 
 export default class PrivacyhubBackend {
     private app: Application;
@@ -31,11 +32,27 @@ export default class PrivacyhubBackend {
 
     private setupRoutes(): void {
         /**
-         * @api {get} /
+         * @api {get} / Index
          * @apiName Index
+         * @apiGroup Utility
          */
         this.app.get('/', (_, res: Response) => {
             res.send('Welcome to the most private hub EU west');
+        });
+
+        /**
+         * @api {get} /nodes List Nodes
+         * @apiName List Nodes
+         * @apiGroup Nodes
+         *
+         * @apiSuccess {Object[]} nodes List of nodes
+         */
+        this.app.get('/nodes', (_, res: Response) => {
+            const nodeList = this.privacyhubNode.getCommissionedNodes()
+            const response = {
+                nodes: nodeList
+            }
+            res.send(stringifyWithBigint(response));
         });
 
         /**

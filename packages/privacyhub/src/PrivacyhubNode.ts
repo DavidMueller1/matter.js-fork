@@ -21,6 +21,7 @@ import {
     requireMinNodeVersion,
     singleton,
 } from "@project-chip/matter-node.js/util";
+import { stringifyWithBigint } from "./Util.js";
 
 export default class PrivacyhubNode {
     private readonly logger: Logger;
@@ -34,7 +35,7 @@ export default class PrivacyhubNode {
 
         // Use storage for now. TODO: Remove later and replace with something else maybe
         const storageLocation = process.env.STORAGE_LOCATION || ".privacyhub-storage-dafault";
-        this.storage = new StorageBackendDisk(storageLocation, true);
+        this.storage = new StorageBackendDisk(storageLocation, false);
         this.logger.info(`Storage location: ${storageLocation} (Directory)`);
     }
 
@@ -70,7 +71,7 @@ export default class PrivacyhubNode {
         });
     }
 
-    commissionNodeBLEThread(
+    async commissionNodeBLEThread(
         pairingCode: string,
         threadNetworkName: string,
         threadNetworkOperationalDataset: string
@@ -122,5 +123,11 @@ export default class PrivacyhubNode {
                 reject(error);
             })
         });
+    }
+
+    getCommissionedNodes() {
+        const nodes = this.commissioningController.getCommissionedNodesDetails();
+        this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
+        return nodes;
     }
 }
