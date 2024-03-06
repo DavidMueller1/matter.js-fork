@@ -34,7 +34,7 @@ export default class NeoPixelController {
     }
 
     private rgbToHexNumber(r: number, g: number, b: number): number {
-        return (r << 16) + (g << 8) + b;
+        return (b << 16) + (g << 8) + r;
     }
 
     private hslToHexNumber(h: number, s: number, l: number): number {
@@ -59,6 +59,6 @@ export default class NeoPixelController {
             b = hueToRgb(p, q, h - 1 / 3);
         }
 
-        return (Math.round(r * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(b * 255);
+        return (Math.round(b * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(r * 255);
     }
 }
