@@ -56,7 +56,8 @@ export default class NeoPixelController {
             for (let i = 0; i < this.channel.count; i++) {
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 // Adjust value based on relative elapsed time and tail length
-                const value = hsvColor.v * Math.max(0, 1 - (relativeElapsed / this.spinnerOptions.rotationDuration));
+                const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
+                const value = hsvColor.v * Math.max(0, Math.min(1, currentRotation + tailRotationPart));
                 // if (i === 0) {
                 //     this.logger.debug(`Value for index ${i}: ${relativeElapsed}`);
                 // }
