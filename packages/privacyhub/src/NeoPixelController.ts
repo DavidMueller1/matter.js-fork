@@ -46,6 +46,7 @@ export default class NeoPixelController {
         this.logger.debug("Rendering loading spinner...")
 
         const hsvColor = this.hexToHsv(color);
+        this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
         const start = Date.now();
         const durationPerIndex = this.spinnerOptions.rotationDuration / this.channel.count;
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
