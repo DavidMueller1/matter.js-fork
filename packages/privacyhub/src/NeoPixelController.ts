@@ -4,21 +4,22 @@ import { Logger } from "@project-chip/matter-node.js/log";
 const logger = Logger.get("NeoPixelController");
 logger.info("Starting NeoPixelController...");
 
-const NUM_LEDS = 10;
+const NUM_LEDS = 24;
 const options = {
+    dma: 10,
     freq: 800000,
-    gpio: 17,
+    gpio: 18,
     invert: false,
-    brightness: 255,
-    stripType: ws281x.stripType.WS2812
+    brightness: 100,
+    stripType: ws281x.stripType.SK6812W
 }
 
 const channel = ws281x(NUM_LEDS, options);
 
-const colorArray = channel.array;
+const colors = channel.array;
 
 for (let i = 0; i < channel.count; i++) {
-    colorArray[i] = 0xffcc22;
+    colors[i] = 0x22cc00;
 }
 
 ws281x.render();

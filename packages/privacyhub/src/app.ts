@@ -14,6 +14,8 @@ dotenv.config()
 
 requireMinNodeVersion(16);
 
+import "./NeoPixelController.js"
+
 // Configure logging
 switch (process.env.LOG_LEVEL || "debug") {
     case "fatal":
