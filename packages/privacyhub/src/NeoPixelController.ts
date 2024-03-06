@@ -30,7 +30,7 @@ export default class NeoPixelController {
             tailLength: parseInt(process.env.SPINNER_TAIL_LENGTH || "10"),
         }
 
-        // this.displaySingleColor(this.rgbToHex(0, 0, 255))
+        this.displaySingleColor(this.rgbToHex(0, 0, 0))
         this.renderLoadingSpinner(this.rgbToHex(0, 0, 255))
     }
 
@@ -103,9 +103,9 @@ export default class NeoPixelController {
     }
 
     private hexToHsv(hex: number): { h: number; s: number; v: number } {
-        const r = (hex >> 16) & 255;
+        const b = (hex >> 16) & 255; // Extract blue value from leftmost byte
         const g = (hex >> 8) & 255;
-        const b = hex & 255;
+        const r = hex & 255;
 
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
