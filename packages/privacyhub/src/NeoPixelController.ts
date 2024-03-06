@@ -58,6 +58,7 @@ export default class NeoPixelController {
                 const value = hsvColor.v * Math.max(0, (relativeElapsed / this.spinnerOptions.rotationDuration) - tailRotationPart);
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
+            ws281x.render();
         });
 
     }
