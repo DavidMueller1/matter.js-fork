@@ -38,16 +38,18 @@
     "privacyhub-backend": "./dist/esm/PrivacyhubBackend.js"
   },
   "devDependencies": {
+    "@types/rpi-ws281x-native": "^1.0.3",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "@project-chip/matter-node-ble.js": "0.7.5",
     "@project-chip/matter-node.js": "0.7.5",
     "@project-chip/matter.js-tools": "0.7.5",
+    "apidoc": "^1.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
-    "apidoc": "^1.2.0"
+    "rpi-ws281x-native": "^1.0.4"
   },
   "engines": {
     "_comment": "For Crypto.hkdf support",

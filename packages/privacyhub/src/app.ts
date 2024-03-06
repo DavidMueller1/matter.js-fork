@@ -50,15 +50,15 @@ switch (process.env.LOG_FORMAT || "plain") {
         if (process.stdin?.isTTY) Logger.format = Format.ANSI;
 }
 
-// Initialize BLE
-Ble.get = singleton(
-    () =>
-        new BleNode({
-            hciId: parseInt(process.env.HCI_ID || "0"),
-        }),
-);
-
-const privacyhubNode = new PrivacyhubNode();
-await privacyhubNode.start();
-
-new PrivacyhubBackend(privacyhubNode);
+// // Initialize BLE
+// Ble.get = singleton(
+//     () =>
+//         new BleNode({
+//             hciId: parseInt(process.env.HCI_ID || "0"),
+//         }),
+// );
+//
+// const privacyhubNode = new PrivacyhubNode();
+// await privacyhubNode.start();
+//
+// new PrivacyhubBackend(privacyhubNode);
