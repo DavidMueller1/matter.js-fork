@@ -38,6 +38,7 @@ export default class NeoPixelController {
     }
 
     private hslToHexNumber(h: number, s: number, l: number): number {
+        const hue = h / 360;
         const hueToRgb = (p: number, q: number, t: number): number => {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -54,9 +55,9 @@ export default class NeoPixelController {
         } else {
             const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
             const p = 2 * l - q;
-            r = hueToRgb(p, q, h + 1 / 3);
-            g = hueToRgb(p, q, h);
-            b = hueToRgb(p, q, h - 1 / 3);
+            r = hueToRgb(p, q, hue + 1 / 3);
+            g = hueToRgb(p, q, hue);
+            b = hueToRgb(p, q, hue - 1 / 3);
         }
 
         return (Math.round(b * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(r * 255);
