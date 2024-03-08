@@ -125,6 +125,7 @@ export default class NeoPixelController {
         this.busy = true;
         const hsvColor = this.hexToHsv(options.color);
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
+        this.logger.debug(`Tail length: ${this.spinnerOptions.tailLength}`);
         const start = startTime || Date.now();
         const durationPerIndex = this.spinnerOptions.rotationDuration / this.channel.count;
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
