@@ -98,7 +98,7 @@ export default class NeoPixelController {
         switch (this.currentState) {
             case LedState.LOADING:
                 this.switchingState = false;
-                this.renderLoadingSpinner(options);
+                this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
                 break;
@@ -120,7 +120,11 @@ export default class NeoPixelController {
 
     }
 
-    private renderLoadingSpinner(options: LedStateOptions, startTime?: number) {
+    private renderSpinupLoadingSpinner(options: LedStateOptions): number {
+        const start = Date.now();
+    }
+
+    private renderLoadingSpinner(options: LedStateOptions, startTime?: number, spinupEffect = false) {
         this.logger.debug("Rendering loading spinner...")
         this.busy = true;
         const hsvColor = this.hexToHsv(options.color);
@@ -133,12 +137,13 @@ export default class NeoPixelController {
         const spinnerInterval = setInterval(() => {
             const elapsed = Date.now() - start;
             for (let i = 0; i < this.channel.count; i++) {
+                if (spinupEffect && elapsed < i * durationPerIndex) continue;
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 // const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
                 const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
                 // map the currentRotation value (which is between 1 and 0) to the tailRotationPart so that value is 1 when currentRotation is 1 and linearly goes down to zero when currentRotation equals tailRotationPart
-const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
-// const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
+                const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
+                // const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
             ws281x.render();
