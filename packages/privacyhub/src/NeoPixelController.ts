@@ -125,8 +125,8 @@ export default class NeoPixelController {
                 this.displaySingleColor({ color: 0x000000 })
                 break;
             case LedState.SINGLE:
-                while (this.busy) {}
-                this.displaySingleColor(options)
+                // while (this.busy) {}
+                // this.displaySingleColor(options)
                 break;
             case LedState.BLINKING:
                 break;
