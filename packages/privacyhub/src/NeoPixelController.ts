@@ -78,10 +78,10 @@ export default class NeoPixelController {
         const lastState = this.currentState;
         this.currentState = newState;
 
-        while (this.busy) {
-            this.logger.debug("Waiting for previous state to finish...")
-            setTimeout(() => {}, 100);
-        }
+        // while (this.busy) {
+        //     this.logger.debug("Waiting for previous state to finish...")
+        //     setTimeout(() => {}, 100);
+        // }
 
         switch (lastState) {
             case LedState.OFF:
