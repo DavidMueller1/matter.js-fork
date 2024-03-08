@@ -1,12 +1,29 @@
 import ws281x from "rpi-ws281x-native";
 import { Logger } from "@project-chip/matter-node.js/log";
 
+enum LedState {
+    OFF,
+    LOADING,
+    BLINKING,
+    PULSING
+}
+
+interface LedStateOptions {
+    color: number;
+    tailLength?: number;
+}
+
 export default class NeoPixelController {
     private readonly logger: Logger;
     private readonly channel;
     private readonly colors;
 
     private readonly spinnerOptions
+
+    private targetColor: number;
+    private currentState;
+    private switchingState;
+    private busy;
 
     constructor() {
         this.logger = Logger.get("NeoPixelController");
@@ -30,11 +47,18 @@ export default class NeoPixelController {
             tailLength: parseInt(process.env.SPINNER_TAIL_LENGTH || "10"),
         }
 
+        this.targetColor = 0x000000;
+        this.currentState = LedState.OFF;
+        this.switchingState = false;
+        this.busy = false;
+
         this.displaySingleColor(this.rgbToHex(0, 0, 0))
-        this.renderLoadingSpinner(this.rgbToHex(0, 0, 255))
+        this.switchToState(LedState.LOADING, { color: this.rgbToHex(0, 0, 255) });
     }
 
     displaySingleColor(color: number) {
+        this.targetColor = color;
+
         for (let i = 0; i < this.channel.count; i++) {
             this.colors[i] = color;
         }
@@ -42,28 +66,81 @@ export default class NeoPixelController {
         ws281x.render();
     }
 
-    private renderLoadingSpinner(color: number) {
-        this.logger.debug("Rendering loading spinner...")
+    switchToState(newState: LedState, options: LedStateOptions) {
+        this.switchingState = true;
 
-        const hsvColor = this.hexToHsv(color);
+        const lastState = this.currentState;
+        this.currentState = newState;
+
+        while (this.busy) {
+            this.logger.debug("Waiting for previous state to finish...")
+            setTimeout(() => {}, 100);
+        }
+
+        switch (lastState) {
+            case LedState.OFF:
+                this.switchFromOff(options);
+                break;
+            case LedState.LOADING:
+                this.switchFromLoading(options);
+                break;
+            case LedState.BLINKING:
+                this.switchFromBlinking(options);
+                break;
+            case LedState.PULSING:
+                this.switchFromPulsing(options);
+                break;
+
+        }
+    }
+
+    switchFromOff(options: LedStateOptions) {
+        switch (this.currentState) {
+            case LedState.LOADING:
+                this.renderLoadingSpinner(options);
+                break;
+            case LedState.BLINKING:
+                break;
+            case LedState.PULSING:
+                break;
+
+        }
+    }
+
+    switchFromLoading(options: LedStateOptions) {
+
+    }
+
+    switchFromBlinking(options: LedStateOptions) {
+
+    }
+
+    switchFromPulsing(options: LedStateOptions) {
+
+    }
+
+    private renderLoadingSpinner(options: LedStateOptions, startTime?: number) {
+        this.logger.debug("Rendering loading spinner...")
+        this.busy = true;
+        const hsvColor = this.hexToHsv(options.color);
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
-        const start = Date.now();
+        const start = startTime || Date.now();
         const durationPerIndex = this.spinnerOptions.rotationDuration / this.channel.count;
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
         const spinnerInterval = setInterval(() => {
             const elapsed = Date.now() - start;
-            // const rotation = (elapsed % this.spinnerOptions.rotationDuration) / this.spinnerOptions.rotationDuration;
             for (let i = 0; i < this.channel.count; i++) {
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
-                // Adjust value based on relative elapsed time and tail length
                 const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
                 const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
-                // if (i === 0) {
-                //     this.logger.debug(`Value for index ${i}: ${relativeElapsed}`);
-                // }
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
             ws281x.render();
+
+            if (this.currentState != LedState.LOADING || this.switchingState) {
+                clearInterval(spinnerInterval);
+                this.busy = false;
+            }
         });
 
     }
