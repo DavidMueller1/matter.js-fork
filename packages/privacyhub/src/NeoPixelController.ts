@@ -3,6 +3,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 enum LedState {
     OFF,
+    SINGLE,
     LOADING,
     BLINKING,
     PULSING
@@ -53,11 +54,15 @@ export default class NeoPixelController {
         this.busy = false;
 
         this.displaySingleColor(this.rgbToHex(0, 0, 0))
-        this.switchToState(LedState.LOADING, { color: this.rgbToHex(0, 0, 255) });
+        this.switchToState(LedState.LOADING, { color: this.rgbToHex(100, 0, 255) });
+        // switch to single color red after 5 seconds
+        setTimeout(() => {
+            this.switchToState(LedState.SINGLE, { color: this.rgbToHex(0, 255, 0) });
+        }, 5000);
     }
 
-    displaySingleColor(color: number) {
-        this.targetColor = color;
+    displaySingleColor(options: LedStateOptions) {
+        this.targetColor = options.color;
 
         for (let i = 0; i < this.channel.count; i++) {
             this.colors[i] = color;
@@ -67,6 +72,7 @@ export default class NeoPixelController {
     }
 
     switchToState(newState: LedState, options: LedStateOptions) {
+        this.targetColor = options.color;
         this.switchingState = true;
 
         const lastState = this.currentState;
@@ -96,9 +102,13 @@ export default class NeoPixelController {
 
     switchFromOff(options: LedStateOptions) {
         switch (this.currentState) {
-            case LedState.LOADING:
+            case LedState.SINGLE:
+                this.displaySingleColor(options.color);
                 this.switchingState = false;
+                break;
+            case LedState.LOADING:
                 this.renderLoadingSpinner(options, undefined, true);
+                this.switchingState = false;
                 break;
             case LedState.BLINKING:
                 break;
@@ -109,7 +119,21 @@ export default class NeoPixelController {
     }
 
     switchFromLoading(options: LedStateOptions) {
+        switch (this.currentState) {
+            case LedState.OFF:
+                while (this.busy) {}
+                this.displaySingleColor({ color: 0x000000 })
+                break;
+            case LedState.SINGLE:
+                while (this.busy) {}
+                this.displaySingleColor(options)
+                break;
+            case LedState.BLINKING:
+                break;
+            case LedState.PULSING:
+                break;
 
+        }
     }
 
     switchFromBlinking(options: LedStateOptions) {
@@ -118,10 +142,6 @@ export default class NeoPixelController {
 
     switchFromPulsing(options: LedStateOptions) {
 
-    }
-
-    private renderSpinupLoadingSpinner(options: LedStateOptions): number {
-        const start = Date.now();
     }
 
     private renderLoadingSpinner(options: LedStateOptions, startTime?: number, spinupEffect = false) {
@@ -139,16 +159,39 @@ export default class NeoPixelController {
             for (let i = 0; i < this.channel.count; i++) {
                 if (spinupEffect && elapsed < this.spinnerOptions.rotationDuration - i * durationPerIndex) continue;
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
-                // const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
                 const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
-                // map the currentRotation value (which is between 1 and 0) to the tailRotationPart so that value is 1 when currentRotation is 1 and linearly goes down to zero when currentRotation equals tailRotationPart
                 const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
-                // const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
             ws281x.render();
 
             if (this.currentState != LedState.LOADING || this.switchingState) {
+                const currentCicleElapsed = elapsed % this.spinnerOptions.rotationDuration;
+                const switchTime = Date.now();
+                const targetColorHsv = this.hexToHsv(this.targetColor);
+
+                const hueDifference = targetColorHsv.h - hsvColor.h;
+                const saturationDifference = targetColorHsv.s - hsvColor.s;
+                const valueDifference = targetColorHsv.v - hsvColor.v;
+
+                while (Date.now() - switchTime < this.spinnerOptions.rotationDuration) {
+                    const realElapsed = Date.now() - start;
+                    const elapsedSwitch = realElapsed + currentCicleElapsed;
+                    for (let i = 0; i < this.channel.count; i++) {
+                        const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
+                        const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
+
+                        const hue = hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
+                        const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
+                        let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
+                        if (i * durationPerIndex < realElapsed) {
+                            value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
+                        }
+                        this.colors[i] = this.hsvToHex(hue, saturation, value);
+                    }
+                    ws281x.render();
+                }
+
                 clearInterval(spinnerInterval);
                 this.busy = false;
             }
