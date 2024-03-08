@@ -166,6 +166,7 @@ export default class NeoPixelController {
             ws281x.render();
 
             if (this.currentState != LedState.LOADING || this.switchingState) {
+                this.logger.debug("Switching to new color");
                 const currentCicleElapsed = elapsed % this.spinnerOptions.rotationDuration;
                 const switchTime = Date.now();
                 const targetColorHsv = this.hexToHsv(this.targetColor);
@@ -175,6 +176,7 @@ export default class NeoPixelController {
                 const valueDifference = targetColorHsv.v - hsvColor.v;
 
                 while (Date.now() - switchTime < this.spinnerOptions.rotationDuration) {
+                    this.logger.debug("Switching...");
                     const realElapsed = Date.now() - start;
                     const elapsedSwitch = realElapsed + currentCicleElapsed;
                     for (let i = 0; i < this.channel.count; i++) {
