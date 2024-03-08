@@ -44,7 +44,7 @@ export default class NeoPixelController {
         this.spinnerOptions = {
             rotationDuration: parseInt(process.env.SPINNER_ROTATION_DURATION || "1000"),
             framesPerSecond: parseInt(process.env.SPINNER_FRAMES_PER_SECOND || "100"),
-            tailLength: parseInt(process.env.SPINNER_TAIL_LENGTH || "10"),
+            tailLength: parseInt(process.env.SPINNER_TAIL_LENGTH || "12"),
         }
 
         this.targetColor = 0x000000;
