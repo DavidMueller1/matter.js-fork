@@ -65,7 +65,7 @@ export default class NeoPixelController {
         this.targetColor = options.color;
 
         for (let i = 0; i < this.channel.count; i++) {
-            this.colors[i] = color;
+            this.colors[i] = this.targetColor;
         }
 
         ws281x.render();
