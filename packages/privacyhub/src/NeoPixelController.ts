@@ -97,6 +97,7 @@ export default class NeoPixelController {
     switchFromOff(options: LedStateOptions) {
         switch (this.currentState) {
             case LedState.LOADING:
+                this.switchingState = false;
                 this.renderLoadingSpinner(options);
                 break;
             case LedState.BLINKING:
