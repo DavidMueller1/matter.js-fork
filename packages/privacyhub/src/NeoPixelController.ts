@@ -137,7 +137,7 @@ export default class NeoPixelController {
         const spinnerInterval = setInterval(() => {
             const elapsed = Date.now() - start;
             for (let i = 0; i < this.channel.count; i++) {
-                if (spinupEffect && elapsed < i * durationPerIndex) continue;
+                if (spinupEffect && elapsed < this.spinnerOptions.rotationDuration - i * durationPerIndex) continue;
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 // const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
                 const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
