@@ -136,7 +136,7 @@ export default class NeoPixelController {
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
                 // map the currentRotation value (which is between 1 and 0) to the tailRotationPart so that value is 1 when currentRotation is 1 and linearly goes down to zero when currentRotation equals tailRotationPart
-const value = hsvColor.v * Math.max(0, (currentRotation / tailRotationPart);
+const value = hsvColor.v * Math.max(0, (currentRotation / tailRotationPart));
 // const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
