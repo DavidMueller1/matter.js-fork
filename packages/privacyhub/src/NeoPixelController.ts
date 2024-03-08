@@ -126,6 +126,7 @@ export default class NeoPixelController {
         const hsvColor = this.hexToHsv(options.color);
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
         this.logger.debug(`Tail length: ${this.spinnerOptions.tailLength}`);
+        this.logger.debug(`Total channel count: ${this.channel.count}`);
         const start = startTime || Date.now();
         const durationPerIndex = this.spinnerOptions.rotationDuration / this.channel.count;
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
@@ -134,7 +135,9 @@ export default class NeoPixelController {
             for (let i = 0; i < this.channel.count; i++) {
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 const currentRotation = 1 - relativeElapsed / this.spinnerOptions.rotationDuration;
-                const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
+                // map the currentRotation value (which is between 1 and 0) to the tailRotationPart so that value is 1 when currentRotation is 1 and linearly goes down to zero when currentRotation equals tailRotationPart
+const value = hsvColor.v * Math.max(0, (currentRotation / tailRotationPart);
+// const value = hsvColor.v * Math.max(0, (currentRotation * (1 + tailRotationPart)) - tailRotationPart);
                 this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
             ws281x.render();
