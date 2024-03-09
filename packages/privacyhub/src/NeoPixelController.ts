@@ -60,17 +60,17 @@ export default class NeoPixelController {
 
         this.displaySingleColor({ color: NeoPixelController.rgbToHex(0, 0, 0) });
 
-        // this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(100, 0, 255) });
-        // // switch to single color red after 5 seconds
-        // setTimeout(() => {
-        //     this.switchToState(LedState.SINGLE, { color: NeoPixelController.rgbToHex(0, 255, 0) });
-        //     setTimeout(() => {
-        //         this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(255, 100, 0) });
-        //         setTimeout(() => {
-        //             this.switchToState(LedState.OFF, { color: NeoPixelController.rgbToHex(0, 0, 0) });
-        //         }, 5000);
-        //     }, 5000);
-        // }, 5000);
+        this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(100, 0, 255) });
+        // switch to single color red after 5 seconds
+        setTimeout(() => {
+            this.switchToState(LedState.SINGLE, { color: NeoPixelController.rgbToHex(0, 255, 0) });
+            setTimeout(() => {
+                this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(255, 100, 0) });
+                setTimeout(() => {
+                    this.switchToState(LedState.OFF, { color: NeoPixelController.rgbToHex(0, 0, 0) });
+                }, 5000);
+            }, 5000);
+        }, 5000);
     }
 
     displaySingleColor(options: LedStateOptions) {
