@@ -174,7 +174,7 @@ export default class NeoPixelController {
                 const hueDifference = targetColorHsv.h - hsvColor.h;
                 const saturationDifference = targetColorHsv.s - hsvColor.s;
                 const valueDifference = targetColorHsv.v - hsvColor.v;
-                this.logger.debug(`Difference: ${JSON.stringify({ h: hueDifference, s: saturationDifference, v: valueDifference})
+                this.logger.debug(`Difference: ${JSON.stringify({ h: hueDifference, s: saturationDifference, v: valueDifference})}`);
 
                 while (Date.now() - switchTime < this.spinnerOptions.rotationDuration) {
                     const realElapsed = Date.now() - start;
