@@ -245,6 +245,9 @@ export default class NeoPixelController {
                         if (relativeElapsed > realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
+                        if (i == 0) {
+                            this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
+                        }
                         this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
                     }
                     ws281x.render();
