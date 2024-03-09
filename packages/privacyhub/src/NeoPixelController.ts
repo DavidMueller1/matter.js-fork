@@ -189,7 +189,10 @@ export default class NeoPixelController {
                 this.switchingState = true;
                 break;
             case LedState.BLINKING:
-                this.renderBlinking(options)
+                this.targetColor = 0x000000;
+                this.waitUntilNotBusy().then(() => {
+                    this.renderBlinking(options);
+                }).catch((_) => {});
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -293,7 +296,7 @@ export default class NeoPixelController {
 
     private renderBlinking(options: LedStateOptions) {
         this.busy = true;
-        const blinkDuration = options.blinkDuration || 1000;
+        const blinkDuration = options.blinkDuration || 600;
         const blinkCount = options.blinkCount || 2;
         const colorHsv = NeoPixelController.hexToHsv(options.color);
 
