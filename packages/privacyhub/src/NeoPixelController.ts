@@ -84,6 +84,7 @@ export default class NeoPixelController {
     }
 
     switchToState(newState: LedState, options: LedStateOptions) {
+        this.logger.debug(`Switching to state: ${LedState[newState]}`);
         this.targetColor = options.color;
         this.switchingState = true;
 
