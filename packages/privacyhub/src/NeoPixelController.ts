@@ -187,7 +187,7 @@ export default class NeoPixelController {
                         const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
 
-                        if (relativeElapsed > realElapsed) {
+                        if (relativeElapsed < realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
                         if (i == 0) {
