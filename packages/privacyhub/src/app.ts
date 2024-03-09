@@ -62,4 +62,4 @@ Ble.get = singleton(
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
 
-new PrivacyhubBackend(privacyhubNode);
+new PrivacyhubBackend(privacyhubNode, neoPixelController);
