@@ -177,7 +177,7 @@ export default class NeoPixelController {
                 this.logger.debug(`Difference: ${JSON.stringify({ h: hueDifference, s: saturationDifference, v: valueDifference})}`);
 
                 while (Date.now() - switchTime < this.spinnerOptions.rotationDuration) {
-                    const realElapsed = Date.now() - start;
+                    const realElapsed = Date.now() - switchTime;
                     const elapsedSwitch = realElapsed + currentCicleElapsed;
                     for (let i = 0; i < this.channel.count; i++) {
                         const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
