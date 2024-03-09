@@ -49,7 +49,7 @@ switch (process.env.LOG_FORMAT || "plain") {
 }
 
 const neoPixelController = new NeoPixelController()
-// neoPixelController.switchToState(LedState.LOADING, { color: NeoPixelController.hsvToHex(30, 1, 1) })
+neoPixelController.switchToState(LedState.LOADING, { color: NeoPixelController.hsvToHex(30, 1, 1) })
 
 // Initialize BLE
 Ble.get = singleton(
