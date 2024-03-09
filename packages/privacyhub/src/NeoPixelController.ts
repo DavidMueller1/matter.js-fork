@@ -293,7 +293,7 @@ export default class NeoPixelController {
 
     private renderBlinking(options: LedStateOptions) {
         this.busy = true;
-        const blinkDuration = options.blinkDuration || 500;
+        const blinkDuration = options.blinkDuration || 1000;
         const blinkCount = options.blinkCount || 2;
         const colorHsv = NeoPixelController.hexToHsv(options.color);
 
@@ -314,7 +314,8 @@ export default class NeoPixelController {
                 this.busy = false;
                 clearInterval(interval);
             } else {
-                const currentValue = Math.sin(2 * Math.PI * (progress - 0.25) * blinkCount)
+                const currentValue = Math.sin(2 * Math.PI * (progress - 0.25) * blinkCount);
+                this.logger.debug(`Current value: ${currentValue}`);
                 const currentColor = NeoPixelController.hsvToHex(colorHsv.h, colorHsv.s, colorHsv.v * currentValue);
                 for (let i = 0; i < this.channel.count; i++) {
                     this.colors[i] = currentColor;
