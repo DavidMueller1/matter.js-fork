@@ -5,3 +5,7 @@ export const stringifyWithBigint = (param: any): any => {
         2
     );
 };
+
+export const mod = (n: number, m: number): number => {
+    return ((n % m) + m) % m;
+}

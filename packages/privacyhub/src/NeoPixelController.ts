@@ -1,5 +1,6 @@
 import ws281x from "rpi-ws281x-native";
 import { Logger } from "@project-chip/matter-node.js/log";
+import { mod } from "./Util.js";
 
 export enum LedState {
     OFF,
@@ -238,16 +239,16 @@ export default class NeoPixelController {
                         const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                         const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
 
-                        const hue = (hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration)) % 360;
+                        const hue = mod(hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration)), 360);
                         const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
 
                         if (relativeElapsed > realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
-                        if (i == 0) {
-                            this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
-                        }
+                        // if (i == 0) {
+                        //     this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
+                        // }
                         this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
                     }
                     ws281x.render();
