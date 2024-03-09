@@ -131,7 +131,7 @@ export default class NeoPixelController {
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
-                this.renderBlinking(options)
+                this.renderBlinking(options, false, false)
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -159,7 +159,10 @@ export default class NeoPixelController {
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
-                this.renderBlinking(options)
+                this.fadeToColor(options, 400);
+                this.waitUntilNotBusy().then(() => {
+                    this.renderBlinking(options, true, false)
+                }).catch((_) => {});
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -189,9 +192,8 @@ export default class NeoPixelController {
                 this.switchingState = true;
                 break;
             case LedState.BLINKING:
-                this.targetColor = 0x000000;
                 this.waitUntilNotBusy().then(() => {
-                    this.renderBlinking(options);
+                    this.renderBlinking(options, true, false);
                 }).catch((_) => {});
                 break;
             case LedState.PULSING:
@@ -294,11 +296,16 @@ export default class NeoPixelController {
 
     }
 
-    private renderBlinking(options: LedStateOptions) {
+    private renderBlinking(options: LedStateOptions, startOn = false, finishOn = false) {
         this.busy = true;
-        const blinkDuration = options.blinkDuration || 600;
+        let blinkDuration = options.blinkDuration || 600;
         const blinkCount = options.blinkCount || 2;
+        const cycleDuration = blinkDuration / blinkCount;
+        if (startOn) blinkDuration += cycleDuration / 2;
+        if (finishOn) blinkDuration -= cycleDuration / 2;
         const colorHsv = NeoPixelController.hexToHsv(options.color);
+
+        const startOnFactor = startOn ? 1 : 0;
 
         const startTime = Date.now();
 
@@ -307,8 +314,9 @@ export default class NeoPixelController {
             const progress = elapsed / blinkDuration;
 
             if (progress >= 1) {
+                const finalColor = finishOn ? options.color : 0x000000;
                 for (let i = 0; i < this.channel.count; i++) {
-                    this.colors[i] = 0x000000;
+                    this.colors[i] = finalColor;
                 }
                 ws281x.render();
 
@@ -317,7 +325,7 @@ export default class NeoPixelController {
                 this.busy = false;
                 clearInterval(interval);
             } else {
-                const currentValue = (Math.sin(2 * Math.PI * (progress - 0.25 / blinkCount) * blinkCount) + 1) / 2;
+                const currentValue = (Math.sin(2 * Math.PI * (progress - 0.25 / blinkCount + (0.5 / blinkCount * startOnFactor)) * blinkCount) + 1) / 2;
                 this.logger.debug(`Current value: ${currentValue}`);
                 const currentColor = NeoPixelController.hsvToHex(colorHsv.h, colorHsv.s, colorHsv.v * currentValue);
                 for (let i = 0; i < this.channel.count; i++) {
