@@ -91,5 +91,31 @@ export default class PrivacyhubBackend {
                 res.status(500).send(`Error commissioning node: ${error}`);
             });
         });
+
+        /**
+         * @api {post} /debug/led/state Set LED state
+         * @apiName Set LED state
+         * @apiGroup Debug
+         *
+         * @apiBody {String} ledState LED state
+         * @apiBody {number} hue Color hue
+         * @apiBody {number} saturation Color saturation
+         * @apiBody {number} val Color value
+         */
+        this.app.post('/debug/led/state', (req: Request, res: Response) => {
+            // Log JSON body
+            this.logger.info("Received LED state change request:");
+            this.logger.info(JSON.stringify(req.body, null, 2));
+
+            // Check if the request body has the required fields
+            if (!req.body.ledState || !req.body.hue || !req.body.saturation || !req.body.val) {
+                res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
+                return;
+            }
+
+            // Set LED state
+            this.neoPixelController.switchToState(req.body.ledState, { color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val) });
+            res.send("LED state changed successfully");
+        });
     }
 }
