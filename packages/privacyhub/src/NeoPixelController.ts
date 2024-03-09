@@ -124,6 +124,7 @@ export default class NeoPixelController {
                 }).catch((_) => {});
                 break;
             case LedState.LOADING:
+                this.switchingState = false;
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
@@ -145,6 +146,7 @@ export default class NeoPixelController {
                 }).catch((_) => {});
                 break;
             case LedState.LOADING:
+                this.switchingState = false;
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
@@ -199,9 +201,6 @@ export default class NeoPixelController {
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
         const spinnerInterval = setInterval(() => {
             const elapsed = Date.now() - start;
-            if (spinupEffect && elapsed > this.spinnerOptions.rotationDuration) {
-                this.switchingState = false;
-            }
 
             for (let i = 0; i < this.channel.count; i++) {
                 if (spinupEffect && elapsed < this.spinnerOptions.rotationDuration - i * durationPerIndex) continue;
