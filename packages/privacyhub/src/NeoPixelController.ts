@@ -320,7 +320,7 @@ export default class NeoPixelController {
                 }
                 ws281x.render();
 
-                this.currentState = LedState.OFF;
+                this.currentState = finishOn ? LedState.SINGLE : LedState.OFF;
                 this.switchingState = false;
                 this.busy = false;
                 clearInterval(interval);
