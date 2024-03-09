@@ -92,29 +92,28 @@ export default class NeoPixelController {
         const lastState = this.currentState;
         this.currentState = newState;
 
-        // while (this.busy) {
-        //     this.logger.debug("Waiting for previous state to finish...")
-        //     setTimeout(() => {}, 100);
-        // }
+        this.waitForStateSwitch().then(() => {
+            this.targetColor = options.color;
+            this.switchingState = true;
+            switch (lastState) {
+                case LedState.OFF:
+                    this.switchFromOff(options);
+                    break;
+                case LedState.SINGLE:
+                    this.switchFromSingle(options);
+                    break;
+                case LedState.LOADING:
+                    this.switchFromLoading(options);
+                    break;
+                case LedState.BLINKING:
+                    this.switchFromBlinking(options);
+                    break;
+                case LedState.PULSING:
+                    this.switchFromPulsing(options);
+                    break;
 
-        switch (lastState) {
-            case LedState.OFF:
-                this.switchFromOff(options);
-                break;
-            case LedState.SINGLE:
-                this.switchFromSingle(options);
-                break;
-            case LedState.LOADING:
-                this.switchFromLoading(options);
-                break;
-            case LedState.BLINKING:
-                this.switchFromBlinking(options);
-                break;
-            case LedState.PULSING:
-                this.switchFromPulsing(options);
-                break;
-
-        }
+            }
+        }).catch((_) => {});
     }
 
     switchFromOff(options: LedStateOptions) {
@@ -127,7 +126,6 @@ export default class NeoPixelController {
                 }).catch((_) => {});
                 break;
             case LedState.LOADING:
-                this.switchingState = false;
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
@@ -149,8 +147,13 @@ export default class NeoPixelController {
                     this.switchingState = false;
                 }).catch((_) => {});
                 break;
+            case LedState.SINGLE:
+                this.fadeToColor(options, this.fadeOptions.duration)
+                this.waitUntilNotBusy().then(() => {
+                    this.switchingState = false;
+                }).catch((_) => {});
+                break;
             case LedState.LOADING:
-                this.switchingState = false;
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
@@ -168,15 +171,12 @@ export default class NeoPixelController {
         switch (this.currentState) {
             case LedState.OFF:
                 this.targetColor = 0x000000;
-                this.switchingState = true;
                 this.waitUntilNotBusy().then(() => {
                     this.displaySingleColor({ color: 0x000000 });
                     this.switchingState = false;
                 }).catch((_) => {});
                 break;
             case LedState.SINGLE:
-                this.targetColor = options.color;
-                this.switchingState = true;
                 this.waitUntilNotBusy().then(() => {
                     this.displaySingleColor(options)
                     this.switchingState = false;
@@ -214,11 +214,27 @@ export default class NeoPixelController {
         const start = startTime || Date.now();
         const durationPerIndex = this.spinnerOptions.rotationDuration / this.channel.count;
         const tailRotationPart = this.spinnerOptions.tailLength / this.channel.count;
+
+        if (spinupEffect) {
+            let spinupElapsed = Date.now() - start;
+            while (spinupElapsed < this.spinnerOptions.rotationDuration) {
+                spinupElapsed = Date.now() - start;
+                for (let i = 0; i < this.channel.count; i++) {
+                    if (spinupElapsed < this.spinnerOptions.rotationDuration - i * durationPerIndex) continue;
+                    const relativeElapsed = (spinupElapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
+                    const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
+                    const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
+                    this.colors[i] = NeoPixelController.hsvToHex(hsvColor.h, hsvColor.s, value);
+                }
+                ws281x.render();
+            }
+            this.switchingState = false;
+        }
+
         const spinnerInterval = setInterval(() => {
             const elapsed = Date.now() - start;
 
             for (let i = 0; i < this.channel.count; i++) {
-                if (spinupEffect && elapsed < this.spinnerOptions.rotationDuration - i * durationPerIndex) continue;
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
                 const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
@@ -377,6 +393,17 @@ export default class NeoPixelController {
         return new Promise<void>((resolve) => {
             const interval = setInterval(() => {
                 if (!this.busy) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 100);
+        });
+    }
+
+    waitForStateSwitch() {
+        return new Promise<void>((resolve) => {
+            const interval = setInterval(() => {
+                if (!this.switchingState) {
                     clearInterval(interval);
                     resolve();
                 }
