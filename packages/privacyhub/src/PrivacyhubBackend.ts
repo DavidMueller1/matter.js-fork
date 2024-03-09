@@ -117,7 +117,7 @@ export default class PrivacyhubBackend {
             const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
 
             // Set LED state
-            this.neoPixelController.switchToState(targetState, { color: NeoPixelController.rgbToHex(0, 0, 255) });
+            this.neoPixelController.switchToState(targetState, { color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)});
             res.send("LED state changed successfully");
         });
     }
