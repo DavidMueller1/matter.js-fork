@@ -238,7 +238,7 @@ export default class NeoPixelController {
                         const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                         const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
 
-                        const hue = hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
+                        const hue = (hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration)) % 360;
                         const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
 
