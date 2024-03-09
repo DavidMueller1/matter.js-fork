@@ -192,7 +192,7 @@ export default class NeoPixelController {
                         }
                         if (i == 0) {
                             this.logger.debug(`Relative elapsed: ${relativeElapsed}`);
-                            this.logger.debug(`HSV: ${JSON.stringify({ h: hue, s: saturation, v: value })}`);
+                            // this.logger.debug(`HSV: ${JSON.stringify({ h: hue, s: saturation, v: value })}`);
                         }
                         this.colors[i] = this.hsvToHex(hue, saturation, value);
                     }
