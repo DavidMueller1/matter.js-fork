@@ -13,6 +13,8 @@ export enum LedState {
 export interface LedStateOptions {
     color: number;
     tailLength?: number;
+    blinkDuration?: number;
+    blinkCount?: number;
 }
 
 export default class NeoPixelController {
@@ -129,7 +131,7 @@ export default class NeoPixelController {
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
-                // TODO: implement
+                this.renderBlinking(options)
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -157,7 +159,7 @@ export default class NeoPixelController {
                 this.renderLoadingSpinner(options, undefined, true);
                 break;
             case LedState.BLINKING:
-                // TODO: implement
+                this.renderBlinking(options)
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -187,7 +189,7 @@ export default class NeoPixelController {
                 this.switchingState = true;
                 break;
             case LedState.BLINKING:
-                // TODO: implement
+                this.renderBlinking(options)
                 break;
             case LedState.PULSING:
                 // TODO: implement
@@ -287,6 +289,39 @@ export default class NeoPixelController {
             }
         });
 
+    }
+
+    private renderBlinking(options: LedStateOptions) {
+        this.busy = true;
+        const blinkDuration = options.blinkDuration || 500;
+        const blinkCount = options.blinkCount || 2;
+        const colorHsv = NeoPixelController.hexToHsv(options.color);
+
+        const startTime = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = elapsed / blinkDuration;
+
+            if (progress >= 1) {
+                for (let i = 0; i < this.channel.count; i++) {
+                    this.colors[i] = 0x000000;
+                }
+                ws281x.render();
+
+                this.currentState = LedState.OFF;
+                this.switchingState = false;
+                this.busy = false;
+                clearInterval(interval);
+            } else {
+                const currentValue = Math.sin(2 * Math.PI * (progress - 0.25) * blinkCount)
+                const currentColor = NeoPixelController.hsvToHex(colorHsv.h, colorHsv.s, colorHsv.v * currentValue);
+                for (let i = 0; i < this.channel.count; i++) {
+                    this.colors[i] = currentColor;
+                }
+                ws281x.render();
+            }
+        });
     }
 
     fadeToColor(options: LedStateOptions, duration: number) {
