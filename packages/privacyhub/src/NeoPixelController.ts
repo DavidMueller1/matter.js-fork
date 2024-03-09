@@ -117,6 +117,7 @@ export default class NeoPixelController {
     }
 
     switchFromOff(options: LedStateOptions) {
+        this.logger.debug(`Switching from off: ${JSON.stringify(options)}`);
         switch (this.currentState) {
             case LedState.SINGLE:
                 this.fadeToColor(options, this.fadeOptions.duration)
@@ -139,6 +140,7 @@ export default class NeoPixelController {
     }
 
     switchFromSingle(options: LedStateOptions) {
+        this.logger.debug(`Switching from single: ${JSON.stringify(options)}`);
         switch (this.currentState) {
             case LedState.OFF:
                 this.fadeToColor({ color: 0x000000 }, this.fadeOptions.duration)
@@ -161,6 +163,7 @@ export default class NeoPixelController {
     }
 
     switchFromLoading(options: LedStateOptions) {
+        this.logger.debug(`Switching from loading: ${JSON.stringify(options)}`);
         switch (this.currentState) {
             case LedState.OFF:
                 this.waitUntilNotBusy().then(() => {
