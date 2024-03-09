@@ -167,7 +167,7 @@ export default class NeoPixelController {
 
             if (this.currentState != LedState.LOADING || this.switchingState) {
                 this.logger.debug("Switching to new color");
-                const currentCicleElapsed = elapsed % this.spinnerOptions.rotationDuration;
+                const currentCycleElapsed = elapsed % this.spinnerOptions.rotationDuration;
                 const switchTime = Date.now();
                 const targetColorHsv = this.hexToHsv(this.targetColor);
 
@@ -178,7 +178,7 @@ export default class NeoPixelController {
 
                 while (Date.now() - switchTime < this.spinnerOptions.rotationDuration) {
                     const realElapsed = Date.now() - switchTime;
-                    const elapsedSwitch = realElapsed + currentCicleElapsed;
+                    const elapsedSwitch = realElapsed + currentCycleElapsed;
                     for (let i = 0; i < this.channel.count; i++) {
                         const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                         const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
@@ -186,7 +186,7 @@ export default class NeoPixelController {
                         const hue = hsvColor.h + hueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
-                        if (i * durationPerIndex < realElapsed) {
+                        if (i * durationPerIndex >= realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
                         if (i == 0) {
