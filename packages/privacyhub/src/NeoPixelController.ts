@@ -305,7 +305,7 @@ export default class NeoPixelController {
 
             if (progress >= 1) {
                 for (let i = 0; i < this.channel.count; i++) {
-                    this.colors[i] = NeoPixelController.rgbToHex(targetColor.r, targetColor.g, targetColor.b);
+                    this.colors[i] = options.color;
                 }
                 ws281x.render();
 
@@ -330,9 +330,9 @@ export default class NeoPixelController {
     }
 
     static hexToRgb(hex: number): { r: number; g: number; b: number } {
-        const r = (hex >> 16) & 255;
+        const r = hex & 255;
         const g = (hex >> 8) & 255;
-        const b = hex & 255;
+        const b = (hex >> 16) & 255;
         return { r, g, b };
     }
 
