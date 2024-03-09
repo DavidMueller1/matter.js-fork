@@ -222,7 +222,7 @@ export default class NeoPixelController {
                 const switchTime = Date.now();
                 const targetColorHsv = NeoPixelController.hexToHsv(this.targetColor);
 
-                const hueDifference = targetColorHsv.h - hsvColor.h;
+                let hueDifference = targetColorHsv.h - hsvColor.h;
                 if (Math.abs(hueDifference) > 180) {
                     hueDifference = (hueDifference + 360) % 360;
                 }
