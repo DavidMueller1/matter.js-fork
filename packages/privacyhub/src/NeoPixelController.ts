@@ -207,7 +207,7 @@ export default class NeoPixelController {
     private renderLoadingSpinner(options: LedStateOptions, startTime?: number, spinupEffect = false) {
         this.logger.debug("Rendering loading spinner...")
         this.busy = true;
-        const hsvColor = NeoPixelController.hexToHsv(options.color);
+        let hsvColor = NeoPixelController.hexToHsv(options.color);
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
         this.logger.debug(`Tail length: ${this.spinnerOptions.tailLength}`);
         this.logger.debug(`Total channel count: ${this.channel.count}`);
@@ -251,7 +251,7 @@ export default class NeoPixelController {
                         const saturation = hsvColor.s + saturationDifference * (realElapsed / this.spinnerOptions.rotationDuration);
                         let value = hsvColor.v + valueDifference * (realElapsed / this.spinnerOptions.rotationDuration);
 
-                        if (this.currentState != LedState.LOADING && relativeElapsed > realElapsed) {
+                        if (this.currentState == LedState.LOADING || relativeElapsed > realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
                         // if (i == 0) {
@@ -266,6 +266,7 @@ export default class NeoPixelController {
                     this.busy = false;
                 } else {
                     this.switchingState = false;
+                    hsvColor = NeoPixelController.hexToHsv(this.targetColor);
                 }
             }
         });
