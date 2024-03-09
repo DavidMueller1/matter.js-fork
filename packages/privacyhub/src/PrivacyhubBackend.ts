@@ -26,7 +26,7 @@ export default class PrivacyhubBackend {
         this.setupRoutes()
         this.app.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
-            this.neoPixelController.switchToState(LedState.SINGLE, { color: NeoPixelController.hsvToHex(120, 1, 1) });
+            // this.neoPixelController.switchToState(LedState.SINGLE, { color: NeoPixelController.hsvToHex(120, 1, 1) });
         });
     }
 
