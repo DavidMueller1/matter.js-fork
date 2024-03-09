@@ -167,12 +167,14 @@ export default class NeoPixelController {
         switch (this.currentState) {
             case LedState.OFF:
                 this.waitUntilNotBusy().then(() => {
-                    this.displaySingleColor({ color: 0x000000 })
+                    this.displaySingleColor({ color: 0x000000 });
+                    this.switchingState = false;
                 }).catch((_) => {});
                 break;
             case LedState.SINGLE:
                 this.waitUntilNotBusy().then(() => {
                     this.displaySingleColor(options)
+                    this.switchingState = false;
                 }).catch((_) => {});
                 break;
             case LedState.BLINKING:
