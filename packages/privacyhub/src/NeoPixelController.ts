@@ -223,6 +223,9 @@ export default class NeoPixelController {
                 const targetColorHsv = NeoPixelController.hexToHsv(this.targetColor);
 
                 const hueDifference = targetColorHsv.h - hsvColor.h;
+                if (Math.abs(hueDifference) > 180) {
+                    hueDifference = (hueDifference + 360) % 360;
+                }
                 const saturationDifference = targetColorHsv.s - hsvColor.s;
                 const valueDifference = targetColorHsv.v - hsvColor.v;
 
