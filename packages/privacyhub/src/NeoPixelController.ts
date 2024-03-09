@@ -1,7 +1,7 @@
 import ws281x from "rpi-ws281x-native";
 import { Logger } from "@project-chip/matter-node.js/log";
 
-enum LedState {
+export enum LedState {
     OFF,
     SINGLE,
     LOADING,
@@ -9,7 +9,7 @@ enum LedState {
     PULSING
 }
 
-interface LedStateOptions {
+export interface LedStateOptions {
     color: number;
     tailLength?: number;
 }
@@ -58,19 +58,19 @@ export default class NeoPixelController {
         this.switchingState = false;
         this.busy = false;
 
-        this.displaySingleColor({ color: this.rgbToHex(0, 0, 0) });
+        this.displaySingleColor({ color: NeoPixelController.rgbToHex(0, 0, 0) });
 
-        this.switchToState(LedState.LOADING, { color: this.rgbToHex(100, 0, 255) });
-        // switch to single color red after 5 seconds
-        setTimeout(() => {
-            this.switchToState(LedState.SINGLE, { color: this.rgbToHex(0, 255, 0) });
-            setTimeout(() => {
-                this.switchToState(LedState.LOADING, { color: this.rgbToHex(255, 100, 0) });
-                setTimeout(() => {
-                    this.switchToState(LedState.OFF, { color: this.rgbToHex(0, 0, 0) });
-                }, 5000);
-            }, 5000);
-        }, 5000);
+        // this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(100, 0, 255) });
+        // // switch to single color red after 5 seconds
+        // setTimeout(() => {
+        //     this.switchToState(LedState.SINGLE, { color: NeoPixelController.rgbToHex(0, 255, 0) });
+        //     setTimeout(() => {
+        //         this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(255, 100, 0) });
+        //         setTimeout(() => {
+        //             this.switchToState(LedState.OFF, { color: NeoPixelController.rgbToHex(0, 0, 0) });
+        //         }, 5000);
+        //     }, 5000);
+        // }, 5000);
     }
 
     displaySingleColor(options: LedStateOptions) {
@@ -192,7 +192,7 @@ export default class NeoPixelController {
     private renderLoadingSpinner(options: LedStateOptions, startTime?: number, spinupEffect = false) {
         this.logger.debug("Rendering loading spinner...")
         this.busy = true;
-        const hsvColor = this.hexToHsv(options.color);
+        const hsvColor = NeoPixelController.hexToHsv(options.color);
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
         this.logger.debug(`Tail length: ${this.spinnerOptions.tailLength}`);
         this.logger.debug(`Total channel count: ${this.channel.count}`);
@@ -207,14 +207,14 @@ export default class NeoPixelController {
                 const relativeElapsed = (elapsed + durationPerIndex * i) % this.spinnerOptions.rotationDuration;
                 const currentRotation = relativeElapsed / this.spinnerOptions.rotationDuration;
                 const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
-                this.colors[i] = this.hsvToHex(hsvColor.h, hsvColor.s, value);
+                this.colors[i] = NeoPixelController.hsvToHex(hsvColor.h, hsvColor.s, value);
             }
             ws281x.render();
 
             if (this.currentState != LedState.LOADING || this.switchingState) {
                 const currentCycleElapsed = elapsed % this.spinnerOptions.rotationDuration;
                 const switchTime = Date.now();
-                const targetColorHsv = this.hexToHsv(this.targetColor);
+                const targetColorHsv = NeoPixelController.hexToHsv(this.targetColor);
 
                 const hueDifference = targetColorHsv.h - hsvColor.h;
                 const saturationDifference = targetColorHsv.s - hsvColor.s;
@@ -234,7 +234,7 @@ export default class NeoPixelController {
                         if (relativeElapsed > realElapsed) {
                             value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                         }
-                        this.colors[i] = this.hsvToHex(hue, saturation, value);
+                        this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
                     }
                     ws281x.render();
                 }
@@ -249,8 +249,8 @@ export default class NeoPixelController {
     fadeToColor(options: LedStateOptions, duration: number) {
         this.busy = true;
         const startTime = Date.now();
-        const startColor = this.hexToRgb(this.colors[0]);
-        const targetColor = this.hexToRgb(options.color);
+        const startColor = NeoPixelController.hexToRgb(this.colors[0]);
+        const targetColor = NeoPixelController.hexToRgb(options.color);
         const difference = {
             r: targetColor.r - startColor.r,
             g: targetColor.g - startColor.g,
@@ -262,7 +262,7 @@ export default class NeoPixelController {
 
             if (progress >= 1) {
                 for (let i = 0; i < this.channel.count; i++) {
-                    this.colors[i] = this.rgbToHex(targetColor.r, targetColor.g, targetColor.b);
+                    this.colors[i] = NeoPixelController.rgbToHex(targetColor.r, targetColor.g, targetColor.b);
                 }
                 ws281x.render();
 
@@ -275,25 +275,25 @@ export default class NeoPixelController {
                         g: startColor.g + difference.g * Math.min(1, progress),
                         b: startColor.b + difference.b * Math.min(1, progress)
                     }
-                    this.colors[i] = this.rgbToHex(currentColor.r, currentColor.g, currentColor.b);
+                    this.colors[i] = NeoPixelController.rgbToHex(currentColor.r, currentColor.g, currentColor.b);
                 }
                 ws281x.render();
             }
         });
     }
 
-    private rgbToHex(r: number, g: number, b: number): number {
+    static rgbToHex(r: number, g: number, b: number): number {
         return (b << 16) + (g << 8) + r;
     }
 
-    private hexToRgb(hex: number): { r: number; g: number; b: number } {
+    static hexToRgb(hex: number): { r: number; g: number; b: number } {
         const r = (hex >> 16) & 255;
         const g = (hex >> 8) & 255;
         const b = hex & 255;
         return { r, g, b };
     }
 
-    private hsvToHex(h: number, s: number, v: number): number {
+    static hsvToHex(h: number, s: number, v: number): number {
         const c = v * s;
         const x = c * (1 - Math.abs((h / 60) % 2 - 1));
         const m = v - c;
@@ -321,7 +321,7 @@ export default class NeoPixelController {
         return (blue << 16) + (green << 8) + red;
     }
 
-    private hexToHsv(hex: number): { h: number; s: number; v: number } {
+    static hexToHsv(hex: number): { h: number; s: number; v: number } {
         const b = (hex >> 16) & 255; // Extract blue value from leftmost byte
         const g = (hex >> 8) & 255;
         const r = hex & 255;
@@ -347,7 +347,7 @@ export default class NeoPixelController {
     }
 
     waitUntilNotBusy() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             const interval = setInterval(() => {
                 if (!this.busy) {
                     clearInterval(interval);

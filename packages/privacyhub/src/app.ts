@@ -2,14 +2,11 @@ import PrivacyhubBackend from "./PrivacyhubBackend.js";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
 import { Ble } from "@project-chip/matter-node.js/ble";
-import {
-    requireMinNodeVersion,
-    singleton,
-} from "@project-chip/matter-node.js/util";
+import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/util";
 
 import dotenv from "dotenv";
 import PrivacyhubNode from "./PrivacyhubNode.js";
-import NeoPixelController from "./NeoPixelController.js";
+import NeoPixelController, { LedState } from "./NeoPixelController.js";
 
 dotenv.config()
 
@@ -51,17 +48,18 @@ switch (process.env.LOG_FORMAT || "plain") {
         if (process.stdin?.isTTY) Logger.format = Format.ANSI;
 }
 
-new NeoPixelController()
+const neoPixelController = new NeoPixelController()
+neoPixelController.switchToState(LedState.LOADING, { color: NeoPixelController.hsvToHex(30, 1, 1) })
 
-// // Initialize BLE
-// Ble.get = singleton(
-//     () =>
-//         new BleNode({
-//             hciId: parseInt(process.env.HCI_ID || "0"),
-//         }),
-// );
-//
-// const privacyhubNode = new PrivacyhubNode();
-// await privacyhubNode.start();
-//
-// new PrivacyhubBackend(privacyhubNode);
+// Initialize BLE
+Ble.get = singleton(
+    () =>
+        new BleNode({
+            hciId: parseInt(process.env.HCI_ID || "0"),
+        }),
+);
+
+const privacyhubNode = new PrivacyhubNode();
+await privacyhubNode.start();
+
+new PrivacyhubBackend(privacyhubNode);

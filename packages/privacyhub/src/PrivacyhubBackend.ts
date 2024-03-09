@@ -3,6 +3,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode from "./PrivacyhubNode.js";
 import { stringifyWithBigint } from "./Util.js";
+import NeoPixelController, { LedState } from "./NeoPixelController.js";
 
 export default class PrivacyhubBackend {
     private app: Application;
@@ -10,9 +11,11 @@ export default class PrivacyhubBackend {
     private readonly logger: Logger;
 
     private readonly privacyhubNode: PrivacyhubNode;
+    private readonly neoPixelController: NeoPixelController;
 
-    constructor(privacyhubNode: PrivacyhubNode) {
+    constructor(privacyhubNode: PrivacyhubNode, neoPixelController: NeoPixelController) {
         this.privacyhubNode = privacyhubNode;
+        this.neoPixelController = neoPixelController;
 
         this.logger = Logger.get("PrivacyhubBackend");
         this.logger.info("Starting Privacyhub backend...")
@@ -23,6 +26,7 @@ export default class PrivacyhubBackend {
         this.setupRoutes()
         this.app.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
+            this.neoPixelController.switchToState(LedState.SINGLE, { color: NeoPixelController.hsvToHex(120, 1, 1) });
         });
     }
 
