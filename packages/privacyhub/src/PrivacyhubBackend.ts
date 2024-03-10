@@ -138,11 +138,26 @@ export default class PrivacyhubBackend {
             });
         });
 
+        /**
+         * Color HSV
+         * @typedef {object} ColorHSV
+         * @property {number} hue.required - Hue value - eg: 120
+         * @property {number} saturation.required - Saturation value - eg: 1
+         * @property {number} value.required - Value value - eg: 1
+         */
 
         /**
          * Led State options
          * @typedef {object} LedOptions
          * @property {string} ledState.required - State of the LED ring - enum:OFF,SINGLE,LOADING,BLINKING,PULSING
+         * @property {ColorHSV} colorHsv.required - HSV color
+         * @property {number} loadingTailLength - Length of the loading tail
+         * @property {number} loadingRotationDuration - Duration of the loading rotation
+         * @property {number} blinkDuration - Duration of the blink
+         * @property {number} blinkCount - Number of blinks
+         * @property {number} pulsingDuration - Duration of the pulsing
+         * @property {number} pulsingSecondColor - Second color of the pulsing
+         * @property {number} fadeDuration - Duration of the fade
          */
 
         /**
@@ -155,34 +170,23 @@ export default class PrivacyhubBackend {
             this.logger.info("Received LED state change request:");
             this.logger.info(JSON.stringify(req.body, null, 2));
 
-            if (!req.body.ledState) {
-                res.status(400).send("Missing required fields. Needed: {options: {state: string, hue: number, saturation: number, value: number}}");
-                return;
-            }
-
             // Get LedState enum from ledState string
             const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
-
-            if (targetState == undefined) {
-                res.status(400).send("Invalid LED state");
-                return;
+            const color = NeoPixelController.hsvToHex(req.body.colorHsv.hue, req.body.colorHsv.saturation, req.body.colorHsv.value);
+            const options = {
+                state: targetState,
+                color: color,
+                loadingTailLength: req.body.loadingTailLength,
+                loadingRotationDuration: req.body.loadingRotationDuration,
+                blinkDuration: req.body.blinkDuration,
+                blinkCount: req.body.blinkCount,
+                pulsingDuration: req.body.pulsingDuration,
+                pulsingSecondColor: req.body.pulsingSecondColor,
+                fadeDuration: req.body.fadeDuration
             }
-
-            // const hsvColor =
-
-            // Check if the request body has the required fields
-            if (!req.body.ledState || req.body.hue == undefined || req.body.saturation == undefined || req.body.val == undefined) {
-                res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
-                return;
-            }
-
-
 
             // Set LED state
-            this.neoPixelController.switchToState({
-                state: targetState,
-                color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
-            });
+            this.neoPixelController.switchToState(options);
             res.send("LED state changed successfully");
         });
     }
