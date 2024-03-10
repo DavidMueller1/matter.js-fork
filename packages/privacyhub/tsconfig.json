@@ -1,5 +1,6 @@
 {
     "compilerOptions": { "composite": true },
     "files": [],
-    "references": [{ "path": "src" }]
+    "references": [{ "path": "src" }],
+    "types": ["node"]
 }
