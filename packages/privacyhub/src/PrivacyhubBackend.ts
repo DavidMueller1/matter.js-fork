@@ -26,7 +26,10 @@ export default class PrivacyhubBackend {
         this.setupRoutes()
         this.app.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
-            this.neoPixelController.switchToState(LedState.BLINKING, { color: NeoPixelController.hsvToHex(120, 1, 0) });
+            this.neoPixelController.switchToState({
+                state: LedState.BLINKING,
+                color: NeoPixelController.hsvToHex(120, 1, 0)
+            });
         });
     }
 
@@ -80,17 +83,26 @@ export default class PrivacyhubBackend {
                 res.status(400).send("Missing required fields. Needed: {pairingCode: number, threadNetworkName: string, threadNetworkOperationalDataset: string}");
                 return;
             }
-            this.neoPixelController.switchToState(LedState.LOADING, { color: NeoPixelController.hsvToHex(235, 1, 1) });
+            this.neoPixelController.switchToState({
+                state: LedState.LOADING,
+                color: NeoPixelController.hsvToHex(235, 1, 1)
+            });
 
             this.privacyhubNode.commissionNodeBLEThread(
                 req.body.pairingCode,
                 req.body.threadNetworkName,
                 req.body.threadNetworkOperationalDataset
             ).then(() => {
-                this.neoPixelController.switchToState(LedState.BLINKING, { color: NeoPixelController.hsvToHex(120, 1, 1) });
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(120, 1, 1)
+                });
                 res.send("Commissioned node successfully");
             }).catch((error) => {
-                this.neoPixelController.switchToState(LedState.BLINKING, { color: NeoPixelController.hsvToHex(0, 1, 1) });
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(0, 1, 1)
+                });
                 res.status(500).send(`Error commissioning node: ${error}`);
             });
         });
@@ -120,7 +132,10 @@ export default class PrivacyhubBackend {
             const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
 
             // Set LED state
-            this.neoPixelController.switchToState(targetState, { color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)});
+            this.neoPixelController.switchToState({
+                state: targetState,
+                color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
+            });
             res.send("LED state changed successfully");
         });
     }
