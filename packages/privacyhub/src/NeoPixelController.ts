@@ -65,6 +65,7 @@ export default class NeoPixelController {
         this.targetColor = 0x000000;
         this.currentState = LedState.OFF;
         this.switchingState = false;
+        this.busy = false;
 
         this.displaySingleColor({
             state: LedState.OFF,
@@ -165,7 +166,10 @@ export default class NeoPixelController {
     private switchFromSingle(options: LedStateOptions) {
         switch (this.currentState) {
             case LedState.OFF:
-                this.fadeToColor({ color: 0x000000 })
+                this.fadeToColor({
+                    state: LedState.OFF,
+                    color: 0x000000
+                });
                 this.waitUntilNotBusy().then(() => {
                     this.switchingState = false;
                 }).catch((_) => {});
@@ -198,7 +202,10 @@ export default class NeoPixelController {
             case LedState.OFF:
                 this.targetColor = 0x000000;
                 this.waitUntilNotBusy().then(() => {
-                    this.displaySingleColor({ color: 0x000000 });
+                    this.displaySingleColor({
+                        state: LedState.OFF,
+                        color: 0x000000
+                    });
                     this.switchingState = false;
                 }).catch((_) => {});
                 break;
@@ -242,78 +249,80 @@ export default class NeoPixelController {
         const durationPerIndex = rotationDuration / this.channel.count;
         const tailRotationPart = tailLength / this.channel.count;
 
-        if (spinupEffect) {
-            let spinupElapsed = Date.now() - start;
-            while (spinupElapsed < rotationDuration) {
-                spinupElapsed = Date.now() - start;
+        new Promise<void>((resolve) => {
+            if (spinupEffect) {
+                let spinupElapsed = Date.now() - start;
+                while (spinupElapsed < rotationDuration) {
+                    spinupElapsed = Date.now() - start;
+                    for (let i = 0; i < this.channel.count; i++) {
+                        if (spinupElapsed < rotationDuration - i * durationPerIndex) continue;
+                        const relativeElapsed = (spinupElapsed + durationPerIndex * i) % rotationDuration;
+                        const currentRotation = relativeElapsed / rotationDuration;
+                        const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
+                        this.colors[i] = NeoPixelController.hsvToHex(hsvColor.h, hsvColor.s, value);
+                    }
+                    ws281x.render();
+                }
+                this.switchingState = false;
+                resolve();
+            }
+        }).then(() => {
+            const spinnerInterval = setInterval(() => {
+                const elapsed = Date.now() - start;
+
                 for (let i = 0; i < this.channel.count; i++) {
-                    if (spinupElapsed < rotationDuration - i * durationPerIndex) continue;
-                    const relativeElapsed = (spinupElapsed + durationPerIndex * i) % rotationDuration;
+                    const relativeElapsed = (elapsed + durationPerIndex * i) % rotationDuration;
                     const currentRotation = relativeElapsed / rotationDuration;
                     const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
                     this.colors[i] = NeoPixelController.hsvToHex(hsvColor.h, hsvColor.s, value);
                 }
                 ws281x.render();
-            }
-            this.switchingState = false;
-        }
 
-        const spinnerInterval = setInterval(() => {
-            const elapsed = Date.now() - start;
+                if (this.switchingState) {
+                    const currentCycleElapsed = elapsed % rotationDuration;
+                    const switchTime = Date.now();
+                    const targetColorHsv = NeoPixelController.hexToHsv(this.targetColor);
 
-            for (let i = 0; i < this.channel.count; i++) {
-                const relativeElapsed = (elapsed + durationPerIndex * i) % rotationDuration;
-                const currentRotation = relativeElapsed / rotationDuration;
-                const value = hsvColor.v * Math.max(0, 1 - (currentRotation / tailRotationPart));
-                this.colors[i] = NeoPixelController.hsvToHex(hsvColor.h, hsvColor.s, value);
-            }
-            ws281x.render();
-
-            if (this.switchingState) {
-                const currentCycleElapsed = elapsed % rotationDuration;
-                const switchTime = Date.now();
-                const targetColorHsv = NeoPixelController.hexToHsv(this.targetColor);
-
-                let hueDifference = targetColorHsv.h - hsvColor.h;
-                if (hueDifference > 180) {
-                    hueDifference = hueDifference - 360;
-                } else if (hueDifference < -180) {
-                    hueDifference = 360 + hueDifference;
-                }
-                const saturationDifference = targetColorHsv.s - hsvColor.s;
-                const valueDifference = targetColorHsv.v - hsvColor.v;
-
-                while (Date.now() - switchTime < rotationDuration) {
-                    const realElapsed = Date.now() - switchTime;
-                    const elapsedSwitch = realElapsed + currentCycleElapsed;
-                    for (let i = 0; i < this.channel.count; i++) {
-                        const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % rotationDuration;
-                        const currentRotation = relativeElapsed / rotationDuration;
-
-                        const hue = mod(hsvColor.h + hueDifference * (realElapsed / rotationDuration), 360);
-                        const saturation = hsvColor.s + saturationDifference * (realElapsed / rotationDuration);
-                        let value = hsvColor.v + valueDifference * (realElapsed / rotationDuration);
-
-                        if (this.currentState == LedState.LOADING || relativeElapsed > realElapsed) {
-                            value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
-                        }
-                        // if (i == 0) {
-                        //     this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
-                        // }
-                        this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
+                    let hueDifference = targetColorHsv.h - hsvColor.h;
+                    if (hueDifference > 180) {
+                        hueDifference = hueDifference - 360;
+                    } else if (hueDifference < -180) {
+                        hueDifference = 360 + hueDifference;
                     }
-                    ws281x.render();
-                }
-                if (this.currentState != LedState.LOADING) {
-                    clearInterval(spinnerInterval);
-                    this.busy = false;
-                } else {
-                    this.switchingState = false;
-                    hsvColor = NeoPixelController.hexToHsv(this.targetColor);
-                }
-            }
-        });
+                    const saturationDifference = targetColorHsv.s - hsvColor.s;
+                    const valueDifference = targetColorHsv.v - hsvColor.v;
 
+                    while (Date.now() - switchTime < rotationDuration) {
+                        const realElapsed = Date.now() - switchTime;
+                        const elapsedSwitch = realElapsed + currentCycleElapsed;
+                        for (let i = 0; i < this.channel.count; i++) {
+                            const relativeElapsed = (elapsedSwitch + durationPerIndex * i) % rotationDuration;
+                            const currentRotation = relativeElapsed / rotationDuration;
+
+                            const hue = mod(hsvColor.h + hueDifference * (realElapsed / rotationDuration), 360);
+                            const saturation = hsvColor.s + saturationDifference * (realElapsed / rotationDuration);
+                            let value = hsvColor.v + valueDifference * (realElapsed / rotationDuration);
+
+                            if (this.currentState == LedState.LOADING || relativeElapsed > realElapsed) {
+                                value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
+                            }
+                            // if (i == 0) {
+                            //     this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
+                            // }
+                            this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
+                        }
+                        ws281x.render();
+                    }
+                    if (this.currentState != LedState.LOADING) {
+                        clearInterval(spinnerInterval);
+                        this.busy = false;
+                    } else {
+                        this.switchingState = false;
+                        hsvColor = NeoPixelController.hexToHsv(this.targetColor);
+                    }
+                }
+            });
+        }).catch((_) => {});
     }
 
     private renderBlinking(options: LedStateOptions, startOn = false, finishOn = false) {
