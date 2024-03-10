@@ -55,7 +55,7 @@ export default class PrivacyhubBackend {
             //     },
             // },
             // Base directory which we use to locate your JSDOC files
-            baseDir: __dirname,
+            baseDir: "./",
             // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)
             filesPattern: './**/*.js',
             // URL where SwaggerUI will be rendered
