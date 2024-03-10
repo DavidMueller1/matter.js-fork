@@ -5,6 +5,11 @@ import PrivacyhubNode from "./PrivacyhubNode.js";
 import { stringifyWithBigint } from "./Util.js";
 import NeoPixelController, { LedState } from "./NeoPixelController.js";
 
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerExpressValidator from "swagger-express-validator";
+import { ledStateSchema } from "./RequestBodySchemas.js";
+
 export default class PrivacyhubBackend {
     private app: Application;
     private readonly port: number;
@@ -22,8 +27,9 @@ export default class PrivacyhubBackend {
         process.env.PORT ? this.port = parseInt(process.env.PORT) : this.port = 8000;
         this.app = express();
 
-        this.setupExpress()
-        this.setupRoutes()
+        this.setupExpress();
+        this.setupRoutes();
+        this.setupSwagger();
         this.app.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
             this.neoPixelController.switchToState({
@@ -35,6 +41,23 @@ export default class PrivacyhubBackend {
 
     private setupExpress(): void {
         this.app.use(express.json());
+    }
+
+    private setupSwagger(): void {
+        const swaggerOptions = {
+            swaggerDefinition: {
+                openapi: '3.0.0',
+                info: {
+                    title: 'Express API with Swagger',
+                    version: '1.0.0',
+                    description: 'API documentation generated with Swagger',
+                },
+                servers: [{ url: 'http://localhost:8000' }],
+            },
+            apis: ['PrivacyhubBackend.js'], // Specify the file containing your routes
+        };
+        const specs = swaggerJsdoc(swaggerOptions);
+        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
     }
 
     private setupRoutes(): void {
@@ -117,26 +140,43 @@ export default class PrivacyhubBackend {
          * @apiBody {number} saturation Color saturation
          * @apiBody {number} val Color value
          */
-        this.app.post('/debug/led/state', (req: Request, res: Response) => {
-            // Log JSON body
-            this.logger.info("Received LED state change request:");
-            this.logger.info(JSON.stringify(req.body, null, 2));
+        this.app.post('/debug/led/state', [
+            swaggerExpressValidator.validate(ledStateSchema),
+            (req: Request, res: Response) => {
+                // Log JSON body
+                this.logger.info("Received LED state change request:");
+                this.logger.info(JSON.stringify(req.body, null, 2));
 
-            // Check if the request body has the required fields
-            if (!req.body.ledState || req.body.hue == undefined || req.body.saturation == undefined || req.body.val == undefined) {
-                res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
-                return;
+                if (!req.body.ledState) {
+                    res.status(400).send("Missing required fields. Needed: {options: {state: string, hue: number, saturation: number, value: number}}");
+                    return;
+                }
+
+                // Get LedState enum from ledState string
+                const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
+
+                if (targetState == undefined) {
+                    res.status(400).send("Invalid LED state");
+                    return;
+                }
+
+                // const hsvColor =
+
+                // Check if the request body has the required fields
+                if (!req.body.ledState || req.body.hue == undefined || req.body.saturation == undefined || req.body.val == undefined) {
+                    res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
+                    return;
+                }
+
+
+
+                // Set LED state
+                this.neoPixelController.switchToState({
+                    state: targetState,
+                    color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
+                });
+                res.send("LED state changed successfully");
             }
-
-            // Get LedState enum from ledState string
-            const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
-
-            // Set LED state
-            this.neoPixelController.switchToState({
-                state: targetState,
-                color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
-            });
-            res.send("LED state changed successfully");
-        });
+        ]);
     }
 }

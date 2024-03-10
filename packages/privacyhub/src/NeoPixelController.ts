@@ -3,11 +3,11 @@ import { Logger } from "@project-chip/matter-node.js/log";
 import { mod } from "./Util.js";
 
 export enum LedState {
-    OFF,
-    SINGLE,
-    LOADING,
-    BLINKING,
-    PULSING
+    OFF = "off",
+    SINGLE = "single",
+    LOADING= "loading",
+    BLINKING = "blinking",
+    PULSING = "pulsing"
 }
 
 export interface LedStateOptions {
