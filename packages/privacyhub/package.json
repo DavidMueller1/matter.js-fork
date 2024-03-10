@@ -51,7 +51,7 @@
     "express": "^4.18.2",
     "rpi-ws281x-native": "^1.0.4",
     "express-jsdoc-swagger": "^1.8.0",
-    "express-oas-validator": "^3.0.1",
+    "express-oas-validator": "^3.0.1"
   },
   "engines": {
     "_comment": "For Crypto.hkdf support",
