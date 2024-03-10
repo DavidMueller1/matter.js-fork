@@ -355,7 +355,6 @@ export default class NeoPixelController {
                 clearInterval(interval);
             } else {
                 const currentValue = (Math.sin(2 * Math.PI * (progress - 0.25 / blinkCount + (0.5 / blinkCount * startOnFactor)) * blinkCount) + 1) / 2;
-                this.logger.debug(`Current value: ${currentValue}`);
                 const currentColor = NeoPixelController.hsvToHex(colorHsv.h, colorHsv.s, colorHsv.v * currentValue);
                 for (let i = 0; i < this.channel.count; i++) {
                     this.colors[i] = currentColor;

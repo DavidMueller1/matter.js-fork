@@ -28,7 +28,7 @@ export default class PrivacyhubBackend {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
-                color: NeoPixelController.hsvToHex(120, 1, 0)
+                color: NeoPixelController.hsvToHex(120, 1, 1)
             });
         });
     }
