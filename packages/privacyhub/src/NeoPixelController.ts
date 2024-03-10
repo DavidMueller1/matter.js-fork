@@ -11,6 +11,7 @@ export enum LedState {
 }
 
 export interface LedStateOptions {
+    state: LedState;
     color: number;
     loadingTailLength?: number;
     loadingRotationDuration?: number;
@@ -30,6 +31,8 @@ export default class NeoPixelController {
     private currentState;
     private switchingState;
     private busy;
+
+    private stateSwitchQueue: LedStateOptions[]
 
     constructor() {
         this.logger = Logger.get("NeoPixelController");
@@ -57,12 +60,16 @@ export default class NeoPixelController {
         //     duration: parseInt(process.env.FADE_DURATION || "1000"),
         // }
 
+        this.stateSwitchQueue = [];
+
         this.targetColor = 0x000000;
         this.currentState = LedState.OFF;
         this.switchingState = false;
-        this.busy = false;
 
-        this.displaySingleColor({ color: NeoPixelController.rgbToHex(0, 0, 0) });
+        this.displaySingleColor({
+            state: LedState.OFF,
+            color: NeoPixelController.rgbToHex(0, 0, 0)
+        });
 
         // this.switchToState(LedState.LOADING, { color: NeoPixelController.rgbToHex(100, 0, 255) });
         // // switch to single color red after 5 seconds
@@ -87,34 +94,52 @@ export default class NeoPixelController {
         ws281x.render();
     }
 
-    switchToState(newState: LedState, options: LedStateOptions) {
-        this.logger.debug(`Switching to state: ${newState}`);
+    switchToState(options: LedStateOptions) {
+        this.logger.debug(`Switching to state: ${options.state}`);
+
+        if (this.switchingState) {
+            this.stateSwitchQueue.push(options);
+            return;
+        }
 
         const lastState = this.currentState;
-        this.currentState = newState;
+        this.currentState = options.state;
 
-        this.waitForStateSwitch().then(() => {
-            this.targetColor = options.color;
-            this.switchingState = true;
-            switch (lastState) {
-                case LedState.OFF:
-                    this.switchFromOff(options);
-                    break;
-                case LedState.SINGLE:
-                    this.switchFromSingle(options);
-                    break;
-                case LedState.LOADING:
-                    this.switchFromLoading(options);
-                    break;
-                case LedState.BLINKING:
-                    // Blinking stops automatically
-                    break;
-                case LedState.PULSING:
-                    this.switchFromPulsing(options);
-                    break;
+        this.targetColor = options.color;
+        this.switchingState = true;
 
+        // Check for states in queue after state change
+        this.handleNextStateFromQueue();
+
+        switch (lastState) {
+            case LedState.OFF:
+                this.switchFromOff(options);
+                break;
+            case LedState.SINGLE:
+                this.switchFromSingle(options);
+                break;
+            case LedState.LOADING:
+                this.switchFromLoading(options);
+                break;
+            case LedState.BLINKING:
+                // Blinking stops automatically
+                break;
+            case LedState.PULSING:
+                this.switchFromPulsing(options);
+                break;
+
+        }
+    }
+
+    private handleNextStateFromQueue() {
+        if (this.stateSwitchQueue.length > 0) {
+            const nextState = this.stateSwitchQueue.shift();
+            if (nextState != undefined) {
+                this.waitForStateSwitch().then(() => {
+                    this.switchToState(nextState);
+                }).catch((_) => {});
             }
-        }).catch((_) => {});
+        }
     }
 
     private switchFromOff(options: LedStateOptions) {
