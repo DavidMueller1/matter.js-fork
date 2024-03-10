@@ -151,13 +151,13 @@ export default class PrivacyhubBackend {
          * @typedef {object} LedOptions
          * @property {string} ledState.required - State of the LED ring - enum:OFF,SINGLE,LOADING,BLINKING,PULSING
          * @property {ColorHSV} colorHsv.required - HSV color
-         * @property {number} loadingTailLength - Length of the loading tail
-         * @property {number} loadingRotationDuration - Duration of the loading rotation
-         * @property {number} blinkDuration - Duration of the blink
-         * @property {number} blinkCount - Number of blinks
-         * @property {number} pulsingDuration - Duration of the pulsing
-         * @property {number} pulsingSecondColor - Second color of the pulsing
-         * @property {number} fadeDuration - Duration of the fade
+         * @property {number} loadingTailLength - Length of the loading tail - eg: 12
+         * @property {number} loadingRotationDuration - Duration of the loading rotation - eg: 1000
+         * @property {number} blinkDuration - Duration of the blinks - eg: 500
+         * @property {number} blinkCount - Number of blinks - eg: 2
+         * @property {number} pulsingDuration - Duration of the pulsing - eg: 1000
+         * @property {number} pulsingSecondColor - Second color of the pulsing - eg: 0x00FF00
+         * @property {number} fadeDuration - Duration of the fade - eg: 1000
          */
 
         /**
