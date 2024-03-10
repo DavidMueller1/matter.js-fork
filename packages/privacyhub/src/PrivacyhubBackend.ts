@@ -142,12 +142,12 @@ export default class PrivacyhubBackend {
         /**
          * Led State options
          * @typedef {object} LedOptions
-         * @property {string} ledState.required - State of the LED ring - enum: 'OFF', 'SINGLE', 'LOADING', 'BLINKING', 'PULSING'
+         * @property {string} ledState.required - State of the LED ring - enum:OFF,SINGLE,LOADING,BLINKING,PULSING
          */
 
         /**
          * POST /debug/led/state
-         * @param {LedOptions} request.body.required - Led state options - multipart/form-data
+         * @param {LedOptions} request.body.required - Led state options - application/json
          * @return {string} 200 - Status changed
          */
         this.app.post('/debug/led/state', (req: Request, res: Response) => {
