@@ -138,12 +138,17 @@ export default class PrivacyhubBackend {
             });
         });
 
+
+        /**
+         * Led State options
+         * @typedef {object} LedOptions
+         * @property {string} ledState.required - State of the LED ring - enum: 'OFF', 'SINGLE', 'LOADING', 'BLINKING', 'PULSING'
+         */
+
         /**
          * POST /debug/led/state
-         * @summary Update state of LED ring
-         * @tags debug
-         * @param {string} ledState.body.required - state of the LED ring
-         * @return {string} 200 - success response
+         * @param {LedOptions} request.body.required - Led state options - multipart/form-data
+         * @return {string} 200 - Status changed
          */
         this.app.post('/debug/led/state', (req: Request, res: Response) => {
             // Log JSON body
