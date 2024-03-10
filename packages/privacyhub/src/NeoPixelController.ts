@@ -239,7 +239,7 @@ export default class NeoPixelController {
         this.logger.debug("Rendering loading spinner...")
         this.busy = true;
         let hsvColor = NeoPixelController.hexToHsv(options.color);
-        const rotationDuration = options.loadingRotationDuration || 5000;
+        const rotationDuration = options.loadingRotationDuration || 1000;
         const tailLength = options.loadingTailLength || 12;
         this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
         this.logger.debug(`Tail length: ${tailLength}`);
