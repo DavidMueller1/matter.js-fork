@@ -4,11 +4,7 @@ import express, { Application, Request, Response } from "express";
 import PrivacyhubNode from "./PrivacyhubNode.js";
 import { stringifyWithBigint } from "./Util.js";
 import NeoPixelController, { LedState } from "./NeoPixelController.js";
-
-import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import swaggerExpressValidator from "swagger-express-validator";
-import { ledStateSchema } from "./RequestBodySchemas.js";
+import expressJSDocSwagger from "express-jsdoc-swagger";
 
 export default class PrivacyhubBackend {
     private app: Application;
@@ -44,20 +40,43 @@ export default class PrivacyhubBackend {
     }
 
     private setupSwagger(): void {
-        const swaggerOptions = {
-            swaggerDefinition: {
-                openapi: '3.0.0',
-                info: {
-                    title: 'Express API with Swagger',
-                    version: '1.0.0',
-                    description: 'API documentation generated with Swagger',
+        const options = {
+            info: {
+                version: '1.0.0',
+                title: 'Privacyhub Backend',
+                license: {
+                    name: 'MIT',
                 },
-                servers: [{ url: 'http://localhost:8000' }],
             },
-            apis: ['PrivacyhubBackend.js'], // Specify the file containing your routes
+            // security: {
+            //     BasicAuth: {
+            //         type: 'http',
+            //         scheme: 'basic',
+            //     },
+            // },
+            // Base directory which we use to locate your JSDOC files
+            baseDir: __dirname,
+            // Glob pattern to find your jsdoc files (multiple patterns can be added in an array)
+            filesPattern: './**/*.js',
+            // URL where SwaggerUI will be rendered
+            swaggerUIPath: '/api-docs',
+            // Expose OpenAPI UI
+            exposeSwaggerUI: true,
+            // Expose Open API JSON Docs documentation in `apiDocsPath` path.
+            exposeApiDocs: false,
+            // Open API JSON Docs endpoint.
+            apiDocsPath: '/v3/api-docs',
+            // Set non-required fields as nullable by default
+            notRequiredAsNullable: false,
+            // You can customize your UI options.
+            // you can extend swagger-ui-express config. You can checkout an example of this
+            // in the `example/configuration/swaggerOptions.js`
+            swaggerUiOptions: {},
+            // multiple option in case you want more that one instance
+            multiple: true,
         };
-        const specs = swaggerJsdoc(swaggerOptions);
-        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+        expressJSDocSwagger(this.app)(options);
     }
 
     private setupRoutes(): void {
@@ -85,17 +104,6 @@ export default class PrivacyhubBackend {
             res.send(stringifyWithBigint(response));
         });
 
-        /**
-         * @api {post} /pairing/ble-thread BLE Thread Pairing
-         * @apiName BLE Thread Pairing
-         * @apiGroup Pairing
-         *
-         * @apiBody {String} pairingCode Device pairing code
-         * @apiBody {String} threadNetworkName Name of the thread network
-         * @apiBody {String} threadNetworkOperationalDataset Operational dataset of the thread network as hex string
-         *
-         * @apiSuccess {String} device_id The device ID.
-         */
         this.app.post('/pairing/ble-thread', (req: Request, res: Response) => {
             // Log JSON body
             this.logger.info("Received BLE Thread pairing request:");
@@ -131,52 +139,46 @@ export default class PrivacyhubBackend {
         });
 
         /**
-         * @api {post} /debug/led/state Set LED state
-         * @apiName Set LED state
-         * @apiGroup Debug
-         *
-         * @apiBody {String} ledState LED state
-         * @apiBody {number} hue Color hue
-         * @apiBody {number} saturation Color saturation
-         * @apiBody {number} val Color value
+         * POST /debug/led/state
+         * @summary Update state of LED ring
+         * @tags debug
+         * @param {string} ledState.body.required - state of the LED ring
+         * @return {string} 200 - success response
          */
-        this.app.post('/debug/led/state', [
-            swaggerExpressValidator.validate(ledStateSchema),
-            (req: Request, res: Response) => {
-                // Log JSON body
-                this.logger.info("Received LED state change request:");
-                this.logger.info(JSON.stringify(req.body, null, 2));
+        this.app.post('/debug/led/state', (req: Request, res: Response) => {
+            // Log JSON body
+            this.logger.info("Received LED state change request:");
+            this.logger.info(JSON.stringify(req.body, null, 2));
 
-                if (!req.body.ledState) {
-                    res.status(400).send("Missing required fields. Needed: {options: {state: string, hue: number, saturation: number, value: number}}");
-                    return;
-                }
-
-                // Get LedState enum from ledState string
-                const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
-
-                if (targetState == undefined) {
-                    res.status(400).send("Invalid LED state");
-                    return;
-                }
-
-                // const hsvColor =
-
-                // Check if the request body has the required fields
-                if (!req.body.ledState || req.body.hue == undefined || req.body.saturation == undefined || req.body.val == undefined) {
-                    res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
-                    return;
-                }
-
-
-
-                // Set LED state
-                this.neoPixelController.switchToState({
-                    state: targetState,
-                    color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
-                });
-                res.send("LED state changed successfully");
+            if (!req.body.ledState) {
+                res.status(400).send("Missing required fields. Needed: {options: {state: string, hue: number, saturation: number, value: number}}");
+                return;
             }
-        ]);
+
+            // Get LedState enum from ledState string
+            const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
+
+            if (targetState == undefined) {
+                res.status(400).send("Invalid LED state");
+                return;
+            }
+
+            // const hsvColor =
+
+            // Check if the request body has the required fields
+            if (!req.body.ledState || req.body.hue == undefined || req.body.saturation == undefined || req.body.val == undefined) {
+                res.status(400).send("Missing required fields. Needed: {state: string, hue: number, saturation: number, value: number}");
+                return;
+            }
+
+
+
+            // Set LED state
+            this.neoPixelController.switchToState({
+                state: targetState,
+                color: NeoPixelController.hsvToHex(req.body.hue, req.body.saturation, req.body.val)
+            });
+            res.send("LED state changed successfully");
+        });
     }
 }
