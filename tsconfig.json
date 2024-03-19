@@ -7,6 +7,7 @@
         { "path": "packages/matter-node-ble.js" },
         { "path": "packages/matter-node-shell.js" },
         { "path": "packages/matter-node.js-examples" },
+        { "path": "packages/privacyhub" },
         { "path": "models" },
         { "path": "codegen" },
         { "path": "chip-testing" }

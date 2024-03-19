@@ -1,0 +1,71 @@
+{
+  "name": "privacyhub",
+  "version": "1.0.0",
+  "description": "A Matter device that provides privacy and security services to other Matter devices.",
+  "keywords": [
+    "iot",
+    "home automation",
+    "matter",
+    "smart device",
+    "privacy",
+    "security"
+  ],
+  "license": "Apache-2.0",
+  "author": "David Müller",
+  "contributors": [
+    "Martin Turon <mturon@google.com>",
+    "Marco Fucci di Napoli <mfucci@gmail.com>",
+    "Ingo Fischer <github@fischer-ka.de>"
+  ],
+  "bugs": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/project-chip/matter.js.git"
+  },
+  "scripts": {
+    "clean": "matter-build clean",
+    "build": "matter-build",
+    "build-clean": "matter-build --clean",
+    "matter-controller": "matter-run src/ControllerNode.ts",
+    "privacyhub-backend": "matter-run src/PrivacyhubBackend.ts",
+    "privacyhub-app": "matter-run src/app.ts",
+    "noble-test": "matter-run src/NobleTest.ts",
+    "privacyhub-apidoc": "apidoc -i src/ -o doc/",
+    "bundle-device": "esbuild src/examples/DeviceNode.ts --bundle --platform=node --conditions=esbuild --external:@abandonware/bleno --external:@abandonware/bluetooth-hci-socket --sourcemap --minify --outfile=build/bundle/DeviceNode.cjs",
+    "matter-device-bundled": "node --enable-source-maps build/bundle/DeviceNode.cjs"
+  },
+  "bin": {
+    "matter-controller": "./dist/esm/ControllerNode.js",
+    "privacyhub-backend": "./dist/esm/PrivacyhubBackend.js"
+  },
+  "devDependencies": {
+    "@types/rpi-ws281x-native": "^1.0.3",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@project-chip/matter-node-ble.js": "0.7.5",
+    "@project-chip/matter-node.js": "0.7.5",
+    "@project-chip/matter.js-tools": "0.7.5",
+    "apidoc": "^1.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "rpi-ws281x-native": "^1.0.4",
+    "express-jsdoc-swagger": "^1.8.0",
+    "express-oas-validator": "^3.0.1"
+  },
+  "engines": {
+    "_comment": "For Crypto.hkdf support",
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  }
+}
