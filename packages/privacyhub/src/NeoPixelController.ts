@@ -36,6 +36,7 @@ export default class NeoPixelController {
 
     constructor() {
         this.logger = Logger.get("NeoPixelController");
+        this.logger.debug("Environment: " + process.env.ENVIROMENT);
         if (process.env.ENVIROMENT != "pi") {
             this.logger.warn("This module is only supported on a Raspberry Pi");
             return;
