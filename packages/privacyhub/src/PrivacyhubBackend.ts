@@ -98,6 +98,7 @@ export default class PrivacyhubBackend {
          */
         this.app.get('/nodes', (_, res: Response) => {
             const nodeList = this.privacyhubNode.getCommissionedNodes()
+            this.logger.debug(`Sending nodes list: ${stringifyWithBigint(nodeList)}`);
             const response = {
                 nodes: nodeList
             }

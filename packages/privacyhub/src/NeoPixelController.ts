@@ -36,6 +36,11 @@ export default class NeoPixelController {
 
     constructor() {
         this.logger = Logger.get("NeoPixelController");
+        if (process.env.ENVIROMENT != "pi") {
+            this.logger.warn("This module is only supported on a Raspberry Pi");
+            return;
+        }
+
         this.logger.debug("Setup NeoPixelController...")
 
         const NUM_LEDS = parseInt(process.env.NUM_LEDS || "24");
@@ -96,6 +101,10 @@ export default class NeoPixelController {
     }
 
     switchToState(options: LedStateOptions) {
+        if (process.env.ENVIROMENT != "pi") {
+            this.logger.warn("This module is only supported on a Raspberry Pi");
+            return;
+        }
         this.logger.debug(`Switching to state: ${options.state}`);
 
         if (this.switchingState) {
