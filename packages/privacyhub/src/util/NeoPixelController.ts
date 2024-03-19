@@ -28,21 +28,15 @@ export default class NeoPixelController {
     private readonly colors;
 
     private targetColor: number;
-    private currentState;
-    private switchingState;
-    private busy;
+    private currentState: LedState;
+    private switchingState: boolean;
+    private busy: boolean;
 
     private stateSwitchQueue: LedStateOptions[]
 
     constructor() {
         this.logger = Logger.get("NeoPixelController");
         this.logger.debug("Environment: " + process.env.ENVIRONMENT);
-        if (process.env.ENVIRONMENT !== "pi") {
-            this.logger.warn("This module is only supported on a Raspberry Pi");
-            return;
-        }
-
-        this.logger.debug("Setup NeoPixelController...")
 
         const NUM_LEDS = parseInt(process.env.NUM_LEDS || "24");
         const options = {
@@ -53,8 +47,23 @@ export default class NeoPixelController {
             brightness: 100,
             stripType: ws281x.stripType.SK6812W
         }
+
         this.channel = ws281x(NUM_LEDS, options);
         this.colors = this.channel.array;
+
+        this.targetColor = 0x000000;
+        this.currentState = LedState.OFF;
+        this.switchingState = false;
+        this.busy = false;
+
+        this.stateSwitchQueue = [];
+
+        if (process.env.ENVIRONMENT !== "pi") {
+            this.logger.warn("This module is only supported on a Raspberry Pi");
+            return;
+        }
+
+        this.logger.debug("Setup NeoPixelController...")
 
         // this.spinnerOptions = {
         //     rotationDuration: parseInt(process.env.SPINNER_ROTATION_DURATION || "1000"),
@@ -65,13 +74,6 @@ export default class NeoPixelController {
         // this.fadeOptions = {
         //     duration: parseInt(process.env.FADE_DURATION || "1000"),
         // }
-
-        this.stateSwitchQueue = [];
-
-        this.targetColor = 0x000000;
-        this.currentState = LedState.OFF;
-        this.switchingState = false;
-        this.busy = false;
 
         this.displaySingleColor({
             state: LedState.OFF,

@@ -1,9 +1,9 @@
 import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
-import PrivacyhubNode from "./PrivacyhubNode.js";
-import { stringifyWithBigint } from "./Util.js";
-import NeoPixelController, { LedState } from "./NeoPixelController.js";
+import PrivacyhubNode from "../matter/PrivacyhubNode.js";
+import { stringifyWithBigint } from "../util/Util.js";
+import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import expressJSDocSwagger from "express-jsdoc-swagger";
 
 export default class PrivacyhubBackend {

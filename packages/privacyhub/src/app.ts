@@ -1,12 +1,12 @@
-import PrivacyhubBackend from "./PrivacyhubBackend.js";
+import PrivacyhubBackend from "./express/PrivacyhubBackend.js";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
 import { Ble } from "@project-chip/matter-node.js/ble";
 import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/util";
 
 import dotenv from "dotenv";
-import PrivacyhubNode from "./PrivacyhubNode.js";
-import NeoPixelController, { LedState } from "./NeoPixelController.js";
+import PrivacyhubNode from "./matter/PrivacyhubNode.js";
+import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
 
 dotenv.config()
 

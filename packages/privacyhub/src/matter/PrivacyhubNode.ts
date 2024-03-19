@@ -21,7 +21,7 @@ import {
     requireMinNodeVersion,
     singleton,
 } from "@project-chip/matter-node.js/util";
-import { stringifyWithBigint } from "./Util.js";
+import { stringifyWithBigint } from "../util/Util.js";
 
 export default class PrivacyhubNode {
     private readonly logger: Logger;
