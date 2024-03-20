@@ -102,7 +102,13 @@ export default class PrivacyhubBackend {
             const nodeList = this.privacyhubNode.getCommissionedNodes()
             this.logger.debug(`Sending nodes list: ${stringifyWithBigint(nodeList)}`);
             const response = {
-                nodes: nodeList
+                nodes: nodeList.map(node => {
+                    return {
+                        nodeId: node.nodeId,
+                        vendor: node.basicInformationData?.vendorName,
+                        product: node.basicInformationData?.productName,
+                    }
+                })
             }
             res.send(stringifyWithBigint(response));
         });
