@@ -7,6 +7,7 @@ import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/u
 import dotenv from "dotenv";
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
+import { stringifyWithBigint } from "./util/Util.js";
 
 dotenv.config()
 
@@ -71,7 +72,7 @@ for (const node of connectedNodes) {
     const interactionClient = await node.getInteractionClient();
     console.log(`Node ${node.nodeId}: ${interactionClient}`);
     const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-    console.log(`Attributes and events: ${JSON.stringify(attributesAndEvents)}`);
+    console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
 }
 
 new PrivacyhubBackend(privacyhubNode, neoPixelController);
