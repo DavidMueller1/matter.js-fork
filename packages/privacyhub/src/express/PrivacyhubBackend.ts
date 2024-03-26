@@ -172,6 +172,7 @@ export default class PrivacyhubBackend {
                 res.send("Connected to node successfully");
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
             });
         });
 
