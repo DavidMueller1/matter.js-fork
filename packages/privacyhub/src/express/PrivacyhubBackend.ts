@@ -5,7 +5,7 @@ import PrivacyhubNode from "../matter/PrivacyhubNode.js";
 import { stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
-import { NodeId } from "@project-chip/matter.js/dist/esm/datatype/NodeId.js";
+import { NodeId } from "@project-chip/matter.js/datatype";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
 export default class PrivacyhubBackend {
