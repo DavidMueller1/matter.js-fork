@@ -7,7 +7,6 @@ import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/u
 import dotenv from "dotenv";
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
-import { InteractionClient } from "@project-chip/matter.js/interaction";
 
 dotenv.config()
 
