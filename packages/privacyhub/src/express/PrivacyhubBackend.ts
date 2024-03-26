@@ -161,7 +161,7 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 node.getInteractionClient().then((interactionClient) => {
-                    interactionClient.getAllAttributesAndEvents().then((attributesAndEvents) => {
+                    interactionClient.getAllAttributes().then((attributesAndEvents) => {
                         res.send(stringifyWithBigint(attributesAndEvents));
                     }).catch((error) => {
                         res.status(500).send(`Error getting attributes and events: ${error}`);
