@@ -2,7 +2,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode from "../matter/PrivacyhubNode.js";
-import { stringifyWithBigint } from "../util/Util.js";
+import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
 import { NodeId } from "@project-chip/matter.js/datatype";
@@ -161,8 +161,8 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 node.getInteractionClient().then((interactionClient) => {
-                    interactionClient.getAllAttributes().then((attributesAndEvents) => {
-                        res.send(stringifyWithBigint(attributesAndEvents));
+                    interactionClient.getAllAttributesAndEvents().then((attributesAndEvents) => {
+                        res.send(stringifyIgnoreCircular(attributesAndEvents));
                     }).catch((error) => {
                         res.status(500).send(`Error getting attributes and events: ${error}`);
                     });
