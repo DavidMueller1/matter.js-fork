@@ -179,7 +179,7 @@ export default class PrivacyhubNode {
                     }
                 },
             }).then((node: PairedNode) => {
-                console.log(`Node connected: ${Logger.toJSON(node)}`);
+                // console.log(`Node connected: ${Logger.toJSON(node)}`);
                 resolve(node);
             }).catch((error) => {
                 console.log(`Error connecting to node: ${error}`);
