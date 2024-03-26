@@ -131,7 +131,11 @@ export default class PrivacyhubNode {
         return nodes;
     }
 
-    connectToNode(nodeId: NodeId) {
+    async reconnectAllNodes() {
+        return this.commissioningController.connect();
+    }
+
+    connectToNode(nodeId: NodeId): Promise<void> {
         return new Promise( (resolve, reject) => {
             // const node = await this.commissioningController.connectNode(nodeId, {
             this.commissioningController.connectNode(nodeId, {
