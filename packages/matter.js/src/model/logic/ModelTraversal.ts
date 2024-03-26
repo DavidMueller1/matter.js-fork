@@ -1,28 +1,26 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { InternalError } from "../../common/MatterError.js";
-import { Aspect, Constraint } from "../aspects/index.js";
+import { Access, Aspect, Constraint } from "../aspects/index.js";
 import { ElementTag, FieldValue, Metatype } from "../definitions/index.js";
 import { AnyElement, Globals } from "../elements/index.js";
-import { CommandModel, type Model, type ValueModel } from "../models/index.js";
+import { Children } from "../models/Children.js";
+import { type CommandModel, type Model, type ValueModel } from "../models/index.js";
 
 const OPERATION_DEPTH_LIMIT = 20;
 
 /**
- * This class performs lookups of models in the scope of a specific model.  We
- * use a class so the lookup can maintain state and guard against circular
- * references.
+ * This class performs lookups of models in the scope of a specific model.  We use a class so the lookup can maintain
+ * state and guard against circular references.
  *
- * Any logic that requires traversal of a multi-model ownership or inheritance
- * should use this class.
+ * Any logic that requires traversal of a multi-model ownership or inheritance should use this class.
  *
- * Note that we don't currently utilize any kind of index when we perform
- * search.  Not currently a problem but may need to address if it becomes too
- * inefficient.
+ * Note that we don't currently utilize any kind of index when we perform search.  Not currently a problem but may need
+ * to address if it becomes too inefficient.
  */
 export class ModelTraversal {
     private operationDepth = 0;
@@ -53,36 +51,34 @@ export class ModelTraversal {
     }
 
     /**
-     * Perform an operation with a model dismissed from consideration for type
-     * lookup.
+     * Perform an operation with a model dismissed from consideration for type lookup.
      */
     operationWithDismissal<T>(toDismiss: Model | undefined, operator: () => T): T {
         return this.operation(operator, toDismiss);
     }
 
     /**
-     * Determine the type for a model.  This is the string name of the base
-     * model.  Usually this is simply the type field but we infer the type of
-     * some datatypes based on their parent's type.
+     * Determine the type for a model.  This is the string name of the base model.  Usually this is simply the type
+     * field but we infer the type of some datatypes based on their parent's type.
      */
     getTypeName(model: Model | undefined): string | undefined {
+        if (!model) {
+            return undefined;
+        }
+
+        if (model.type) {
+            return model.type;
+        }
+
+        // Commands, events and clusters always represent structs
+        if (model.tag === ElementTag.Command || model.tag === ElementTag.Event || model.tag === ElementTag.Cluster) {
+            return "struct";
+        }
+
         return this.operation(() => {
-            if (!model) {
-                return undefined;
-            }
-
-            if (model.type) {
-                return model.type;
-            }
-
-            // Commands and events always represent structs
-            if (model.tag === ElementTag.Command || model.tag === ElementTag.Event) {
-                return "struct";
-            }
-
             let result: string | undefined;
             const name = model.name;
-            this.visitInheritance(model.parent, ancestor => {
+            this.visitInheritance(parentOf(model), ancestor => {
                 // If parented by enum or bitmap, infer type as uint of same size
                 if ((ancestor as any).metatype) {
                     switch (ancestor.name) {
@@ -106,9 +102,8 @@ export class ModelTraversal {
                     }
                 }
 
-                // If I override a field my type is the same as the overridden
-                // field
-                const overridden = this.findLocal(ancestor, name, [model.tag]);
+                // If I override a field my type is the same as the overridden field
+                const overridden = ancestor.children.select(name, [model.tag], this.dismissed);
                 if (overridden?.type) {
                     result = overridden.type;
                     return false;
@@ -120,8 +115,8 @@ export class ModelTraversal {
     }
 
     /**
-     * Find the model in my inheritance hierarchy that has semantic meaning.
-     * This will be the first inherited model with a metatype.
+     * Find the model in my inheritance hierarchy that has semantic meaning. This will be the first inherited model with
+     * a metatype.
      */
     findMetabase(model: Model | undefined): Model | undefined {
         return this.operation(() => {
@@ -145,7 +140,7 @@ export class ModelTraversal {
                 // Allowed tags represent a priority so search each tag
                 // independently
                 for (const tag of model.allowedBaseTags) {
-                    const found = this.findType(model.parent, type, tag);
+                    const found = this.findType(parentOf(model), type, tag);
                     if (found) {
                         return found;
                     }
@@ -206,7 +201,7 @@ export class ModelTraversal {
             if (model.xref) {
                 return model.xref;
             }
-            return this.findXref(model.parent);
+            return this.findXref(parentOf(model));
         });
     }
 
@@ -228,8 +223,7 @@ export class ModelTraversal {
     }
 
     /**
-     * Find a child in the parent's inheritance hierarchy with the same tag
-     * and ID/name.
+     * Find a child in the parent's inheritance hierarchy with the same tag and ID/name.
      */
     findShadow(model: Model | undefined): Model | undefined {
         if (model === undefined) {
@@ -238,14 +232,14 @@ export class ModelTraversal {
 
         let shadow: Model | undefined;
         this.operationWithDismissal(model, () => {
-            this.visitInheritance(this.findBase(model?.parent), parent => {
+            this.visitInheritance(this.findBase(parentOf(model)), parent => {
                 if (model.id !== undefined) {
-                    shadow = this.findLocal(parent, model.id, [model.tag]);
+                    shadow = parent.children.select(model.id, [model.tag], this.dismissed);
                     if (shadow) {
                         return false;
                     }
                 }
-                shadow = this.findLocal(parent, model.name, [model.tag]);
+                shadow = parent.children.select(model.name, [model.tag], this.dismissed);
                 if (shadow) {
                     return false;
                 }
@@ -255,11 +249,9 @@ export class ModelTraversal {
     }
 
     /**
-     * Get an aspect that reflects extension of any shadowed aspects.  Note
-     * that this searches parent's inheritance and the model's inheritance.
-     * This is because aspects can be inherited by overriding an element in
-     * the parent or by direct type inheritance.  Aspects in shadowed elements
-     * take priority as they are presumably more specific.
+     * Get an aspect that reflects extension of any shadowed aspects.  Note that this searches the parent's inheritance
+     * and the model's inheritance. This is because aspects can be inherited by overriding an element in the parent or
+     * by direct type inheritance.  Aspects in shadowed elements take priority as they are presumably more specific.
      */
     findAspect(model: Model | undefined, symbol: symbol): Aspect<any> | undefined {
         if (!model) {
@@ -267,7 +259,7 @@ export class ModelTraversal {
         }
 
         return this.operation(() => {
-            let aspect = (model as any)[symbol] as Aspect<any>;
+            let aspect = (model as any)[symbol] as Aspect<any> | undefined;
 
             const shadowedAspect = this.findAspect(this.findShadow(model), symbol);
             if (shadowedAspect) {
@@ -292,8 +284,7 @@ export class ModelTraversal {
     }
 
     /**
-     * Constraint aspects are specialized because we infer constraint fields
-     * that are referenced in other models.
+     * Constraint aspects are specialized because we infer constraint fields that are referenced in other models.
      */
     findConstraint(model: ValueModel, symbol: symbol, field?: "value" | "min" | "max"): Constraint | undefined {
         return this.operation(() => {
@@ -311,9 +302,9 @@ export class ModelTraversal {
                     return;
                 }
 
-                const referenced = this.findMember(model.parent, name, [
+                const referenced = this.findMember(parentOf(model), name, [
                     ElementTag.Attribute,
-                    ElementTag.Datatype,
+                    ElementTag.Field,
                 ]) as ValueModel;
                 if (!referenced) {
                     return;
@@ -325,10 +316,9 @@ export class ModelTraversal {
                 }
             };
 
-            // The only reason the field filter exists is that some fields
-            // referenced in constraints are circularly constrained (e.g. min
-            // of max field is max of min field and vice versa).  By only
-            // loading the field of interest we avoid infinite loops
+            // The only reason the field filter exists is that some fields referenced in constraints are circularly
+            // constrained (e.g. min of max field is max of min field and vice versa).  By only loading the field of
+            // interest we avoid infinite loops
             if (field) {
                 resolve(field);
             } else {
@@ -338,7 +328,7 @@ export class ModelTraversal {
             }
 
             if (Object.keys(bounds).length) {
-                constraint = constraint.extend(bounds) as Constraint;
+                constraint = constraint.extend(bounds);
             }
 
             return constraint;
@@ -346,16 +336,46 @@ export class ModelTraversal {
     }
 
     /**
+     * Access aspects are specialized because access controls are inherited from the owner if not otherwise defined.
+     *
+     * That means access controls may come from 5 places, in order of priority:
+     *
+     *   1. The model itself
+     *   2. A shadowed model in the owner hierarchy
+     *   3. An overridden model in the model's class hierarchy
+     *   4. A model in the parent hierarchy
+     *   5. Access.Default
+     *
+     * This method uses {@link findAspect} for 1-3 then extends the result with 4 & 5 as necessary until
+     * {@link Access.complete} is true.
+     */
+    findAccess(model: ValueModel | undefined, symbol: symbol, VM: typeof ValueModel): Access {
+        if (model === undefined) {
+            return Access.Default;
+        }
+
+        return this.operation(() => {
+            const access = this.findAspect(model, symbol) as Access | undefined;
+
+            if (!access) {
+                return this.findAccess(this.findOwner(VM, model), symbol, VM);
+            }
+
+            if (access.complete) {
+                return access;
+            }
+
+            return this.findAccess(this.findOwner(VM, model), symbol, VM).extend(access);
+        });
+    }
+
+    /**
      * Search inherited scope for a named member.
      */
-    findMember(
-        scope: Model | undefined,
-        key: ModelTraversal.ElementSelector,
-        allowedTags: ElementTag[],
-    ): Model | undefined {
+    findMember(scope: Model | undefined, key: Children.Selector, allowedTags: ElementTag[]): Model | undefined {
         return this.operation(() => {
             while (scope) {
-                const result = this.findLocal(scope, key, allowedTags);
+                const result = scope.children.select(key, allowedTags, this.dismissed);
                 if (result) {
                     return result;
                 }
@@ -392,7 +412,7 @@ export class ModelTraversal {
                 }
 
                 if ((scope as ValueModel).effectiveMetatype !== Metatype.bitmap) {
-                    scope = scope.parent;
+                    scope = parentOf(scope);
                     continue;
                 }
 
@@ -418,7 +438,7 @@ export class ModelTraversal {
             const queue = Array<Model>(scope);
             for (scope = queue.shift(); scope; scope = queue.shift()) {
                 if (scope.isTypeScope) {
-                    const result = this.findLocal(scope, name, [tag]);
+                    const result = scope.children.select(name, [tag], this.dismissed);
                     if (result) {
                         return result;
                     }
@@ -431,8 +451,9 @@ export class ModelTraversal {
                 }
 
                 // Search parent scope once all inherited scope is searched
-                if (scope.parent) {
-                    queue.push(scope.parent);
+                const parent = parentOf(scope);
+                if (parent) {
+                    queue.push(parent);
                 }
             }
         });
@@ -463,8 +484,8 @@ export class ModelTraversal {
                 return;
             }
 
-            // A command can reference its response
-            if (model instanceof CommandModel && this.findResponse(model) === type) {
+            // A command may reference its response
+            if (model.tag === ElementTag.Command && this.findResponse(model as CommandModel) === type) {
                 references.push(model);
                 return;
             }
@@ -487,13 +508,15 @@ export class ModelTraversal {
     /**
      * Find an owning model of a specific type.
      */
-    findOwner<T extends Model>(constructor: Model.Constructor<T>, model: Model | undefined): T | undefined {
-        if (!model || model instanceof constructor || !model.parent) {
-            return model as T | undefined;
+    findOwner<T extends Model>(constructor: Model.Type<T>, model: Model | undefined): T | undefined {
+        const parent = parentOf(model);
+
+        if (!parent || parent instanceof constructor) {
+            return parent;
         }
 
         return this.operation(() => {
-            return this.findOwner(constructor, model.parent);
+            return this.findOwner(constructor, parent);
         });
     }
 
@@ -504,11 +527,14 @@ export class ModelTraversal {
         if (!model) {
             return undefined;
         }
-        if (!model.parent) {
+
+        const parent = parentOf(model);
+        if (!parent) {
             return model;
         }
+
         this.operation(() => {
-            return this.findRoot(model.parent);
+            return this.findRoot(parent);
         });
     }
 
@@ -546,17 +572,15 @@ export class ModelTraversal {
     }
 
     /**
-     * Search for a direct child by name.
+     * If a model is not owned by a MatterModel, global resolution won't work.
+     * This model acts as a fallback to work around this.
      */
-    private findLocal(scope: Model, key: ModelTraversal.ElementSelector, allowedTags: ElementTag[]) {
-        for (const c of scope.children) {
-            if (c.is(key) && allowedTags.indexOf(c.tag) !== -1 && !this.dismissed?.has(c)) {
-                return c;
-            }
-        }
-    }
+    static defaultRoot: Model;
 }
 
-export namespace ModelTraversal {
-    export type ElementSelector = string | number | ((model: Model) => boolean);
+function parentOf(model?: Model) {
+    if (model?.parent === undefined && model?.tag !== ElementTag.Matter) {
+        return ModelTraversal.defaultRoot;
+    }
+    return model?.parent;
 }

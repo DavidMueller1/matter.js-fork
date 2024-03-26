@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -8,7 +8,7 @@
 
 import { ChipMatter, LocalMatter, SpecMatter } from "@project-chip/matter.js-intermediate-models";
 import { Logger } from "@project-chip/matter.js/log";
-import { AnyElement, ElementTag, MatterElement, MatterModel, MergeModels } from "@project-chip/matter.js/model";
+import { AnyElement, ElementTag, MatterElement, MatterModel, MergedModel } from "@project-chip/matter.js/model";
 import { generateElement } from "./mom/common/generate-element.js";
 import { TsFile } from "./util/TsFile.js";
 import { clean } from "./util/file.js";
@@ -31,9 +31,9 @@ export async function main() {
 
         const file = new TsFile(`#elements/${elementFilename(element)}`);
 
-        file.addImport(`../Matter`, `Matter`);
+        file.addImport(`../Matter.js`, `Matter`);
 
-        generateElement(file, element, `Matter.children.push(`, ")");
+        generateElement(file, "../../elements/index.js", element, `Matter.children.push(`, ")");
 
         file.save();
     }
@@ -42,7 +42,7 @@ export async function main() {
         const file = new TsFile(`#elements/index`);
         elements.forEach(element => {
             if (!element.global) {
-                file.addImport(`./${elementFilename(element)}`);
+                file.addImport(`./${elementFilename(element)}.js`);
             }
         });
 
@@ -50,7 +50,7 @@ export async function main() {
     }
 
     const matter = new MatterModel(
-        MergeModels({ spec: SpecMatter, chip: ChipMatter, local: LocalMatter }) as MatterElement,
+        MergedModel({ spec: SpecMatter, chip: ChipMatter, local: LocalMatter }) as MatterElement,
     );
 
     const validationResult = finalizeModel(matter);

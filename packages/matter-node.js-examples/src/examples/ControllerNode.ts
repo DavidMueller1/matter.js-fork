@@ -2,7 +2,7 @@
 
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -16,91 +16,54 @@
  * Import needed modules from @project-chip/matter-node.js
  */
 // Include this first to auto-register Crypto, Network and Time Node.js implementations
-import { CommissioningController, MatterServer, NodeCommissioningOptions } from "@project-chip/matter-node.js";
+// Include this first to auto-register Crypto, Network and Time Node.js implementations
+import "@project-chip/matter-node.js";
 
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
-import { Ble } from "@project-chip/matter-node.js/ble";
+import { requireMinNodeVersion } from "@project-chip/matter-node.js/util";
+import { CommissioningController, NodeCommissioningOptions } from "@project-chip/matter.js";
+import { Ble } from "@project-chip/matter.js/ble";
 import {
     BasicInformationCluster,
     DescriptorCluster,
     GeneralCommissioning,
     OnOffCluster,
-} from "@project-chip/matter-node.js/cluster";
-import { NodeId } from "@project-chip/matter-node.js/datatype";
-import { NodeStateInformation } from "@project-chip/matter-node.js/device";
-import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
-import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
-import { ManualPairingCodeCodec } from "@project-chip/matter-node.js/schema";
-import { StorageBackendDisk, StorageManager } from "@project-chip/matter-node.js/storage";
-import {
-    getIntParameter,
-    getParameter,
-    hasParameter,
-    requireMinNodeVersion,
-    singleton,
-} from "@project-chip/matter-node.js/util";
+} from "@project-chip/matter.js/cluster";
+import { NodeId } from "@project-chip/matter.js/datatype";
+import { NodeStateInformation } from "@project-chip/matter.js/device";
+import { Environment, StorageService } from "@project-chip/matter.js/environment";
+import { Logger } from "@project-chip/matter.js/log";
+import { CommissioningOptions } from "@project-chip/matter.js/protocol";
+import { ManualPairingCodeCodec } from "@project-chip/matter.js/schema";
+import { Time } from "@project-chip/matter.js/time";
+import { singleton } from "@project-chip/matter.js/util";
 
 const logger = Logger.get("Controller");
 
 requireMinNodeVersion(16);
 
-/** Configure logging */
-switch (getParameter("loglevel")) {
-    case "fatal":
-        Logger.defaultLogLevel = Level.FATAL;
-        break;
-    case "error":
-        Logger.defaultLogLevel = Level.ERROR;
-        break;
-    case "warn":
-        Logger.defaultLogLevel = Level.WARN;
-        break;
-    case "info":
-        Logger.defaultLogLevel = Level.INFO;
-        break;
-}
+const environment = Environment.default;
 
-switch (getParameter("logformat")) {
-    case "plain":
-        Logger.format = Format.PLAIN;
-        break;
-    case "html":
-        Logger.format = Format.HTML;
-        break;
-    default:
-        if (process.stdin?.isTTY) Logger.format = Format.ANSI;
-}
-
-if (hasParameter("ble")) {
+if (environment.vars.get("ble")) {
     // Initialize Ble
     Ble.get = singleton(
         () =>
             new BleNode({
-                hciId: getIntParameter("ble-hci-id"),
+                hciId: environment.vars.number("ble-hci-id"),
             }),
     );
 }
 
-const storageLocation = getParameter("store") ?? ".controller-node";
-const storage = new StorageBackendDisk(storageLocation, hasParameter("clearstorage"));
-logger.info(`Storage location: ${storageLocation} (Directory)`);
+const storageService = environment.get(StorageService);
+
+console.log(`Storage location: ${storageService.location} (Directory)`);
 logger.info(
-    'Use the parameter "-store NAME" to specify a different storage location, use -clearstorage to start with an empty storage.',
+    'Use the parameter "--storage-path=NAME-OR-PATH" to specify a different storage location in this directory, use --storage-clear to start with an empty storage.',
 );
 
 class ControllerNode {
     async start() {
         logger.info(`node-matter Controller started`);
-
-        /**
-         * Initialize the storage system.
-         *
-         * The storage manager is then also used by the Matter server, so this code block in general is required,
-         * but you can choose a different storage backend as long as it implements the required API.
-         */
-
-        const storageManager = new StorageManager(storage);
-        await storageManager.initialize();
 
         /**
          * Collect all needed data
@@ -113,11 +76,17 @@ class ControllerNode {
          * (so maybe better not ;-)).
          */
 
-        const controllerStorage = storageManager.createContext("Controller");
-        const ip = controllerStorage.has("ip") ? controllerStorage.get<string>("ip") : getParameter("ip");
-        const port = controllerStorage.has("port") ? controllerStorage.get<number>("port") : getIntParameter("port");
+        const controllerStorage = (await storageService.open("controller")).createContext("data");
+        const ip = controllerStorage.has("ip") ? controllerStorage.get<string>("ip") : environment.vars.string("ip");
+        const port = controllerStorage.has("port")
+            ? controllerStorage.get<number>("port")
+            : environment.vars.number("port");
+        const uniqueId = controllerStorage.has("uniqueid")
+            ? controllerStorage.get<string>("uniqueid")
+            : environment.vars.string("uniqueid") ?? Time.nowMs().toString();
+        controllerStorage.set("uniqueid", uniqueId);
 
-        const pairingCode = getParameter("pairingcode");
+        const pairingCode = environment.vars.string("pairingcode");
         let longDiscriminator, setupPin, shortDiscriminator;
         if (pairingCode !== undefined) {
             const pairingCodeCodec = ManualPairingCodeCodec.decode(pairingCode);
@@ -127,9 +96,9 @@ class ControllerNode {
             logger.debug(`Data extracted from pairing code: ${Logger.toJSON(pairingCodeCodec)}`);
         } else {
             longDiscriminator =
-                getIntParameter("longDiscriminator") ?? controllerStorage.get("longDiscriminator", 3840);
+                environment.vars.number("longDiscriminator") ?? controllerStorage.get("longDiscriminator", 3840);
             if (longDiscriminator > 4095) throw new Error("Discriminator value must be less than 4096");
-            setupPin = getIntParameter("pin") ?? controllerStorage.get("pin", 20202021);
+            setupPin = environment.vars.number("pin") ?? controllerStorage.get("pin", 20202021);
         }
         if ((shortDiscriminator === undefined && longDiscriminator === undefined) || setupPin === undefined) {
             throw new Error(
@@ -144,12 +113,12 @@ class ControllerNode {
         };
 
         let ble = false;
-        if (hasParameter("ble")) {
+        if (environment.vars.get("ble")) {
             ble = true;
-            const wifiSsid = getParameter("ble-wifi-ssid");
-            const wifiCredentials = getParameter("ble-wifi-credentials");
-            const threadNetworkName = getParameter("ble-thread-networkname");
-            const threadOperationalDataset = getParameter("ble-thread-operationaldataset");
+            const wifiSsid = environment.vars.string("ble-wifi-ssid");
+            const wifiCredentials = environment.vars.string("ble-wifi-credentials");
+            const threadNetworkName = environment.vars.string("ble-thread-networkname");
+            const threadOperationalDataset = environment.vars.string("ble-thread-operationaldataset");
             if (wifiSsid !== undefined && wifiCredentials !== undefined) {
                 logger.info(`Registering Commissioning over BLE with WiFi: ${wifiSsid}`);
                 commissioningOptions.wifiNetwork = {
@@ -179,11 +148,13 @@ class ControllerNode {
          * are called.
          */
 
-        const matterServer = new MatterServer(storageManager);
         const commissioningController = new CommissioningController({
+            environment: {
+                environment,
+                id: uniqueId,
+            },
             autoConnect: false,
         });
-        await matterServer.addCommissioningController(commissioningController);
 
         /**
          * Start the Matter Server
@@ -191,8 +162,7 @@ class ControllerNode {
          * After everything was plugged together we can start the server. When not delayed announcement is set for the
          * CommissioningServer node then this command also starts the announcement of the device into the network.
          */
-
-        await matterServer.start();
+        await commissioningController.start();
 
         if (!commissioningController.isCommissioned()) {
             const options = {
@@ -224,7 +194,7 @@ class ControllerNode {
             const nodes = commissioningController.getCommissionedNodes();
             console.log("Found commissioned nodes:", Logger.toJSON(nodes));
 
-            const nodeId = NodeId(getIntParameter("nodeid") ?? nodes[0]);
+            const nodeId = NodeId(environment.vars.number("nodeid") ?? nodes[0]);
             if (!nodes.includes(nodeId)) {
                 throw new Error(`Node ${nodeId} not found in commissioned nodes`);
             }
@@ -308,7 +278,7 @@ class ControllerNode {
             //console.log("Attributes-BasicInformation:", JSON.stringify(attributesBasicInformation, null, 2));
 
             const devices = node.getDevices();
-            if (devices[0] && devices[0].id === 1) {
+            if (devices[0] && devices[0].number === 1) {
                 // Example to subscribe to all Attributes of endpoint 1 of the commissioned node: */*/*
                 //await interactionClient.subscribeMultipleAttributes([{ endpointId: 1, /* subscribe anything from endpoint 1 */ }], 0, 180, data => {
                 //    console.log("Subscribe-All Data:", Logger.toJSON(data));
@@ -343,12 +313,3 @@ class ControllerNode {
 }
 
 new ControllerNode().start().catch(error => logger.error(error));
-
-process.on("SIGINT", () => {
-    // Clean up on CTRL-C
-    // Pragmatic way to make sure the storage is correctly closed before the process ends.
-    storage
-        .close()
-        .then(() => process.exit(0))
-        .catch(() => process.exit(1));
-});
