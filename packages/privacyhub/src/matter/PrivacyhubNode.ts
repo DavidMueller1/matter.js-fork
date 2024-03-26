@@ -9,7 +9,7 @@ import {
     OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
 import { NodeId } from "@project-chip/matter-node.js/datatype";
-import { NodeStateInformation } from "@project-chip/matter-node.js/device";
+import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
 import { ManualPairingCodeCodec } from "@project-chip/matter-node.js/schema";
@@ -135,7 +135,7 @@ export default class PrivacyhubNode {
         return this.commissioningController.connect();
     }
 
-    connectToNode(nodeId: NodeId): Promise<void> {
+    connectToNode(nodeId: NodeId): Promise<PairedNode> {
         return new Promise( (resolve, reject) => {
             // const node = await this.commissioningController.connectNode(nodeId, {
             this.commissioningController.connectNode(nodeId, {
@@ -178,9 +178,9 @@ export default class PrivacyhubNode {
                             break;
                     }
                 },
-            }).then((node) => {
+            }).then((node: PairedNode) => {
                 console.log(`Node connected: ${Logger.toJSON(node)}`);
-                resolve();
+                resolve(node);
             }).catch((error) => {
                 console.log(`Error connecting to node: ${error}`);
                 reject(error);

@@ -66,13 +66,13 @@ Ble.get = singleton(
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
 const connectedNodes = await privacyhubNode.reconnectAllNodes();
-console.log(`Connected to ${connectedNodes.length} nodes`);
-console.log("=====================================");
-for (const node of connectedNodes) {
-    const interactionClient = await node.getInteractionClient();
-    console.log(`Node ${node.nodeId}: ${interactionClient}`);
-    const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-    console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
-}
+// console.log(`Connected to ${connectedNodes.length} nodes`);
+// console.log("=====================================");
+// for (const node of connectedNodes) {
+//     const interactionClient = await node.getInteractionClient();
+//     console.log(`Node ${node.nodeId}: ${interactionClient}`);
+//     const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+//     console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+// }
 
 new PrivacyhubBackend(privacyhubNode, neoPixelController);

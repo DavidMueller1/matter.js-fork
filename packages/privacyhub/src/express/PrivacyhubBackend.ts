@@ -157,6 +157,24 @@ export default class PrivacyhubBackend {
             });
         });
 
+        this.app.get('/nodes/:nodeId/attributes', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                node.getInteractionClient().then((interactionClient) => {
+                    interactionClient.getAllAttributesAndEvents().then((attributesAndEvents) => {
+                        res.send(stringifyWithBigint(attributesAndEvents));
+                    }).catch((error) => {
+                        res.status(500).send(`Error getting attributes and events: ${error}`);
+                    });
+                }).catch((error) => {
+                    res.status(500).send(`Error getting interaction client: ${error}`);
+                });
+                res.send("Connected to node successfully");
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+            });
+        });
+
         /**
          * Color HSV
          * @typedef {object} ColorHSV
