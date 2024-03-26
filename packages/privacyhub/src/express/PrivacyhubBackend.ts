@@ -5,6 +5,7 @@ import PrivacyhubNode from "../matter/PrivacyhubNode.js";
 import { stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
+import { NodeId } from "@project-chip/matter.js/dist/esm/datatype/NodeId.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
 export default class PrivacyhubBackend {
@@ -144,6 +145,15 @@ export default class PrivacyhubBackend {
                     color: NeoPixelController.hsvToHex(0, 1, 1)
                 });
                 res.status(500).send(`Error commissioning node: ${error}`);
+            });
+        });
+
+        this.app.get('/nodes/:nodeId', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then(() => {
+                res.send("Connected to node successfully");
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
             });
         });
 

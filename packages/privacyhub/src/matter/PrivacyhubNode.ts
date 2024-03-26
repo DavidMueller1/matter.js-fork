@@ -130,4 +130,58 @@ export default class PrivacyhubNode {
         this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
         return nodes;
     }
+
+    connectToNode(nodeId: NodeId) {
+        return new Promise( (resolve, reject) => {
+            // const node = await this.commissioningController.connectNode(nodeId, {
+            this.commissioningController.connectNode(nodeId, {
+                attributeChangedCallback: (
+                    peerNodeId,
+                    { path: { nodeId, clusterId, endpointId, attributeName }, value },
+                ) =>
+                    console.log(
+                        `attributeChangedCallback ${peerNodeId}: Attribute ${nodeId}/${endpointId}/${clusterId}/${attributeName} changed to ${Logger.toJSON(
+                            value,
+                        )}`,
+                    ),
+                eventTriggeredCallback: (peerNodeId, { path: { nodeId, clusterId, endpointId, eventName }, events }) =>
+                    console.log(
+                        `eventTriggeredCallback ${peerNodeId}: Event ${nodeId}/${endpointId}/${clusterId}/${eventName} triggered with ${Logger.toJSON(
+                            events,
+                        )}`,
+                    ),
+                stateInformationCallback: (peerNodeId, info) => {
+                    switch (info) {
+                        case NodeStateInformation.Connected:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} connected`);
+                            break;
+                        case NodeStateInformation.Disconnected:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} disconnected`);
+                            break;
+                        case NodeStateInformation.Reconnecting:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} reconnecting`);
+                            break;
+                        case NodeStateInformation.WaitingForDeviceDiscovery:
+                            console.log(
+                                `stateInformationCallback ${peerNodeId}: Node ${nodeId} waiting for device discovery`,
+                            );
+                            break;
+                        case NodeStateInformation.StructureChanged:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} structure changed`);
+                            break;
+                        case NodeStateInformation.Decommissioned:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} decommissioned`);
+                            break;
+                    }
+                },
+            }).then((node) => {
+                console.log(`Node connected: ${Logger.toJSON(node)}`);
+                resolve();
+            }).catch((error) => {
+                console.log(`Error connecting to node: ${error}`);
+                reject(error);
+            });
+        });
+
+    }
 }
