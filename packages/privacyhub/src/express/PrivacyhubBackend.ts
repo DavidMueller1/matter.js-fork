@@ -175,6 +175,20 @@ export default class PrivacyhubBackend {
             });
         });
 
+        this.app.get('/nodes/:nodeId/devices', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                for (const device of devices) {
+                    const deviceTypes = device.getDeviceTypes()
+                    this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                }
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
         /**
          * Color HSV
          * @typedef {object} ColorHSV
