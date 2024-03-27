@@ -159,18 +159,38 @@ export default class PrivacyhubBackend {
             });
         });
 
-        this.app.get('/nodes/:nodeId/attributes', (req: Request, res: Response) => {
+        this.app.get('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+            let toggle = false;
+            let newState = false;
+
             const nodeId = NodeId(BigInt(req.params.nodeId));
+
+            if (!req.body.state) {
+                toggle = true;
+            } else {
+                newState = req.body.state;
+            }
+
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
-                node.getInteractionClient().then((interactionClient) => {
-                    interactionClient.getAllAttributesAndEvents().then((attributesAndEvents) => {
-                        res.send(stringifyIgnoreCircular(attributesAndEvents));
-                    }).catch((error) => {
-                        res.status(500).send(`Error getting attributes and events: ${error}`);
-                    });
-                }).catch((error) => {
-                    res.status(500).send(`Error getting interaction client: ${error}`);
-                });
+                const devices = node.getDevices();
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        if (toggle) {
+                            onOffCluster.toggle().then(() => {
+                                res.send("Toggled successfully");
+                            }).catch((error) => {
+                                res.status(500).send(`Error toggling: ${error}`);
+                            });
+                        } else {
+                            (newState ? onOffCluster.on() : onOffCluster.off()).then(() => {
+                                res.send("Set state successfully");
+                            }).catch((error) => {
+                                res.status(500).send(`Error setting state: ${error}`);
+                            });
+                        }
+                    }
+                }
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
                 throw error;
@@ -178,6 +198,32 @@ export default class PrivacyhubBackend {
         });
 
         this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        onOffCluster.toggle().then(() => {
+                            res.send("Toggled successfully");
+                        }).catch((error) => {
+                            res.status(500).send(`Error toggling: ${error}`);
+                        });
+                    }
+                }
+                // const devices = node.getDevices();
+                // for (const device of devices) {
+                //     const deviceTypes = device.getDeviceTypes()
+                //     // const clusterServer = device.getClusterServerById(ClusterId(6));
+                //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                // }
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
+        this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 const devices = node.getDevices();
