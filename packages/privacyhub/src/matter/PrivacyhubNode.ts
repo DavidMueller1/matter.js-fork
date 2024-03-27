@@ -139,6 +139,7 @@ export default class PrivacyhubNode {
     getCommissionedNodes(): Promise<CommissionedNode[]> {
         return new Promise<CommissionedNode[]>( (resolve, reject) => {
             const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
+            this.logger.debug(`==NODE DETAILS: ${stringifyWithBigint(nodeDetails)}`);
             this.reconnectAllNodes().then((nodes) => {
                 const commissionedNodes: CommissionedNode[] = [];
                 for (const node of nodes) {
