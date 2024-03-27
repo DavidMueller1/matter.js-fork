@@ -148,18 +148,14 @@ export default class PrivacyhubBackend {
          * @apiSuccess {Object[]} nodes List of nodes
          */
         this.app.get('/nodes', (_, res: Response) => {
-            const nodeList = this.privacyhubNode.getCommissionedNodes()
-            this.logger.debug(`Sending nodes list: ${stringifyWithBigint(nodeList)}`);
-            const response = {
-                nodes: nodeList.map(node => {
-                    return {
-                        nodeId: node.nodeId,
-                        vendor: node.basicInformationData?.vendorName,
-                        product: node.basicInformationData?.productName,
-                    }
-                })
-            }
-            res.send(stringifyWithBigint(response));
+            this.privacyhubNode.getCommissionedNodes().then((nodes) => {
+                res.send(stringifyWithBigint(nodes));
+            }).catch((error) => {
+                res.status(500).send(JSON.stringify({
+                    message: "Error getting nodes",
+                    error: error
+                }));
+            });
         });
 
 

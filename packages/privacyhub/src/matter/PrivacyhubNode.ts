@@ -23,12 +23,14 @@ import {
 } from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
 
-const knownTypes = [];
+const knownTypes: Record<number, string> = {
+    266: "OnOffPluginUnit",
+};
 
 type CommissionedNode = {
     nodeId: NodeId;
-    vendor: string;
-    product: string;
+    vendor: string | undefined;
+    product: string | undefined;
     type: string;
 };
 
@@ -134,10 +136,37 @@ export default class PrivacyhubNode {
         });
     }
 
-    getCommissionedNodes() {
-        const nodes = this.commissioningController.getCommissionedNodesDetails();
-        this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
-        return nodes;
+    getCommissionedNodes(): Promise<CommissionedNode[]> {
+        return new Promise<CommissionedNode[]>( (resolve, reject) => {
+            const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
+            this.reconnectAllNodes().then((nodes) => {
+                const commissionedNodes: CommissionedNode[] = [];
+                for (const node of nodes) {
+                    const endpoints = node.getDevices();
+                    const details = nodeDetails.find((n) => n.nodeId === node.nodeId);
+                    for (const endpoint of endpoints) {
+                        const types = endpoint.getDeviceTypes();
+                        const deviceType = types[0].code;
+                        const type = knownTypes[deviceType] || "Unknown";
+                        commissionedNodes.push({
+                            nodeId: node.nodeId,
+                            vendor: details?.basicInformationData?.vendor?.toString(),
+                            product: details?.basicInformationData?.product?.toString(),
+                            type,
+                        });
+                    }
+                }
+                resolve(commissionedNodes);
+            }).catch((error) => {
+                this.logger.error(`Error reconnecting to nodes: ${error}`);
+                reject(error);
+            });
+        });
+
+        // const nodes = this.commissioningController.getCommissionedNodesDetails();
+        // this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
+        //
+        // return nodes;
     }
 
     async reconnectAllNodes() {
