@@ -132,10 +132,7 @@ export default class PrivacyhubBackend {
                     state: LedState.BLINKING,
                     color: NeoPixelController.hsvToHex(0, 1, 1)
                 });
-                res.status(500).send(JSON.stringify({
-                    message: "Error commissioning node",
-                    error: error
-                }));
+                res.status(500).send(`Error commissioning node: ${error}`);
             });
         });
 
@@ -151,10 +148,7 @@ export default class PrivacyhubBackend {
             this.privacyhubNode.getCommissionedNodes().then((nodes) => {
                 res.send(stringifyWithBigint(nodes));
             }).catch((error) => {
-                res.status(500).send(JSON.stringify({
-                    message: "Error getting nodes",
-                    error: error
-                }));
+                res.status(500).send(`Error getting nodes: ${error}`);
             });
         });
 
@@ -200,14 +194,10 @@ export default class PrivacyhubBackend {
                             });
                         }
                     } else {
-                        res.status(500).send(JSON.stringify({
-                            message: "Device does not have OnOff cluster"
-                        }));
+                        res.status(500).send(`Device does not have OnOff cluster`);
                     }
                 } else {
-                    res.status(500).send(JSON.stringify({
-                        message: "Node has no devices"
-                    }));
+                    res.status(500).send(`Node has no devices`);
                 }
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
@@ -228,20 +218,13 @@ export default class PrivacyhubBackend {
                                 state: state
                             }));
                         }).catch((error) => {
-                            res.status(500).send(JSON.stringify({
-                                message: "Error getting state",
-                                error: error
-                            }));
+                            res.status(500).send(`Error getting state: ${error}`);
                         });
                     } else {
-                        res.status(500).send(JSON.stringify({
-                            message: "Device does not have OnOff cluster"
-                        }));
+                        res.status(500).send(`Device does not have OnOff cluster`);
                     }
                 } else {
-                    res.status(500).send(JSON.stringify({
-                        message: "Node has no devices"
-                    }));
+                    res.status(500).send(`Node has no devices`);
                 }
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
@@ -268,31 +251,31 @@ export default class PrivacyhubBackend {
             });
         });
 
-        this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
-            const nodeId = NodeId(BigInt(req.params.nodeId));
-            this.privacyhubNode.connectToNode(nodeId).then((node) => {
-                const devices = node.getDevices();
-                if (devices[0]) {
-                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-                    if (onOffCluster !== undefined) {
-                        onOffCluster.toggle().then(() => {
-                            res.send("Toggled successfully");
-                        }).catch((error) => {
-                            res.status(500).send(`Error toggling: ${error}`);
-                        });
-                    }
-                }
-                // const devices = node.getDevices();
-                // for (const device of devices) {
-                //     const deviceTypes = device.getDeviceTypes()
-                //     // const clusterServer = device.getClusterServerById(ClusterId(6));
-                //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
-                // }
-            }).catch((error) => {
-                res.status(500).send(`Error connecting to node: ${error}`);
-                throw error;
-            });
-        });
+        // this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+        //     const nodeId = NodeId(BigInt(req.params.nodeId));
+        //     this.privacyhubNode.connectToNode(nodeId).then((node) => {
+        //         const devices = node.getDevices();
+        //         if (devices[0]) {
+        //             const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+        //             if (onOffCluster !== undefined) {
+        //                 onOffCluster.toggle().then(() => {
+        //                     res.send("Toggled successfully");
+        //                 }).catch((error) => {
+        //                     res.status(500).send(`Error toggling: ${error}`);
+        //                 });
+        //             }
+        //         }
+        //         // const devices = node.getDevices();
+        //         // for (const device of devices) {
+        //         //     const deviceTypes = device.getDeviceTypes()
+        //         //     // const clusterServer = device.getClusterServerById(ClusterId(6));
+        //         //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+        //         // }
+        //     }).catch((error) => {
+        //         res.status(500).send(`Error connecting to node: ${error}`);
+        //         throw error;
+        //     });
+        // });
 
         /**
          * Color HSV
