@@ -199,13 +199,56 @@ export default class PrivacyhubBackend {
                                 res.status(500).send(`Error setting state: ${error}`);
                             });
                         }
+                    } else {
+                        res.status(500).send(JSON.stringify({
+                            message: "Device does not have OnOff cluster"
+                        }));
                     }
+                } else {
+                    res.status(500).send(JSON.stringify({
+                        message: "Node has no devices"
+                    }));
                 }
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
                 throw error;
             });
         });
+
+
+        this.app.get('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        onOffCluster.attributes.onOff.get(true).then((state) => {
+                            res.send(JSON.stringify({
+                                state: state
+                            }));
+                        }).catch((error) => {
+                            res.status(500).send(JSON.stringify({
+                                message: "Error getting state",
+                                error: error
+                            }));
+                        });
+                    } else {
+                        res.status(500).send(JSON.stringify({
+                            message: "Device does not have OnOff cluster"
+                        }));
+                    }
+                } else {
+                    res.status(500).send(JSON.stringify({
+                        message: "Node has no devices"
+                    }));
+                }
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
 
         this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
