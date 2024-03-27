@@ -159,7 +159,7 @@ export default class PrivacyhubBackend {
             });
         });
 
-        this.app.get('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+        this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
             let toggle = false;
             let newState = false;
 
