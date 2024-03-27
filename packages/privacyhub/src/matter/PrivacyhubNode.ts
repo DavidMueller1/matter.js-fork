@@ -151,8 +151,8 @@ export default class PrivacyhubNode {
                         const type = knownTypes[deviceType] || "Unknown";
                         commissionedNodes.push({
                             nodeId: node.nodeId,
-                            vendor: details?.basicInformationData?.vendor?.toString(),
-                            product: details?.basicInformationData?.product?.toString(),
+                            vendor: details?.basicInformationData?.vendorName?.toString(),
+                            product: details?.basicInformationData?.productName?.toString(),
                             type,
                         });
                     }
