@@ -5,7 +5,9 @@ import PrivacyhubNode from "../matter/PrivacyhubNode.js";
 import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
-import { NodeId } from "@project-chip/matter.js/datatype";
+import { NodeId, ClusterId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import { OnOffCluster } from "@project-chip/matter.js/cluster";
+// import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
 export default class PrivacyhubBackend {
@@ -175,14 +177,26 @@ export default class PrivacyhubBackend {
             });
         });
 
-        this.app.get('/nodes/:nodeId/devices', (req: Request, res: Response) => {
+        this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 const devices = node.getDevices();
-                for (const device of devices) {
-                    const deviceTypes = device.getDeviceTypes()
-                    this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        onOffCluster.toggle().then(() => {
+                            res.send("Toggled successfully");
+                        }).catch((error) => {
+                            res.status(500).send(`Error toggling: ${error}`);
+                        });
+                    }
                 }
+                // const devices = node.getDevices();
+                // for (const device of devices) {
+                //     const deviceTypes = device.getDeviceTypes()
+                //     // const clusterServer = device.getClusterServerById(ClusterId(6));
+                //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                // }
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
                 throw error;
