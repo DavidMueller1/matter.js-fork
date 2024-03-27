@@ -23,6 +23,15 @@ import {
 } from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
 
+const knownTypes = [];
+
+type CommissionedNode = {
+    nodeId: NodeId;
+    vendor: string;
+    product: string;
+    type: string;
+};
+
 export default class PrivacyhubNode {
     private readonly logger: Logger;
     private readonly storage;
@@ -76,7 +85,7 @@ export default class PrivacyhubNode {
         threadNetworkName: string,
         threadNetworkOperationalDataset: string
     ) {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<PairedNode>((resolve, reject) => {
             // Extract data from pairing code
             const pairingCodeCodec = ManualPairingCodeCodec.decode(pairingCode);
             const shortDiscriminator = pairingCodeCodec.shortDiscriminator;
@@ -117,7 +126,7 @@ export default class PrivacyhubNode {
             this.logger.info(JSON.stringify(options));
             this.commissioningController.commissionNode(options).then((pairedNode) => {
                 this.logger.info(`Commissioning successfully done with nodeId ${pairedNode.nodeId}`);
-                resolve();
+                resolve(pairedNode);
             }).catch((error) => {
                 this.logger.error(`Error commissioning node: ${error}`);
                 reject(error);

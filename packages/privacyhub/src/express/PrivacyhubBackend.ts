@@ -10,6 +10,9 @@ import { OnOffCluster } from "@project-chip/matter.js/cluster";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
+const threadNetworkName = process.env.THREAD_NETWORK_NAME || "OpenThread";
+const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
+
 export default class PrivacyhubBackend {
     private app: Application;
     private readonly port: number;
@@ -94,6 +97,49 @@ export default class PrivacyhubBackend {
             res.send('Welcome to the most private hub EU west');
         });
 
+
+        this.app.post('/pairing/ble-thread', (req: Request, res: Response) => {
+            // Log JSON body
+            this.logger.info("Received BLE Thread pairing request:");
+            this.logger.info(JSON.stringify(req.body, null, 2));
+
+            // Check if the request body has the required fields
+            if (!req.body.pairingCode) {
+                res.status(400).send(JSON.stringify({
+                    message: "Missing required field 'pairingCode'"
+                }));
+                return;
+            }
+            this.neoPixelController.switchToState({
+                state: LedState.LOADING,
+                color: NeoPixelController.hsvToHex(235, 1, 1)
+            });
+
+            this.privacyhubNode.commissionNodeBLEThread(
+                req.body.pairingCode,
+                threadNetworkName,
+                threadNetworkOperationalDataset
+            ).then((node) => {
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(120, 1, 1)
+                });
+                res.status(201).send(JSON.stringify({
+                    nodeId: node.nodeId
+                }));
+            }).catch((error) => {
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(0, 1, 1)
+                });
+                res.status(500).send(JSON.stringify({
+                    message: "Error commissioning node",
+                    error: error
+                }));
+            });
+        });
+
+
         /**
          * @api {get} /nodes List Nodes
          * @apiName List Nodes
@@ -116,48 +162,16 @@ export default class PrivacyhubBackend {
             res.send(stringifyWithBigint(response));
         });
 
-        this.app.post('/pairing/ble-thread', (req: Request, res: Response) => {
-            // Log JSON body
-            this.logger.info("Received BLE Thread pairing request:");
-            this.logger.info(JSON.stringify(req.body, null, 2));
-
-            // Check if the request body has the required fields
-            if (!req.body.pairingCode || !req.body.threadNetworkName || !req.body.threadNetworkOperationalDataset) {
-                res.status(400).send("Missing required fields. Needed: {pairingCode: number, threadNetworkName: string, threadNetworkOperationalDataset: string}");
-                return;
-            }
-            this.neoPixelController.switchToState({
-                state: LedState.LOADING,
-                color: NeoPixelController.hsvToHex(235, 1, 1)
-            });
-
-            this.privacyhubNode.commissionNodeBLEThread(
-                req.body.pairingCode,
-                req.body.threadNetworkName,
-                req.body.threadNetworkOperationalDataset
-            ).then(() => {
-                this.neoPixelController.switchToState({
-                    state: LedState.BLINKING,
-                    color: NeoPixelController.hsvToHex(120, 1, 1)
-                });
-                res.send("Commissioned node successfully");
-            }).catch((error) => {
-                this.neoPixelController.switchToState({
-                    state: LedState.BLINKING,
-                    color: NeoPixelController.hsvToHex(0, 1, 1)
-                });
-                res.status(500).send(`Error commissioning node: ${error}`);
-            });
-        });
 
         this.app.get('/nodes/:nodeId', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
-            this.privacyhubNode.connectToNode(nodeId).then(() => {
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 res.send("Connected to node successfully");
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
             });
         });
+
 
         this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
             let toggle = false;
@@ -201,22 +215,14 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             this.privacyhubNode.connectToNode(nodeId).then((node) => {
                 const devices = node.getDevices();
-                if (devices[0]) {
-                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-                    if (onOffCluster !== undefined) {
-                        onOffCluster.toggle().then(() => {
-                            res.send("Toggled successfully");
-                        }).catch((error) => {
-                            res.status(500).send(`Error toggling: ${error}`);
-                        });
-                    }
+                const endpoints = [];
+                for (const device of devices) {
+                    const deviceTypes = device.getDeviceTypes()
+                    // const clusterServer = device.getClusterServerById(ClusterId(6));
+                    this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                    endpoints.push(deviceTypes);
                 }
-                // const devices = node.getDevices();
-                // for (const device of devices) {
-                //     const deviceTypes = device.getDeviceTypes()
-                //     // const clusterServer = device.getClusterServerById(ClusterId(6));
-                //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
-                // }
+                res.send(stringifyIgnoreCircular(endpoints));
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
                 throw error;
