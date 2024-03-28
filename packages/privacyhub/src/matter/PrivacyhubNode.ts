@@ -9,7 +9,7 @@ import {
     OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
 import { NodeId } from "@project-chip/matter-node.js/datatype";
-import { NodeStateInformation } from "@project-chip/matter-node.js/device";
+import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
 import { ManualPairingCodeCodec } from "@project-chip/matter-node.js/schema";
@@ -23,6 +23,17 @@ import {
 } from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
 
+const knownTypes: Record<number, string> = {
+    266: "OnOffPluginUnit",
+};
+
+type CommissionedNode = {
+    nodeId: NodeId;
+    vendor: string | undefined;
+    product: string | undefined;
+    type: string;
+};
+
 export default class PrivacyhubNode {
     private readonly logger: Logger;
     private readonly storage;
@@ -35,7 +46,7 @@ export default class PrivacyhubNode {
 
         // Use storage for now. TODO: Remove later and replace with something else maybe
         const storageLocation = process.env.STORAGE_LOCATION || ".privacyhub-storage-dafault";
-        this.storage = new StorageBackendDisk(storageLocation, true);
+        this.storage = new StorageBackendDisk(storageLocation, false);
         this.logger.info(`Storage location: ${storageLocation} (Directory)`);
     }
 
@@ -76,7 +87,7 @@ export default class PrivacyhubNode {
         threadNetworkName: string,
         threadNetworkOperationalDataset: string
     ) {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<PairedNode>((resolve, reject) => {
             // Extract data from pairing code
             const pairingCodeCodec = ManualPairingCodeCodec.decode(pairingCode);
             const shortDiscriminator = pairingCodeCodec.shortDiscriminator;
@@ -117,7 +128,7 @@ export default class PrivacyhubNode {
             this.logger.info(JSON.stringify(options));
             this.commissioningController.commissionNode(options).then((pairedNode) => {
                 this.logger.info(`Commissioning successfully done with nodeId ${pairedNode.nodeId}`);
-                resolve();
+                resolve(pairedNode);
             }).catch((error) => {
                 this.logger.error(`Error commissioning node: ${error}`);
                 reject(error);
@@ -125,9 +136,95 @@ export default class PrivacyhubNode {
         });
     }
 
-    getCommissionedNodes() {
-        const nodes = this.commissioningController.getCommissionedNodesDetails();
-        this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
-        return nodes;
+    getCommissionedNodes(): Promise<CommissionedNode[]> {
+        return new Promise<CommissionedNode[]>( (resolve, reject) => {
+            const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
+            this.logger.debug(`==NODE DETAILS: ${stringifyWithBigint(nodeDetails)}`);
+            this.reconnectAllNodes().then((nodes) => {
+                const commissionedNodes: CommissionedNode[] = [];
+                for (const node of nodes) {
+                    const endpoints = node.getDevices();
+                    const details = nodeDetails.find((n) => n.nodeId === node.nodeId);
+                    for (const endpoint of endpoints) {
+                        const types = endpoint.getDeviceTypes();
+                        const deviceType = types[0].code;
+                        const type = knownTypes[deviceType] || "Unknown";
+                        commissionedNodes.push({
+                            nodeId: node.nodeId,
+                            vendor: details?.basicInformationData?.vendorName?.toString(),
+                            product: details?.basicInformationData?.productName?.toString(),
+                            type,
+                        });
+                    }
+                }
+                resolve(commissionedNodes);
+            }).catch((error) => {
+                this.logger.error(`Error reconnecting to nodes: ${error}`);
+                reject(error);
+            });
+        });
+
+        // const nodes = this.commissioningController.getCommissionedNodesDetails();
+        // this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
+        //
+        // return nodes;
+    }
+
+    async reconnectAllNodes() {
+        return this.commissioningController.connect();
+    }
+
+    connectToNode(nodeId: NodeId): Promise<PairedNode> {
+        return new Promise( (resolve, reject) => {
+            // const node = await this.commissioningController.connectNode(nodeId, {
+            this.commissioningController.connectNode(nodeId, {
+                attributeChangedCallback: (
+                    peerNodeId,
+                    { path: { nodeId, clusterId, endpointId, attributeName }, value },
+                ) =>
+                    console.log(
+                        `attributeChangedCallback ${peerNodeId}: Attribute ${nodeId}/${endpointId}/${clusterId}/${attributeName} changed to ${Logger.toJSON(
+                            value,
+                        )}`,
+                    ),
+                eventTriggeredCallback: (peerNodeId, { path: { nodeId, clusterId, endpointId, eventName }, events }) =>
+                    console.log(
+                        `eventTriggeredCallback ${peerNodeId}: Event ${nodeId}/${endpointId}/${clusterId}/${eventName} triggered with ${Logger.toJSON(
+                            events,
+                        )}`,
+                    ),
+                stateInformationCallback: (peerNodeId, info) => {
+                    switch (info) {
+                        case NodeStateInformation.Connected:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} connected`);
+                            break;
+                        case NodeStateInformation.Disconnected:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} disconnected`);
+                            break;
+                        case NodeStateInformation.Reconnecting:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} reconnecting`);
+                            break;
+                        case NodeStateInformation.WaitingForDeviceDiscovery:
+                            console.log(
+                                `stateInformationCallback ${peerNodeId}: Node ${nodeId} waiting for device discovery`,
+                            );
+                            break;
+                        case NodeStateInformation.StructureChanged:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} structure changed`);
+                            break;
+                        case NodeStateInformation.Decommissioned:
+                            console.log(`stateInformationCallback ${peerNodeId}: Node ${nodeId} decommissioned`);
+                            break;
+                    }
+                },
+            }).then((node: PairedNode) => {
+                // console.log(`Node connected: ${Logger.toJSON(node)}`);
+                resolve(node);
+            }).catch((error) => {
+                console.log(`Error connecting to node: ${error}`);
+                reject(error);
+            });
+        });
+
     }
 }

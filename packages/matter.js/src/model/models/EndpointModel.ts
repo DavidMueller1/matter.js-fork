@@ -1,10 +1,11 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { DeviceTypeElement, EndpointElement } from "../elements/index.js";
+import { Children } from "./Children.js";
 import { DeviceTypeModel } from "./DeviceTypeModel.js";
 import { Model } from "./Model.js";
 
@@ -16,7 +17,7 @@ export class EndpointModel extends Model implements EndpointElement {
         return this.children;
     }
 
-    override get children(): DeviceTypeModel[] {
+    override get children(): Children<DeviceTypeModel, DeviceTypeElement> {
         return super.children as any;
     }
 
@@ -29,6 +30,6 @@ export class EndpointModel extends Model implements EndpointElement {
     }
 
     static {
-        Model.constructors[EndpointElement.Tag] = this;
+        Model.types[EndpointElement.Tag] = this;
     }
 }

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -19,7 +19,7 @@ export class EventModel extends ValueModel implements EventElement {
     }
 
     static {
-        Model.constructors[EventElement.Tag] = this;
+        Model.types[EventElement.Tag] = this;
     }
 
     static Tag = EventElement.Tag;

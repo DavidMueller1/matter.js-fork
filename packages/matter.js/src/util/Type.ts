@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -66,3 +66,50 @@ declare const __brand: unique symbol;
 // cluster definitions
 export type Brand<B> = { [__brand]: B };
 export type Branded<T, B> = T & Brand<B>;
+
+/**
+ * Make a type immutable.
+ *
+ * TODO - might need to extend depending type (e.g. doesn't handle Maps, Sets or Promises yet)
+ *
+ * Good reference implementation here:
+ *
+ *     https://github.com/ts-essentials/ts-essentials/blob/master/lib/deep-readonly/index.ts
+ */
+export type Immutable<T> = T extends (...args: any[]) => any
+    ? T
+    : T extends number // Necessary for our "branded" IDs
+      ? T
+      : T extends object
+        ? { readonly [K in keyof T]: Immutable<T[K]> }
+        : T;
+
+/**
+ * Convert a union to an interface.
+ *
+ * {@see {@link https://stackoverflow.com/questions/50374908}}
+ */
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+
+/**
+ * An identity type.
+ *
+ * You can't do:
+ *
+ *     interface Foo extends typeof Bar {}
+ *
+ * But you can do:
+ *
+ *     interface Foo extends Identity<typeof Bar> {}
+ *
+ * Without this type you'd have to do:
+ *
+ *     interface FooType = typeof Bar;
+ *     interface Foo extends FooType {};
+ *
+ * We have to do this a lot because we generate complex objects with detailed
+ * type information.  When exported, TS (as of 5.2) inlines the type of these
+ * objects in declarations which makes our declarations massive.  To avoid this
+ * we create an interface from the type then cast to the interface for export.
+ */
+export type Identity<T> = T;

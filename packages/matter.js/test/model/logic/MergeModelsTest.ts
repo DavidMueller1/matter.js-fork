@@ -1,11 +1,11 @@
 /**
  * @license
- * Copyright 2022-2023 Project CHIP Authors
+ * Copyright 2022-2024 Matter.js Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import { ClusterElement, ClusterModel, MatterElement, MatterModel } from "../../../src/model/index.js";
-import { MergeModels } from "../../../src/model/logic/index.js";
+import { MergedModel } from "../../../src/model/logic/index.js";
 
 // Utility function to perform merge.  Type resolution works differently
 // without the global types in MatterModel so we fake that up even though we're
@@ -14,7 +14,7 @@ function merge({ spec, chip }: { spec: MatterElement.Child; chip: MatterElement.
     const specMatter = new MatterModel({ name: "Spec", children: [spec] });
     const chipMatter = new MatterModel({ name: "Chip", children: [chip] });
 
-    return MergeModels({
+    return MergedModel({
         spec: specMatter.children[specMatter.children.length - 1],
         chip: chipMatter.children[chipMatter.children.length - 1],
     });
@@ -82,7 +82,7 @@ namespace Fixtures {
                 {
                     tag: "datatype",
                     name: "OccupancyBitmap",
-                    children: [{ tag: "datatype", id: 0x0001, name: "Occupied" }],
+                    children: [{ tag: "field", id: 0x0001, name: "Occupied" }],
                 },
             ],
         }),
@@ -146,21 +146,21 @@ namespace Fixtures {
                     type: "struct",
                     children: [
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "Label",
                             conformance: "M",
                             type: "string",
                         },
 
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "Mode",
                             conformance: "M",
                             type: "uint8",
                         },
 
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "SemanticTags",
                             conformance: "M",
                             type: "SemanticTagStruct",
@@ -192,7 +192,7 @@ namespace Fixtures {
                     type: "struct",
                     children: [
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "CaseSessionsPerFabric",
                             id: 0x0,
                             type: "uint16",
@@ -201,7 +201,7 @@ namespace Fixtures {
                             default: 3,
                         },
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "SubscriptionsPerFabric",
                             id: 0x1,
                             type: "uint16",
@@ -233,8 +233,8 @@ namespace Fixtures {
                     type: "struct",
                     conformance: "M",
                     children: [
-                        { tag: "datatype", name: "CaseSessionsPerFabric", type: "uint16", conformance: "M" },
-                        { tag: "datatype", name: "SubscriptionsPerFabric", type: "uint16", conformance: "M" },
+                        { tag: "field", name: "CaseSessionsPerFabric", type: "uint16", conformance: "M" },
+                        { tag: "field", name: "SubscriptionsPerFabric", type: "uint16", conformance: "M" },
                     ],
                 },
             ],
@@ -286,28 +286,28 @@ namespace Fixtures {
                     conformance: "M",
                     children: [
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "MotorDirectionReversed",
                             constraint: "1",
                             conformance: "M",
                         },
 
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "CalibrationMode",
                             constraint: "2",
                             conformance: "M",
                         },
 
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "MaintenanceMode",
                             constraint: "3",
                             conformance: "M",
                         },
 
                         {
-                            tag: "datatype",
+                            tag: "field",
                             name: "LedFeedback",
                             constraint: "4",
                             conformance: "M",

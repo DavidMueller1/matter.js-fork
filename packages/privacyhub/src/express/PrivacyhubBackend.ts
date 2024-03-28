@@ -2,10 +2,16 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode from "../matter/PrivacyhubNode.js";
-import { stringifyWithBigint } from "../util/Util.js";
+import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
+import { NodeId, ClusterId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import { OnOffCluster } from "@project-chip/matter.js/cluster";
+// import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
+
+const threadNetworkName = process.env.THREAD_NETWORK_NAME || "OpenThread";
+const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
 
 export default class PrivacyhubBackend {
     private app: Application;
@@ -91,27 +97,6 @@ export default class PrivacyhubBackend {
             res.send('Welcome to the most private hub EU west');
         });
 
-        /**
-         * @api {get} /nodes List Nodes
-         * @apiName List Nodes
-         * @apiGroup Nodes
-         *
-         * @apiSuccess {Object[]} nodes List of nodes
-         */
-        this.app.get('/nodes', (_, res: Response) => {
-            const nodeList = this.privacyhubNode.getCommissionedNodes()
-            this.logger.debug(`Sending nodes list: ${stringifyWithBigint(nodeList)}`);
-            const response = {
-                nodes: nodeList.map(node => {
-                    return {
-                        nodeId: node.nodeId,
-                        vendor: node.basicInformationData?.vendorName,
-                        product: node.basicInformationData?.productName,
-                    }
-                })
-            }
-            res.send(stringifyWithBigint(response));
-        });
 
         this.app.post('/pairing/ble-thread', (req: Request, res: Response) => {
             // Log JSON body
@@ -119,8 +104,10 @@ export default class PrivacyhubBackend {
             this.logger.info(JSON.stringify(req.body, null, 2));
 
             // Check if the request body has the required fields
-            if (!req.body.pairingCode || !req.body.threadNetworkName || !req.body.threadNetworkOperationalDataset) {
-                res.status(400).send("Missing required fields. Needed: {pairingCode: number, threadNetworkName: string, threadNetworkOperationalDataset: string}");
+            if (!req.body.pairingCode) {
+                res.status(400).send(JSON.stringify({
+                    message: "Missing required field 'pairingCode'"
+                }));
                 return;
             }
             this.neoPixelController.switchToState({
@@ -130,14 +117,16 @@ export default class PrivacyhubBackend {
 
             this.privacyhubNode.commissionNodeBLEThread(
                 req.body.pairingCode,
-                req.body.threadNetworkName,
-                req.body.threadNetworkOperationalDataset
-            ).then(() => {
+                threadNetworkName,
+                threadNetworkOperationalDataset
+            ).then((node) => {
                 this.neoPixelController.switchToState({
                     state: LedState.BLINKING,
                     color: NeoPixelController.hsvToHex(120, 1, 1)
                 });
-                res.send("Commissioned node successfully");
+                res.status(201).send(JSON.stringify({
+                    nodeId: node.nodeId
+                }));
             }).catch((error) => {
                 this.neoPixelController.switchToState({
                     state: LedState.BLINKING,
@@ -146,6 +135,147 @@ export default class PrivacyhubBackend {
                 res.status(500).send(`Error commissioning node: ${error}`);
             });
         });
+
+
+        /**
+         * @api {get} /nodes List Nodes
+         * @apiName List Nodes
+         * @apiGroup Nodes
+         *
+         * @apiSuccess {Object[]} nodes List of nodes
+         */
+        this.app.get('/nodes', (_, res: Response) => {
+            this.privacyhubNode.getCommissionedNodes().then((nodes) => {
+                res.send(stringifyWithBigint(nodes));
+            }).catch((error) => {
+                res.status(500).send(`Error getting nodes: ${error}`);
+            });
+        });
+
+
+        this.app.get('/nodes/:nodeId', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                res.send("Connected to node successfully");
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+            });
+        });
+
+
+        this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+            let toggle = false;
+            let newState = false;
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+
+            if (!req.body.state) {
+                toggle = true;
+            } else {
+                newState = req.body.state;
+            }
+
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        if (toggle) {
+                            onOffCluster.toggle().then(() => {
+                                res.send("Toggled successfully");
+                            }).catch((error) => {
+                                res.status(500).send(`Error toggling: ${error}`);
+                            });
+                        } else {
+                            (newState ? onOffCluster.on() : onOffCluster.off()).then(() => {
+                                res.send("Set state successfully");
+                            }).catch((error) => {
+                                res.status(500).send(`Error setting state: ${error}`);
+                            });
+                        }
+                    } else {
+                        res.status(500).send(`Device does not have OnOff cluster`);
+                    }
+                } else {
+                    res.status(500).send(`Node has no devices`);
+                }
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
+
+        this.app.get('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                if (devices[0]) {
+                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        onOffCluster.attributes.onOff.get(true).then((state) => {
+                            res.send(JSON.stringify({
+                                state: state
+                            }));
+                        }).catch((error) => {
+                            res.status(500).send(`Error getting state: ${error}`);
+                        });
+                    } else {
+                        res.status(500).send(`Device does not have OnOff cluster`);
+                    }
+                } else {
+                    res.status(500).send(`Node has no devices`);
+                }
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
+
+        this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+                const devices = node.getDevices();
+                const endpoints = [];
+                for (const device of devices) {
+                    const deviceTypes = device.getDeviceTypes()
+                    // const clusterServer = device.getClusterServerById(ClusterId(6));
+                    this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+                    endpoints.push(deviceTypes);
+                }
+                res.send(stringifyIgnoreCircular(endpoints));
+            }).catch((error) => {
+                res.status(500).send(`Error connecting to node: ${error}`);
+                throw error;
+            });
+        });
+
+        // this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+        //     const nodeId = NodeId(BigInt(req.params.nodeId));
+        //     this.privacyhubNode.connectToNode(nodeId).then((node) => {
+        //         const devices = node.getDevices();
+        //         if (devices[0]) {
+        //             const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+        //             if (onOffCluster !== undefined) {
+        //                 onOffCluster.toggle().then(() => {
+        //                     res.send("Toggled successfully");
+        //                 }).catch((error) => {
+        //                     res.status(500).send(`Error toggling: ${error}`);
+        //                 });
+        //             }
+        //         }
+        //         // const devices = node.getDevices();
+        //         // for (const device of devices) {
+        //         //     const deviceTypes = device.getDeviceTypes()
+        //         //     // const clusterServer = device.getClusterServerById(ClusterId(6));
+        //         //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+        //         // }
+        //     }).catch((error) => {
+        //         res.status(500).send(`Error connecting to node: ${error}`);
+        //         throw error;
+        //     });
+        // });
 
         /**
          * Color HSV
