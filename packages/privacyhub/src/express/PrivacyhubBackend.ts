@@ -9,6 +9,7 @@ import { NodeId, ClusterId, EndpointNumber } from "@project-chip/matter.js/datat
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
+import SocketServer from "../websocket/SocketServer.js";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
@@ -23,7 +24,7 @@ const WEBSOCKET_CORS = {
 export default class PrivacyhubBackend {
     private readonly app: Application;
     private readonly httpServer;
-    private readonly io: Server;
+    private readonly socketServer: SocketServer;
 
     private readonly port: number;
     private readonly logger: Logger;
@@ -40,9 +41,9 @@ export default class PrivacyhubBackend {
         process.env.PORT ? this.port = parseInt(process.env.PORT) : this.port = 8000;
         this.app = express();
         this.httpServer = createServer(this.app);
-        this.io = new Server(this.httpServer, {
+        this.socketServer = new SocketServer(new Server(this.httpServer, {
             cors: WEBSOCKET_CORS
-        });
+        }));
 
         this.setupExpress();
         this.setupRoutes();
