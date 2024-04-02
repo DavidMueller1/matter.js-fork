@@ -15,6 +15,11 @@ import { createServer } from "node:http";
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "OpenThread";
 const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
 
+const WEBSOCKET_CORS = {
+    origin: "*",
+    methods: ["GET", "POST"]
+}
+
 export default class PrivacyhubBackend {
     private readonly app: Application;
     private readonly httpServer;
@@ -35,7 +40,9 @@ export default class PrivacyhubBackend {
         process.env.PORT ? this.port = parseInt(process.env.PORT) : this.port = 8000;
         this.app = express();
         this.httpServer = createServer(this.app);
-        this.io = new Server(this.httpServer);
+        this.io = new Server(this.httpServer, {
+            cors: WEBSOCKET_CORS
+        });
 
         this.setupExpress();
         this.setupRoutes();
