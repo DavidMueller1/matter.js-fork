@@ -7,6 +7,8 @@ import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
 import { NodeId, ClusterId, EndpointNumber } from "@project-chip/matter.js/datatype";
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
+import { Server } from "socket.io";
+import { createServer } from "node:http";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
@@ -14,7 +16,10 @@ const threadNetworkName = process.env.THREAD_NETWORK_NAME || "OpenThread";
 const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
 
 export default class PrivacyhubBackend {
-    private app: Application;
+    private readonly app: Application;
+    private readonly httpServer;
+    private readonly io: Server;
+
     private readonly port: number;
     private readonly logger: Logger;
 
@@ -29,17 +34,28 @@ export default class PrivacyhubBackend {
         this.logger.info("Starting Privacyhub backend...")
         process.env.PORT ? this.port = parseInt(process.env.PORT) : this.port = 8000;
         this.app = express();
+        this.httpServer = createServer(this.app);
+        this.io = new Server(this.httpServer);
 
         this.setupExpress();
         this.setupRoutes();
         // this.setupSwagger();
-        this.app.listen(this.port, () => {
+        this.setupWebSocket();
+
+        this.httpServer.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
                 color: NeoPixelController.hsvToHex(120, 1, 1)
             });
         });
+        // this.app.listen(this.port, () => {
+        //     this.logger.info(`Server is Fire at http://localhost:${this.port}`);
+        //     this.neoPixelController.switchToState({
+        //         state: LedState.BLINKING,
+        //         color: NeoPixelController.hsvToHex(120, 1, 1)
+        //     });
+        // });
     }
 
     private setupExpress(): void {
@@ -327,6 +343,15 @@ export default class PrivacyhubBackend {
             // Set LED state
             this.neoPixelController.switchToState(options);
             res.send("LED state changed successfully");
+        });
+    }
+
+    private setupWebSocket(): void {
+        this.io.on('connection', (socket) => {
+            this.logger.info('a user connected');
+            socket.on('disconnect', () => {
+                this.logger.info('user disconnected');
+            });
         });
     }
 }
