@@ -34,6 +34,9 @@ type CommissionedNode = {
     type: string;
 };
 
+const wifiSsid = "Rate mal";
+const wifiCredentials = "30484188001738191733";
+
 export default class PrivacyhubNode {
     private readonly logger: Logger;
     private readonly storage;
@@ -105,6 +108,11 @@ export default class PrivacyhubNode {
                 networkName: threadNetworkName,
                 operationalDataset: threadNetworkOperationalDataset,
             }
+
+            commissioningOptions.wifiNetwork = {
+                wifiSsid: wifiSsid,
+                wifiCredentials: wifiCredentials,
+            };
 
             const ble = true
             const options = {
