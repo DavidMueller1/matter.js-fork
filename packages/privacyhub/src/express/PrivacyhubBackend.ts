@@ -106,6 +106,7 @@ export default class PrivacyhubBackend {
                                     const onOffCluster = device.getClusterClient(OnOffCluster);
                                     if (onOffCluster !== undefined) {
                                         onOffCluster.subscribeOnOffAttribute((state) => {
+                                            this.logger.info(`OnOff state changed to ${state}`);
                                             this.io.emit('onOffState', {
                                                 nodeId: node.nodeId.toString(),
                                                 state: state
