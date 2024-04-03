@@ -1,7 +1,7 @@
 import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
-import PrivacyhubNode from "../matter/PrivacyhubNode.js";
+import PrivacyhubNode, { knownTypes } from "../matter/PrivacyhubNode.js";
 import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
@@ -24,7 +24,8 @@ const WEBSOCKET_CORS = {
 export default class PrivacyhubBackend {
     private readonly app: Application;
     private readonly httpServer;
-    private readonly socketServer: SocketServer;
+    // private readonly socketServer: SocketServer;
+    private readonly io;
 
     private readonly port: number;
     private readonly logger: Logger;
@@ -32,23 +33,44 @@ export default class PrivacyhubBackend {
     private readonly privacyhubNode: PrivacyhubNode;
     private readonly neoPixelController: NeoPixelController;
 
-    constructor(privacyhubNode: PrivacyhubNode, neoPixelController: NeoPixelController) {
-        this.privacyhubNode = privacyhubNode;
-        this.neoPixelController = neoPixelController;
-
+    constructor(privacyhubNode: PrivacyhubNode) {
         this.logger = Logger.get("PrivacyhubBackend");
         this.logger.info("Starting Privacyhub backend...")
+
+        // Setup NeoPixelController
+        this.neoPixelController = new NeoPixelController()
+        this.neoPixelController.switchToState({
+            state: LedState.LOADING,
+            color: NeoPixelController.hsvToHex(30, 1, 1)
+        });
+
+
+        // Setup PrivacyhubNode
+        this.privacyhubNode = privacyhubNode;
+
+
+        // Setup Express
         process.env.PORT ? this.port = parseInt(process.env.PORT) : this.port = 8000;
         this.app = express();
         this.httpServer = createServer(this.app);
-        this.socketServer = new SocketServer(new Server(this.httpServer, {
+        // this.socketServer = new SocketServer(new Server(this.httpServer, {
+        //     cors: WEBSOCKET_CORS
+        // }));
+        this.io = new Server(this.httpServer, {
             cors: WEBSOCKET_CORS
-        }));
+        });
+        this.app.use(express.json());
+        this.app.use(cors());
 
-        this.setupExpress();
+
         this.setupRoutes();
         // this.setupSwagger();
         this.setupWebSocket();
+        this.setupEventCallbacks().then(() => {
+            this.logger.info("Event callbacks setup successfully");
+        }).catch((error) => {
+            this.logger.error(`Error setting up event callbacks: ${error}`);
+        });
 
         this.httpServer.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
@@ -66,9 +88,52 @@ export default class PrivacyhubBackend {
         // });
     }
 
-    private setupExpress(): void {
-        this.app.use(express.json());
-        this.app.use(cors());
+    private setupEventCallbacks(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.privacyhubNode.reconnectAllNodes().then((connectedNodes) => {
+                for (const node of connectedNodes) {
+                    // Subscribe to all events
+                    node.getDevices().forEach((device) => {
+                        const types = device.getDeviceTypes();
+                        const deviceType = types[0].code;
+                        // Check if the device type is a key of knownTypes
+                        if (!knownTypes[deviceType]) {
+                            this.logger.warn(`Unknown device type: ${deviceType}`);
+                        } else {
+                            switch (deviceType) {
+                                case 266:
+                                    // OnOffPluginUnit
+                                    const onOffCluster = device.getClusterClient(OnOffCluster);
+                                    if (onOffCluster !== undefined) {
+                                        onOffCluster.subscribeOnOffAttribute((state) => {
+                                            this.io.emit('onOffState', {
+                                                nodeId: node.nodeId.toString(),
+                                                state: state
+                                            });
+                                        }, 1, 10).then(() => {
+                                            this.logger.debug(`Subscribed to OnOff attribute`);
+                                            resolve();
+                                        }).catch((error) => {
+                                            this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
+                                            reject();
+                                        });
+                                    } else {
+                                        this.logger.error(`Device does not have OnOff cluster`);
+                                        reject();
+                                    }
+                                    break;
+                            }
+                        }
+                    });
+                    // const interactionClient = await node.getInteractionClient();
+                    // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+                    // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+                    // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
     }
 
     // private setupSwagger(): void {

@@ -49,11 +49,11 @@ switch (process.env.LOG_FORMAT || "plain") {
         if (process.stdin?.isTTY) Logger.format = Format.ANSI;
 }
 
-const neoPixelController = new NeoPixelController()
-neoPixelController.switchToState({
-    state: LedState.LOADING,
-    color: NeoPixelController.hsvToHex(30, 1, 1)
-});
+// const neoPixelController = new NeoPixelController()
+// neoPixelController.switchToState({
+//     state: LedState.LOADING,
+//     color: NeoPixelController.hsvToHex(30, 1, 1)
+// });
 
 // Initialize BLE
 Ble.get = singleton(
@@ -66,13 +66,17 @@ Ble.get = singleton(
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
 const connectedNodes = await privacyhubNode.reconnectAllNodes();
-// console.log(`Connected to ${connectedNodes.length} nodes`);
-// console.log("=====================================");
+// // console.log(`Connected to ${connectedNodes.length} nodes`);
+// // console.log("=====================================");
 // for (const node of connectedNodes) {
-//     const interactionClient = await node.getInteractionClient();
-//     console.log(`Node ${node.nodeId}: ${interactionClient}`);
-//     const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-//     console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+//     // Subscribe to all events
+//     node.getDevices().forEach((device) => {
+//
+//     });
+//     // const interactionClient = await node.getInteractionClient();
+//     // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+//     // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+//     // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
 // }
 
-new PrivacyhubBackend(privacyhubNode, neoPixelController);
+new PrivacyhubBackend(privacyhubNode);

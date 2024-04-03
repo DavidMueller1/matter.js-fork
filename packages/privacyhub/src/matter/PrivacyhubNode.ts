@@ -23,7 +23,7 @@ import {
 } from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
 
-const knownTypes: Record<number, string> = {
+export const knownTypes: Record<number, string> = {
     266: "OnOffPluginUnit",
 };
 
