@@ -81,7 +81,8 @@ await dbController.connect();
 
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
-privacyhubNode.reconnectAllNodes().then(async (connectedNodes) => {
+try {
+    const connectedNodes = await privacyhubNode.reconnectAllNodes();
     logger.info(`Connected to ${connectedNodes.length} nodes`);
     logger.info("=====================================");
     for (const node of connectedNodes) {
@@ -119,8 +120,8 @@ privacyhubNode.reconnectAllNodes().then(async (connectedNodes) => {
         // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
         // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
     }
+} catch (error) {
+    logger.error(`Failed to reconnect to nodes: ${error}`);
+}
 
-// new PrivacyhubBackend(privacyhubNode);
-}).catch((error) => {
-    logger.error(`Failed to reconnect nodes: ${error}`);
-});
+new PrivacyhubBackend(privacyhubNode);
