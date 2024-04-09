@@ -82,8 +82,8 @@ await dbController.connect();
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
 const connectedNodes = await privacyhubNode.reconnectAllNodes();
-// console.log(`Connected to ${connectedNodes.length} nodes`);
-// console.log("=====================================");
+logger.info(`Connected to ${connectedNodes.length} nodes`);
+logger.info("=====================================");
 for (const node of connectedNodes) {
     const descriptor = node.getRootClusterClient(DescriptorCluster);
     if (descriptor !== undefined) {
