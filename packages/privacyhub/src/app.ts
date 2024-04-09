@@ -85,6 +85,8 @@ const connectedNodes = await privacyhubNode.reconnectAllNodes();
 logger.info(`Connected to ${connectedNodes.length} nodes`);
 logger.info("=====================================");
 for (const node of connectedNodes) {
+    const devices = node.getDevices();
+    logger.info(`Node ${node.nodeId} has ${devices.length} devices`);
     const descriptor = node.getRootClusterClient(DescriptorCluster);
     if (descriptor !== undefined) {
         logger.info("STUFF ====================================================================================================");
