@@ -112,6 +112,55 @@ export default class PrivacyhubNode {
                 operationalDataset: threadNetworkOperationalDataset,
             }
 
+            const ble = true
+            const options = {
+                commissioning: commissioningOptions,
+                discovery: {
+                    // knownAddress: ip !== undefined && port !== undefined ? { ip, port, type: "udp" } : undefined,
+                    knownAddress: undefined,
+                    identifierData:
+                        longDiscriminator !== undefined
+                            ? { longDiscriminator }
+                            : shortDiscriminator !== undefined
+                                ? { shortDiscriminator }
+                                : {},
+                    discoveryCapabilities: {
+                        ble,
+                    },
+                },
+                passcode: setupPin,
+            } as NodeCommissioningOptions;
+            this.logger.info(`Commissioning ...`);
+            this.logger.info(JSON.stringify(options));
+            this.commissioningController.commissionNode(options).then((pairedNode) => {
+                this.logger.info(`Commissioning successfully done with nodeId ${pairedNode.nodeId}`);
+                resolve(pairedNode);
+            }).catch((error) => {
+                this.logger.error(`Error commissioning node: ${error}`);
+                reject(error);
+            })
+        });
+    }
+
+    async commissionNodeBLEWiFi(
+        pairingCode: string,
+        threadNetworkName: string,
+        threadNetworkOperationalDataset: string
+    ) {
+        return new Promise<PairedNode>((resolve, reject) => {
+            // Extract data from pairing code
+            const pairingCodeCodec = ManualPairingCodeCodec.decode(pairingCode);
+            const shortDiscriminator = pairingCodeCodec.shortDiscriminator;
+            const longDiscriminator = undefined;
+            const setupPin = pairingCodeCodec.passcode;
+            this.logger.debug(`Data extracted from pairing code: ${Logger.toJSON(pairingCodeCodec)}`);
+
+            // Collect commissionning options
+            const commissioningOptions: CommissioningOptions = {
+                regulatoryLocation: GeneralCommissioning.RegulatoryLocationType.IndoorOutdoor,
+                regulatoryCountryCode: "XX",
+            };
+
             commissioningOptions.wifiNetwork = {
                 wifiSsid: wifiSsid,
                 wifiCredentials: wifiCredentials,
