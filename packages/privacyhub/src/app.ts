@@ -74,6 +74,8 @@ if (!process.env.MONGO_URI) {
     throw new Error("MONGO_URI environment variable is not set");
 }
 
+const logger = Logger.get("app");
+
 const dbController = new DbController(process.env.MONGO_URI);
 await dbController.connect();
 
@@ -85,11 +87,11 @@ const connectedNodes = await privacyhubNode.reconnectAllNodes();
 for (const node of connectedNodes) {
     const descriptor = node.getRootClusterClient(DescriptorCluster);
     if (descriptor !== undefined) {
-        console.log("STUFF ====================================================================================================");
-        console.log(await descriptor.attributes.deviceTypeList.get()); // you can call that way
-        console.log(await descriptor.getServerListAttribute()); // or more convenient that way
+        logger.info("STUFF ====================================================================================================");
+        logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
+        logger.info(await descriptor.getServerListAttribute()); // or more convenient that way
     } else {
-        console.log("No Descriptor Cluster found. This should never happen!");
+        logger.error("No Descriptor Cluster found. This should never happen!");
     }
     const basicInformation = node.getRootClusterClient(BasicInformationCluster);
     // Subscribe to all events
