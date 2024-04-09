@@ -3,7 +3,12 @@ import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
 import { Ble } from "@project-chip/matter-node.js/ble";
 import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/util";
-
+import {
+    BasicInformationCluster,
+    DescriptorCluster,
+    GeneralCommissioning,
+    OnOffCluster,
+} from "@project-chip/matter-node.js/cluster";
 import dotenv from "dotenv";
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
@@ -72,20 +77,29 @@ if (!process.env.MONGO_URI) {
 const dbController = new DbController(process.env.MONGO_URI);
 await dbController.connect();
 
-// const privacyhubNode = new PrivacyhubNode();
-// await privacyhubNode.start();
-// const connectedNodes = await privacyhubNode.reconnectAllNodes();
-// // // console.log(`Connected to ${connectedNodes.length} nodes`);
-// // // console.log("=====================================");
-// // for (const node of connectedNodes) {
-// //     // Subscribe to all events
-// //     node.getDevices().forEach((device) => {
-// //
-// //     });
-// //     // const interactionClient = await node.getInteractionClient();
-// //     // console.log(`Node ${node.nodeId}: ${interactionClient}`);
-// //     // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-// //     // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
-// // }
-//
+const privacyhubNode = new PrivacyhubNode();
+await privacyhubNode.start();
+const connectedNodes = await privacyhubNode.reconnectAllNodes();
+// console.log(`Connected to ${connectedNodes.length} nodes`);
+// console.log("=====================================");
+for (const node of connectedNodes) {
+    const descriptor = node.getRootClusterClient(DescriptorCluster);
+    if (descriptor !== undefined) {
+        console.log("STUFF");
+        console.log(await descriptor.attributes.deviceTypeList.get()); // you can call that way
+        console.log(await descriptor.getServerListAttribute()); // or more convenient that way
+    } else {
+        console.log("No Descriptor Cluster found. This should never happen!");
+    }
+    const basicInformation = node.getRootClusterClient(BasicInformationCluster);
+    // Subscribe to all events
+    // node.getDevices().forEach((device) => {
+    //
+    // });
+    // const interactionClient = await node.getInteractionClient();
+    // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+    // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+    // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+}
+
 // new PrivacyhubBackend(privacyhubNode);

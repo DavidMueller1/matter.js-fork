@@ -16,13 +16,7 @@ export default class DbController {
         return new Promise<void>((resolve, reject) => {
             this.client.connect().then(() => {
                 this.logger.info("Connected to database");
-                this.client.db("devices").command({ ping: 1 }).then(() => {
-                    this.logger.debug("Ping successful");
-                    resolve();
-                }).catch((error) => {
-                    this.logger.error(`Ping failed: ${error}`);
-                    reject(error);
-                });
+                resolve();
             }).catch((error) => {
                 this.logger.error(`Failed to connect to database: ${error}`);
                 reject(error);
