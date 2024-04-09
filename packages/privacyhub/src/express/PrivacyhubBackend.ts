@@ -218,26 +218,11 @@ export default class PrivacyhubBackend {
                     nodeId: node.nodeId
                 }));
             }).catch((error) => {
-                this.logger.error(`Error commissioning node: ${error}`);
-                this.privacyhubNode.commissionNodeBLEWiFi(
-                    req.body.pairingCode,
-                    threadNetworkName,
-                    threadNetworkOperationalDataset
-                ).then((node) => {
-                    this.neoPixelController.switchToState({
-                        state: LedState.BLINKING,
-                        color: NeoPixelController.hsvToHex(120, 1, 1)
-                    });
-                    res.status(201).send(JSON.stringify({
-                        nodeId: node.nodeId
-                    }));
-                }).catch((error) => {
-                    this.neoPixelController.switchToState({
-                        state: LedState.BLINKING,
-                        color: NeoPixelController.hsvToHex(0, 1, 1)
-                    });
-                    res.status(500).send(`Error commissioning node: ${error}`);
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(0, 1, 1)
                 });
+                res.status(500).send(`Error commissioning node: ${error}`);
             });
         });
 
