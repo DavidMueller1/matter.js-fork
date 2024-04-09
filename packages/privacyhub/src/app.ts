@@ -81,7 +81,7 @@ await dbController.connect();
 
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
-privacyhubNode.reconnectAllNodes().then((connectedNodes) => {
+privacyhubNode.reconnectAllNodes().then(async (connectedNodes) => {
     logger.info(`Connected to ${connectedNodes.length} nodes`);
     logger.info("=====================================");
     for (const node of connectedNodes) {
