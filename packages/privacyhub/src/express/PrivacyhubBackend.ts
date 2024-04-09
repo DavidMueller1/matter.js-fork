@@ -10,6 +10,7 @@ import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 import SocketServer from "../websocket/SocketServer.js";
+import dotenv from "dotenv";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 

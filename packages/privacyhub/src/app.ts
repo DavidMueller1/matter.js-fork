@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import PrivacyhubBackend from "./express/PrivacyhubBackend.js";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
@@ -9,13 +12,12 @@ import {
     GeneralCommissioning,
     OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
-import dotenv from "dotenv";
+
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
 import { stringifyWithBigint } from "./util/Util.js";
 import DbController from "./db/DbController.js";
 
-dotenv.config()
 
 requireMinNodeVersion(16);
 
