@@ -89,7 +89,7 @@ for (const node of connectedNodes) {
     logger.info(`Node ${node.nodeId} has ${devices.length} devices`);
     devices.forEach((device) => {
         const uniqueID = device.determineUniqueID();
-        logger.info(`Device ${device.id} has unique ID ${uniqueID}`);
+        logger.info(`Device ${device.id} of node ${node.nodeId} has unique ID ${uniqueID}`);
     });
     const basicInformation = node.getRootClusterClient(BasicInformationCluster);
     if (basicInformation !== undefined) {
