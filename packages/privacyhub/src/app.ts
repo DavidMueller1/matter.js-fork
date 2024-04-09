@@ -85,7 +85,7 @@ const connectedNodes = await privacyhubNode.reconnectAllNodes();
 for (const node of connectedNodes) {
     const descriptor = node.getRootClusterClient(DescriptorCluster);
     if (descriptor !== undefined) {
-        console.log("STUFF");
+        console.log("STUFF ====================================================================================================");
         console.log(await descriptor.attributes.deviceTypeList.get()); // you can call that way
         console.log(await descriptor.getServerListAttribute()); // or more convenient that way
     } else {
