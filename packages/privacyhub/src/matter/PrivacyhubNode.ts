@@ -52,7 +52,7 @@ export default class PrivacyhubNode {
 
         // Use storage for now. TODO: Remove later and replace with something else maybe
         const storageLocation = process.env.STORAGE_LOCATION || ".privacyhub-storage-dafault";
-        this.storage = new StorageBackendDisk(storageLocation, true);
+        this.storage = new StorageBackendDisk(storageLocation, false);
         this.logger.info(`Storage location: ${storageLocation} (Directory)`);
     }
 
