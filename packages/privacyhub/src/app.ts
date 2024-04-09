@@ -91,6 +91,9 @@ for (const node of connectedNodes) {
         const deviceTypeList = await descriptor.attributes.deviceTypeList.get();
         logger.info(`Device Type List:`);
         console.log(deviceTypeList);
+        const parts = await descriptor.attributes.partsList.get();
+        logger.info(`Parts List:`);
+        console.log(parts);
         // logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
         logger.info(await descriptor.getServerListAttribute()); // or more convenient that way
     } else {

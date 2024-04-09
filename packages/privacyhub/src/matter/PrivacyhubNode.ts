@@ -22,6 +22,7 @@ import {
     singleton,
 } from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
+import BaseDevice from "./devices/BaseDevice.js";
 
 export const knownTypes: Record<number, string> = {
     266: "OnOffPluginUnit",
@@ -43,6 +44,8 @@ export default class PrivacyhubNode {
 
     private matterServer: MatterServer;
     private commissioningController: CommissioningController;
+
+    private connectedDevices: Record<string, BaseDevice> = {};
 
     constructor() {
         this.logger = Logger.get("PrivacyhubNode");
@@ -233,6 +236,10 @@ export default class PrivacyhubNode {
                 reject(error);
             });
         });
+
+    }
+
+    getDeviceObject<T extends BaseDevice>(nodeId: string, ): T {
 
     }
 }
