@@ -81,43 +81,46 @@ await dbController.connect();
 
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
-const connectedNodes = await privacyhubNode.reconnectAllNodes();
-logger.info(`Connected to ${connectedNodes.length} nodes`);
-logger.info("=====================================");
-for (const node of connectedNodes) {
-    const devices = node.getDevices();
-    logger.info(`Node ${node.nodeId} has ${devices.length} devices`);
-    devices.forEach((device) => {
-        const uniqueID = device.determineUniqueID();
-        logger.info(`Device ${device.id} of node ${node.nodeId} has unique ID ${uniqueID}`);
-    });
-    const basicInformation = node.getRootClusterClient(BasicInformationCluster);
-    if (basicInformation !== undefined) {
-        const vendorName = await basicInformation.attributes.vendorName.get();
-        const productName = await basicInformation.attributes.productName.get();
-        const uniqueId = await basicInformation.attributes.uniqueId.get();
-        // Log all together
-        logger.info(`Basic Information: ${vendorName} -- ${productName} -- ${uniqueId}`);
-    }
-    // const descriptor = node.getRootClusterClient(DescriptorCluster);
-    // if (descriptor !== undefined) {
-    //     logger.info("STUFF ====================================================================================================");
-    //     const deviceTypeList = await descriptor.attributes.deviceTypeList.get();
-    //     logger.info(`Device Type List:`);
-    //     console.log(deviceTypeList);
-    //     const parts = await descriptor.attributes.partsList.get();
-    //     logger.info(`Parts List:`);
-    //     console.log(parts);
-    //     // logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
-    //     logger.info(await descriptor.getServerListAttribute()); // or more convenient that way
-    // } else {
-    //     logger.error("No Descriptor Cluster found. This should never happen!");
-    // }
+privacyhubNode.reconnectAllNodes().then((connectedNodes) => {
+    logger.info(`Connected to ${connectedNodes.length} nodes`);
+    logger.info("=====================================");
+    for (const node of connectedNodes) {
+        const devices = node.getDevices();
+        logger.info(`Node ${node.nodeId} has ${devices.length} devices`);
+        devices.forEach((device) => {
+            const uniqueID = device.determineUniqueID();
+            logger.info(`Device ${device.id} of node ${node.nodeId} has unique ID ${uniqueID}`);
+        });
+        const basicInformation = node.getRootClusterClient(BasicInformationCluster);
+        if (basicInformation !== undefined) {
+            const vendorName = await basicInformation.attributes.vendorName.get();
+            const productName = await basicInformation.attributes.productName.get();
+            const uniqueId = await basicInformation.attributes.uniqueId.get();
+            // Log all together
+            logger.info(`Basic Information: ${vendorName} -- ${productName} -- ${uniqueId}`);
+        }
+        // const descriptor = node.getRootClusterClient(DescriptorCluster);
+        // if (descriptor !== undefined) {
+        //     logger.info("STUFF ====================================================================================================");
+        //     const deviceTypeList = await descriptor.attributes.deviceTypeList.get();
+        //     logger.info(`Device Type List:`);
+        //     console.log(deviceTypeList);
+        //     const parts = await descriptor.attributes.partsList.get();
+        //     logger.info(`Parts List:`);
+        //     console.log(parts);
+        //     // logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
+        //     logger.info(await descriptor.getServerListAttribute()); // or more convenient that way
+        // } else {
+        //     logger.error("No Descriptor Cluster found. This should never happen!");
+        // }
 
-    // const interactionClient = await node.getInteractionClient();
-    // console.log(`Node ${node.nodeId}: ${interactionClient}`);
-    // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-    // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
-}
+        // const interactionClient = await node.getInteractionClient();
+        // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+        // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+        // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+    }
 
 // new PrivacyhubBackend(privacyhubNode);
+}).catch((error) => {
+    logger.error(`Failed to reconnect nodes: ${error}`);
+});
