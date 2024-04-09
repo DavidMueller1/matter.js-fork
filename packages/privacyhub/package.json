@@ -54,7 +54,8 @@
     "rpi-ws281x-native": "^1.0.4",
     "express-jsdoc-swagger": "^1.8.0",
     "express-oas-validator": "^3.0.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "mongodb": "^6.5.0"
   },
   "engines": {
     "_comment": "For Crypto.hkdf support",

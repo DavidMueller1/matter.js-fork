@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
 import { stringifyWithBigint } from "./util/Util.js";
+import DbController from "./db/DbController.js";
 
 dotenv.config()
 
@@ -62,6 +63,13 @@ Ble.get = singleton(
             hciId: parseInt(process.env.HCI_ID || "0"),
         }),
 );
+
+// Setup DbController
+if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI environment variable is not set");
+}
+
+const dbController = new DbController(process.env.MONGO_URI);
 
 const privacyhubNode = new PrivacyhubNode();
 await privacyhubNode.start();
