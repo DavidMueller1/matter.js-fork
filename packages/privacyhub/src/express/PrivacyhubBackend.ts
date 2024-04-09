@@ -13,7 +13,7 @@ import SocketServer from "../websocket/SocketServer.js";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
-const threadNetworkName = process.env.THREAD_NETWORK_NAME || "OpenThread";
+const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
 const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
 
 const WEBSOCKET_CORS = {
