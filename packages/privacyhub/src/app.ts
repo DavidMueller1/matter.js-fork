@@ -88,7 +88,10 @@ for (const node of connectedNodes) {
     const descriptor = node.getRootClusterClient(DescriptorCluster);
     if (descriptor !== undefined) {
         logger.info("STUFF ====================================================================================================");
-        logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
+        const deviceTypeList = await descriptor.attributes.deviceTypeList.get();
+        logger.info(`Device Type List:`);
+        console.log(deviceTypeList);
+        // logger.info(await descriptor.attributes.deviceTypeList.get()); // you can call that way
         logger.info(await descriptor.getServerListAttribute()); // or more convenient that way
     } else {
         logger.error("No Descriptor Cluster found. This should never happen!");
