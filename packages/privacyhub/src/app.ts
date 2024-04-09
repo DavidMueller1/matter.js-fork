@@ -71,20 +71,20 @@ if (!process.env.MONGO_URI) {
 
 const dbController = new DbController(process.env.MONGO_URI);
 
-const privacyhubNode = new PrivacyhubNode();
-await privacyhubNode.start();
-const connectedNodes = await privacyhubNode.reconnectAllNodes();
-// // console.log(`Connected to ${connectedNodes.length} nodes`);
-// // console.log("=====================================");
-// for (const node of connectedNodes) {
-//     // Subscribe to all events
-//     node.getDevices().forEach((device) => {
+// const privacyhubNode = new PrivacyhubNode();
+// await privacyhubNode.start();
+// const connectedNodes = await privacyhubNode.reconnectAllNodes();
+// // // console.log(`Connected to ${connectedNodes.length} nodes`);
+// // // console.log("=====================================");
+// // for (const node of connectedNodes) {
+// //     // Subscribe to all events
+// //     node.getDevices().forEach((device) => {
+// //
+// //     });
+// //     // const interactionClient = await node.getInteractionClient();
+// //     // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+// //     // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+// //     // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+// // }
 //
-//     });
-//     // const interactionClient = await node.getInteractionClient();
-//     // console.log(`Node ${node.nodeId}: ${interactionClient}`);
-//     // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-//     // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
-// }
-
-new PrivacyhubBackend(privacyhubNode);
+// new PrivacyhubBackend(privacyhubNode);
