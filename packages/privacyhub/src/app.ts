@@ -70,6 +70,7 @@ if (!process.env.MONGO_URI) {
 }
 
 const dbController = new DbController(process.env.MONGO_URI);
+await dbController.connect();
 
 // const privacyhubNode = new PrivacyhubNode();
 // await privacyhubNode.start();
