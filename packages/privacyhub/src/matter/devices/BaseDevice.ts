@@ -3,7 +3,6 @@ import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController, MatterServer, NodeCommissioningOptions } from "@project-chip/matter-node.js";
 import { NodeId } from "@project-chip/matter-node.js/datatype";
 import { Server } from "socket.io";
-import OnOffPluginUnit from "./OnOffPluginUnit.js";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Logger } from "typedoc";
 import { NodeId } from "@project-chip/matter.js/datatype";
@@ -117,3 +116,4 @@ export default class BaseDevice {
     //     });
     // }
 }
+import OnOffPluginUnit from "./OnOffPluginUnit.js";
