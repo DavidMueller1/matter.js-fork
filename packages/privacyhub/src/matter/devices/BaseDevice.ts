@@ -88,7 +88,11 @@ export default class BaseDevice {
     setConnectionStatus(status: ConnectionStatus) {
         this.logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
         this.connectionStatus = status;
-        // TODO Socket stuff
+
+        this.io.emit('connectionStatus', {
+            nodeId: this.nodeId.toString(),
+            status: this.connectionStatus,
+        });
     }
 
 
