@@ -82,7 +82,7 @@ const dbController = new DbController(process.env.MONGO_URI);
 await dbController.connect();
 
 const privacyhubNode = new PrivacyhubNode();
-await privacyhubNode.start();
+const commissioningController = await privacyhubNode.start();
 // try {
 //     const connectedNodes = await privacyhubNode.reconnectAllNodes();
 //     logger.info(`Connected to ${connectedNodes.length} nodes`);
@@ -126,4 +126,4 @@ await privacyhubNode.start();
 //     logger.error(`Failed to reconnect to nodes: ${error}`);
 // }
 
-new PrivacyhubBackend(privacyhubNode);
+new PrivacyhubBackend(privacyhubNode, commissioningController);

@@ -56,7 +56,7 @@ export default class PrivacyhubNode {
         this.logger.info(`Storage location: ${storageLocation} (Directory)`);
     }
 
-    async start() {
+    async start(): Promise<CommissioningController> {
         this.logger.info("Starting PrivacyhubNode...");
 
         const storageManager = new StorageManager(this.storage);
@@ -71,12 +71,12 @@ export default class PrivacyhubNode {
             autoConnect: false,
         });
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<CommissioningController>((resolve, reject) => {
             this.matterServer.addCommissioningController(this.commissioningController).then(() => {
                 this.logger.info("Commissioning controller added");
                 this.matterServer.start().then(() => {
                     this.logger.info("Matter server started");
-                    resolve();
+                    resolve(this.commissioningController);
                 }).catch((error) => { // Error starting matter server
                     this.logger.error(`Error starting matter server: ${error}`);
                     reject(error);
