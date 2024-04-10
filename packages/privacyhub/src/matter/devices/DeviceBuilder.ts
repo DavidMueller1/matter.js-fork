@@ -3,7 +3,6 @@ import { Server } from "socket.io";
 import { PairedNode } from "@project-chip/matter-node.js/device";
 import { NodeId } from "@project-chip/matter-node.js/datatype";
 import OnOffPluginUnit from "./OnOffPluginUnit.js";
-import console from "console";
 import BaseDevice from "./BaseDevice.js";
 
 export default class DeviceBuilder {
