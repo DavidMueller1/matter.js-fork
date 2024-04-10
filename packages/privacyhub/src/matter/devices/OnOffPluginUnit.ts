@@ -4,12 +4,13 @@ import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
+import { NodeId } from "@project-chip/matter.js/datatype";
 
 export default class OnOffPluginUnit extends BaseDevice {
     // private onOffCallback: (state: boolean) => void;
 
     constructor(
-        nodeId: string,
+        nodeId: NodeId,
         pairedNode: PairedNode,
         endpoint: Endpoint,
         commissioningController: CommissioningController,

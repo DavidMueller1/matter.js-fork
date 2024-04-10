@@ -7,9 +7,9 @@ import console from "console";
 import BaseDevice from "./BaseDevice.js";
 
 export default class DeviceBuilder {
-    static generateDevices = (nodeId: string, commissioningController: CommissioningController, io: Server): Promise<BaseDevice[]> => {
+    static generateDevices = (nodeId: NodeId, commissioningController: CommissioningController, io: Server): Promise<BaseDevice[]> => {
         return new Promise<BaseDevice[]>((resolve, reject) => {
-            commissioningController.connectNode(NodeId(Number(nodeId))).then((node: PairedNode) => {
+            commissioningController.connectNode(nodeId).then((node: PairedNode) => {
                 const devices: BaseDevice[] = [];
                 node.getDevices().forEach((device) => {
                     const type = device.getDeviceTypes()[0];

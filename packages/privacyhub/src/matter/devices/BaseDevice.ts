@@ -22,13 +22,13 @@ export enum PrivacyState {
 }
 
 export default class BaseDevice {
-    get nodeId(): string {
+    get nodeId(): NodeId {
         return this._nodeId;
     }
     protected commissioningController: CommissioningController;
     protected io: Server;
 
-    protected _nodeId: string;
+    protected _nodeId: NodeId;
 
     protected pairedNode: PairedNode;
     protected endpoint: Endpoint;
@@ -38,7 +38,7 @@ export default class BaseDevice {
     protected privacyState: PrivacyState = PrivacyState.LOCAL_ONLY;
 
     constructor(
-        nodeId: string,
+        nodeId: NodeId,
         pairedNode: PairedNode,
         endpoint: Endpoint,
         commissioningController: CommissioningController,
