@@ -56,10 +56,10 @@ export default class BaseDevice {
 
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId}`);
-            this.connectionStatus = this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED;
+            this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
         }).catch((error) => {
             this.logger.error(`Failed to connect to node: ${error}`);
-            this.connectionStatus = ConnectionStatus.DISCONNECTED;
+            this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         });
     }
 
