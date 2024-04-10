@@ -30,7 +30,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                     onOffCluster.subscribeOnOffAttribute((state) => {
                         this.logger.info(`OnOff state changed to ${state}`);
                         this.io.emit('onOffState', {
-                            nodeId: this.nodeId,
+                            nodeId: this.nodeId.toString(),
                             state: state
                         });
                     }, 1, 10).then(() => {
