@@ -17,6 +17,7 @@ import dotenv from "dotenv";
 import BaseDevice from "../matter/devices/BaseDevice.js";
 import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
+import DeviceBuilder from "../matter/devices/DeviceBuilder.js";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -93,7 +94,7 @@ export default class PrivacyhubBackend {
         // Setup devices
         this.devices = {};
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
-            BaseDevice.generateDevices(nodeId.toString(), this.commissioningController, this.io).then((devices) => {
+            DeviceBuilder.generateDevices(nodeId.toString(), this.commissioningController, this.io).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId}`);
                 devices.forEach((device) => {
                     this.devices[device.nodeId] = device;
@@ -233,7 +234,7 @@ export default class PrivacyhubBackend {
                 threadNetworkName,
                 threadNetworkOperationalDataset
             ).then((node) => {
-                BaseDevice.generateDevices(node.nodeId.toString(), this.commissioningController, this.io).then((devices) => {
+                DeviceBuilder.generateDevices(node.nodeId.toString(), this.commissioningController, this.io).then((devices) => {
                     this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId}`);
                     devices.forEach((device) => {
                         this.devices[device.nodeId] = device;
@@ -279,7 +280,7 @@ export default class PrivacyhubBackend {
 
         this.app.get('/nodes/:nodeId', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
-            this.privacyhubNode.connectToNode(nodeId).then((node) => {
+            this.privacyhubNode.connectToNode(nodeId).then((_) => {
                 res.send("Connected to node successfully");
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);

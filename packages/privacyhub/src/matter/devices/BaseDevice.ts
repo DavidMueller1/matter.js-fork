@@ -74,28 +74,7 @@ export default class BaseDevice {
         // });
     }
 
-    static generateDevices = (nodeId: string, commissioningController: CommissioningController, io: Server): Promise<BaseDevice[]> => {
-        return new Promise<BaseDevice[]>((resolve, reject) => {
-            commissioningController.connectNode(NodeId(Number(nodeId))).then((node: PairedNode) => {
-                const devices: BaseDevice[] = [];
-                node.getDevices().forEach((device) => {
-                    const type = device.getDeviceTypes()[0];
-                    switch (type.code) {
-                        case 266:
-                            devices.push(new OnOffPluginUnit(nodeId, node, device, commissioningController, io));
-                            break;
-                        default:
-                            devices.push(new BaseDevice(nodeId, node, device, commissioningController, io));
-                            break;
-                    }
-                });
-                resolve(devices);
-            }).catch((error) => {
-                console.log(`Error connecting to node: ${error}`);
-                reject(error);
-            });
-        });
-    }
+
 
     getDeviceObject<T extends BaseDevice>(type: new () => T): T | undefined {
         if (this instanceof type) {
@@ -116,4 +95,3 @@ export default class BaseDevice {
     //     });
     // }
 }
-import OnOffPluginUnit from "./OnOffPluginUnit.js";
