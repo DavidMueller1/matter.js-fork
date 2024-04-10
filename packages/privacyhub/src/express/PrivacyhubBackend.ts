@@ -95,7 +95,7 @@ export default class PrivacyhubBackend {
         this.devices = {};
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
             DeviceBuilder.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
-                this.logger.info(`Generated ${devices.length} devices for node ${nodeId}`);
+                this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
                 devices.forEach((device) => {
                     this.devices[device.nodeId.toString()] = device;
                 });
@@ -235,7 +235,7 @@ export default class PrivacyhubBackend {
                 threadNetworkOperationalDataset
             ).then((node) => {
                 DeviceBuilder.generateDevices(node.nodeId, this.commissioningController, this.io).then((devices) => {
-                    this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId}`);
+                    this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
                     devices.forEach((device) => {
                         this.devices[device.nodeId.toString()] = device;
                     });
