@@ -1,11 +1,12 @@
 import { PairedNode, Endpoint } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController, MatterServer, NodeCommissioningOptions } from "@project-chip/matter-node.js";
-import { NodeId } from "@project-chip/matter-node.js/datatype";
+import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
 import { Server } from "socket.io";
 import { type } from "typedoc/dist/lib/output/themes/default/partials/type.js";
 import { resolve } from "eslint-import-resolver-typescript";
 import * as console from "console";
+import { NodeStateInformation } from "@project-chip/matter.js/src/device/PairedNode.js";
 
 export enum ConnectionStatus {
     CONNECTED,
@@ -19,13 +20,12 @@ export enum PrivacyState {
 }
 
 export default class BaseDevice {
-    get nodeId(): NodeId {
-        return this._nodeId;
-    }
+
     protected commissioningController: CommissioningController;
     protected io: Server;
 
     protected _nodeId: NodeId;
+    protected _endpointId: EndpointNumber;
 
     protected pairedNode: PairedNode;
     protected endpoint: Endpoint;
@@ -34,18 +34,24 @@ export default class BaseDevice {
     protected connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
     protected privacyState: PrivacyState = PrivacyState.LOCAL_ONLY;
 
+    protected stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void;
+
     constructor(
         nodeId: NodeId,
+        endpointId: EndpointNumber,
         pairedNode: PairedNode,
         endpoint: Endpoint,
         commissioningController: CommissioningController,
-        io: Server
+        io: Server,
+        stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void
     ){
         this._nodeId = nodeId;
+        this._endpointId = endpointId;
         this.pairedNode = pairedNode;
         this.endpoint = endpoint;
         this.commissioningController = commissioningController;
         this.io = io;
+        this.stateInformationCallback = stateInformationCallback;
         this.logger = Logger.get("BaseDevice");
 
         this.initialize().then(() => {
@@ -55,6 +61,14 @@ export default class BaseDevice {
             this.logger.error(`Failed to connect to node: ${error}`);
             this.connectionStatus = ConnectionStatus.DISCONNECTED;
         });
+    }
+
+    get nodeId(): NodeId {
+        return this._nodeId;
+    }
+
+    get endpointId(): EndpointNumber {
+        return this._endpointId;
     }
 
     protected initialize(): Promise<void> {
@@ -71,6 +85,11 @@ export default class BaseDevice {
         // });
     }
 
+    setConnectionStatus(status: ConnectionStatus) {
+        this.logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
+        this.connectionStatus = status;
+        // TODO Socket stuff
+    }
 
 
     getDeviceObject<T extends BaseDevice>(type: new () => T): T | undefined {

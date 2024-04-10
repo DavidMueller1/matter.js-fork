@@ -1,22 +1,24 @@
-import { PairedNode, Endpoint } from "@project-chip/matter-node.js/device";
+import { PairedNode, Endpoint, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice from "./BaseDevice.js";
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
-import { NodeId } from "@project-chip/matter.js/datatype";
+import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
 
 export default class OnOffPluginUnit extends BaseDevice {
     // private onOffCallback: (state: boolean) => void;
 
     constructor(
         nodeId: NodeId,
+        endpointId: EndpointNumber,
         pairedNode: PairedNode,
         endpoint: Endpoint,
         commissioningController: CommissioningController,
-        io: Server
+        io: Server,
+        stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
-        super(nodeId, pairedNode, endpoint, commissioningController, io);
+        super(nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         // this.onOffCallback = onOffCallback;
         this.logger = Logger.get("OnOffPluginUnit");
     }

@@ -17,7 +17,7 @@ import dotenv from "dotenv";
 import BaseDevice from "../matter/devices/BaseDevice.js";
 import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
-import DeviceBuilder from "../matter/devices/DeviceBuilder.js";
+import DeviceManager from "../matter/devices/DeviceManager.js";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -41,7 +41,7 @@ export default class PrivacyhubBackend {
     private readonly commissioningController: CommissioningController;
     private readonly neoPixelController: NeoPixelController;
 
-    private readonly devices: Record<string, BaseDevice>;
+    private readonly deviceManager: DeviceManager;
 
     constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
         this.logger = Logger.get("PrivacyhubBackend");
@@ -92,13 +92,10 @@ export default class PrivacyhubBackend {
         });
 
         // Setup devices
-        this.devices = {};
+        this.deviceManager = DeviceManager.getInstance();
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
-            DeviceBuilder.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
+            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
-                devices.forEach((device) => {
-                    this.devices[device.nodeId.toString()] = device;
-                });
             }).catch((error) => {
                 this.logger.error(`Error generating devices: ${error}`);
             });
@@ -234,11 +231,8 @@ export default class PrivacyhubBackend {
                 threadNetworkName,
                 threadNetworkOperationalDataset
             ).then((node) => {
-                DeviceBuilder.generateDevices(node.nodeId, this.commissioningController, this.io).then((devices) => {
+                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io).then((devices) => {
                     this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
-                    devices.forEach((device) => {
-                        this.devices[device.nodeId.toString()] = device;
-                    });
                     this.neoPixelController.switchToState({
                         state: LedState.BLINKING,
                         color: NeoPixelController.hsvToHex(120, 1, 1)
@@ -300,7 +294,7 @@ export default class PrivacyhubBackend {
                 newState = req.body.state;
             }
 
-            const device = this.devices[nodeId.toString()];
+            const device = this.deviceManager.getDevice(nodeId, EndpointNumber(1));
             if (!device) {
                 res.status(500).send(`Device not found`);
                 return;
