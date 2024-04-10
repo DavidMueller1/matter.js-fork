@@ -14,6 +14,9 @@ import SocketServer from "../websocket/SocketServer.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
 import dotenv from "dotenv";
+import BaseDevice from "../matter/devices/BaseDevice.js";
+import { CommissioningController } from "@project-chip/matter.js";
+import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -34,9 +37,12 @@ export default class PrivacyhubBackend {
     private readonly logger: Logger;
 
     private readonly privacyhubNode: PrivacyhubNode;
+    private readonly commissioningController: CommissioningController;
     private readonly neoPixelController: NeoPixelController;
 
-    constructor(privacyhubNode: PrivacyhubNode) {
+    private readonly devices: Record<string, BaseDevice>;
+
+    constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
         this.logger = Logger.get("PrivacyhubBackend");
         this.logger.info("Starting Privacyhub backend...")
 
@@ -50,6 +56,7 @@ export default class PrivacyhubBackend {
 
         // Setup PrivacyhubNode
         this.privacyhubNode = privacyhubNode;
+        this.commissioningController = commissioningController;
 
 
         // Setup Express
@@ -69,17 +76,30 @@ export default class PrivacyhubBackend {
         this.setupRoutes();
         // this.setupSwagger();
         this.setupWebSocket();
-        this.setupEventCallbacks().then(() => {
-            this.logger.info("Event callbacks setup successfully");
-        }).catch((error) => {
-            this.logger.error(`Error setting up event callbacks: ${error}`);
-        });
+        // this.setupEventCallbacks().then(() => {
+        //     this.logger.info("Event callbacks setup successfully");
+        // }).catch((error) => {
+        //     this.logger.error(`Error setting up event callbacks: ${error}`);
+        // });
 
         this.httpServer.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
                 color: NeoPixelController.hsvToHex(120, 1, 1)
+            });
+        });
+
+        // Setup devices
+        this.devices = {};
+        this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
+            BaseDevice.generateDevices(nodeId.toString(), this.commissioningController, this.io).then((devices) => {
+                this.logger.info(`Generated ${devices.length} devices for node ${nodeId}`);
+                devices.forEach((device) => {
+                    this.devices[device.nodeId] = device;
+                });
+            }).catch((error) => {
+                this.logger.error(`Error generating devices: ${error}`);
             });
         });
         // this.app.listen(this.port, () => {
@@ -213,13 +233,24 @@ export default class PrivacyhubBackend {
                 threadNetworkName,
                 threadNetworkOperationalDataset
             ).then((node) => {
-                this.neoPixelController.switchToState({
-                    state: LedState.BLINKING,
-                    color: NeoPixelController.hsvToHex(120, 1, 1)
+                BaseDevice.generateDevices(node.nodeId.toString(), this.commissioningController, this.io).then((devices) => {
+                    this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId}`);
+                    devices.forEach((device) => {
+                        this.devices[device.nodeId] = device;
+                    });
+                    this.neoPixelController.switchToState({
+                        state: LedState.BLINKING,
+                        color: NeoPixelController.hsvToHex(120, 1, 1)
+                    });
+
+                    res.status(201).send(JSON.stringify({
+                        nodeId: node.nodeId
+                    }));
+                }).catch((error) => {
+                    this.logger.error(`Error generating devices: ${error}`);
                 });
-                res.status(201).send(JSON.stringify({
-                    nodeId: node.nodeId
-                }));
+
+
             }).catch((error) => {
                 this.neoPixelController.switchToState({
                     state: LedState.BLINKING,
@@ -268,34 +299,50 @@ export default class PrivacyhubBackend {
                 newState = req.body.state;
             }
 
-            this.privacyhubNode.connectToNode(nodeId).then((node) => {
-                const devices = node.getDevices();
-                if (devices[0]) {
-                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-                    if (onOffCluster !== undefined) {
-                        if (toggle) {
-                            onOffCluster.toggle().then(() => {
-                                res.send("Toggled successfully");
-                            }).catch((error) => {
-                                res.status(500).send(`Error toggling: ${error}`);
-                            });
-                        } else {
-                            (newState ? onOffCluster.on() : onOffCluster.off()).then(() => {
-                                res.send("Set state successfully");
-                            }).catch((error) => {
-                                res.status(500).send(`Error setting state: ${error}`);
-                            });
-                        }
-                    } else {
-                        res.status(500).send(`Device does not have OnOff cluster`);
-                    }
-                } else {
-                    res.status(500).send(`Node has no devices`);
-                }
-            }).catch((error) => {
-                res.status(500).send(`Error connecting to node: ${error}`);
-                throw error;
-            });
+            const device = this.devices[nodeId.toString()];
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof OnOffPluginUnit) {
+                device.switchOnOff(newState, toggle).then(() => {
+                    res.send("Set state successfully");
+                }).catch((error) => {
+                    res.status(500).send(`Error setting state: ${error}`);
+                });
+            } else {
+                res.status(500).send(`Device is not an OnOffPluginUnit`);
+            }
+
+            // this.privacyhubNode.connectToNode(nodeId).then((node) => {
+            //     const devices = node.getDevices();
+            //     if (devices[0]) {
+            //         const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+            //         if (onOffCluster !== undefined) {
+            //             if (toggle) {
+            //                 onOffCluster.toggle().then(() => {
+            //                     res.send("Toggled successfully");
+            //                 }).catch((error) => {
+            //                     res.status(500).send(`Error toggling: ${error}`);
+            //                 });
+            //             } else {
+            //                 (newState ? onOffCluster.on() : onOffCluster.off()).then(() => {
+            //                     res.send("Set state successfully");
+            //                 }).catch((error) => {
+            //                     res.status(500).send(`Error setting state: ${error}`);
+            //                 });
+            //             }
+            //         } else {
+            //             res.status(500).send(`Device does not have OnOff cluster`);
+            //         }
+            //     } else {
+            //         res.status(500).send(`Node has no devices`);
+            //     }
+            // }).catch((error) => {
+            //     res.status(500).send(`Error connecting to node: ${error}`);
+            //     throw error;
+            // });
         });
 
 
