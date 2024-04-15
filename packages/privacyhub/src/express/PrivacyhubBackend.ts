@@ -109,55 +109,55 @@ export default class PrivacyhubBackend {
         // });
     }
 
-    private setupEventCallbacks(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            this.privacyhubNode.reconnectAllNodes().then((connectedNodes) => {
-                for (const node of connectedNodes) {
-                    // Subscribe to all events
-                    node.getDevices().forEach((device) => {
-                        const types = device.getDeviceTypes();
-                        const deviceType = types[0].code;
-                        // Check if the device type is a key of knownTypes
-                        if (!knownTypes[deviceType]) {
-                            this.logger.warn(`Unknown device type: ${deviceType}`);
-                        } else {
-                            switch (deviceType) {
-                                case 266:
-                                    // OnOffPluginUnit
-                                    const onOffCluster = device.getClusterClient(OnOffCluster);
-
-                                    if (onOffCluster !== undefined) {
-                                        onOffCluster.subscribeOnOffAttribute((state) => {
-                                            this.logger.info(`OnOff state changed to ${state}`);
-                                            this.io.emit('onOffState', {
-                                                nodeId: node.nodeId.toString(),
-                                                state: state
-                                            });
-                                        }, 1, 10).then(() => {
-                                            this.logger.debug(`Subscribed to OnOff attribute`);
-                                            resolve();
-                                        }).catch((error) => {
-                                            this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
-                                            reject();
-                                        });
-                                    } else {
-                                        this.logger.error(`Device does not have OnOff cluster`);
-                                        reject();
-                                    }
-                                    break;
-                            }
-                        }
-                    });
-                    // const interactionClient = await node.getInteractionClient();
-                    // console.log(`Node ${node.nodeId}: ${interactionClient}`);
-                    // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
-                    // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
-                }
-            }).catch((error) => {
-                reject(error);
-            });
-        });
-    }
+    // private setupEventCallbacks(): Promise<void> {
+    //     return new Promise<void>((resolve, reject) => {
+    //         this.privacyhubNode.reconnectAllNodes().then((connectedNodes) => {
+    //             for (const node of connectedNodes) {
+    //                 // Subscribe to all events
+    //                 node.getDevices().forEach((device) => {
+    //                     const types = device.getDeviceTypes();
+    //                     const deviceType = types[0].code;
+    //                     // Check if the device type is a key of knownTypes
+    //                     if (!knownTypes[deviceType]) {
+    //                         this.logger.warn(`Unknown device type: ${deviceType}`);
+    //                     } else {
+    //                         switch (deviceType) {
+    //                             case 266:
+    //                                 // OnOffPluginUnit
+    //                                 const onOffCluster = device.getClusterClient(OnOffCluster);
+    //
+    //                                 if (onOffCluster !== undefined) {
+    //                                     onOffCluster.subscribeOnOffAttribute((state) => {
+    //                                         this.logger.info(`OnOff state changed to ${state}`);
+    //                                         this.io.emit('onOffState', {
+    //                                             nodeId: node.nodeId.toString(),
+    //                                             state: state
+    //                                         });
+    //                                     }, 1, 10).then(() => {
+    //                                         this.logger.debug(`Subscribed to OnOff attribute`);
+    //                                         resolve();
+    //                                     }).catch((error) => {
+    //                                         this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
+    //                                         reject();
+    //                                     });
+    //                                 } else {
+    //                                     this.logger.error(`Device does not have OnOff cluster`);
+    //                                     reject();
+    //                                 }
+    //                                 break;
+    //                         }
+    //                     }
+    //                 });
+    //                 // const interactionClient = await node.getInteractionClient();
+    //                 // console.log(`Node ${node.nodeId}: ${interactionClient}`);
+    //                 // const attributesAndEvents = await interactionClient.getAllAttributesAndEvents();
+    //                 // console.log(`Attributes and events: ${stringifyWithBigint(attributesAndEvents)}`);
+    //             }
+    //         }).catch((error) => {
+    //             reject(error);
+    //         });
+    //     });
+    // }
 
     // private setupSwagger(): void {
     //     const options = {
@@ -284,6 +284,8 @@ export default class PrivacyhubBackend {
 
 
         this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
+            this.logger.info("Received OnOff state change request:");
+            console.log(req.params)
             let toggle = false;
             let newState = false;
 
