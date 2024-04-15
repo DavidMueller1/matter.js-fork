@@ -282,11 +282,12 @@ export default class PrivacyhubBackend {
         });
 
 
-        this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+        this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             let toggle = false;
             let newState = false;
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
 
             if (!req.body.state) {
                 toggle = true;
@@ -294,7 +295,7 @@ export default class PrivacyhubBackend {
                 newState = req.body.state;
             }
 
-            const device = this.deviceManager.getDevice(nodeId, EndpointNumber(1));
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
             if (!device) {
                 res.status(500).send(`Device not found`);
                 return;
