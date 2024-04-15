@@ -26,6 +26,7 @@ export default class OnOffPluginUnit extends BaseDevice {
     override initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             super.initialize().then(() => {
+                this.logger.info(`Initializing OnOffPluginUnit ${this.nodeId}`);
                 // Subscribe to OnOff command
                 this.io.on('onOffCommand', (data) => {
                     this.logger.info(`Received OnOff command: ${JSON.stringify(data)}`);
