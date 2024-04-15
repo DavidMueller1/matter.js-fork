@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
 
 export default class OnOffPluginUnit extends BaseDevice {
-    // private onOffCallback: (state: boolean) => void;
+    private _onOffState: boolean = false;
 
     constructor(
         nodeId: NodeId,
@@ -30,11 +30,12 @@ export default class OnOffPluginUnit extends BaseDevice {
                 const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
                 if (onOffCluster !== undefined) {
                     onOffCluster.subscribeOnOffAttribute((state) => {
-                        this.logger.info(`OnOff state changed to ${state}`);
+                        this._onOffState = state;
+                        this.logger.info(`OnOff state changed to ${this._onOffState}`);
                         this.io.emit('onOffState', {
                             nodeId: this.nodeId.toString(),
                             endpointId: this.endpointId.toString(),
-                            state: state
+                            state: this._onOffState
                         });
                     }, 1, 10).then(() => {
                         this.logger.debug(`Subscribed to OnOff attribute`);
@@ -73,21 +74,10 @@ export default class OnOffPluginUnit extends BaseDevice {
                     });
                 }
             }
-
-
-            // const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
-            // if (onOffCluster !== undefined) {
-            //     onOffCluster.setOnOff(state).then(() => {
-            //         this.logger.info(`Set OnOff to ${state}`);
-            //         resolve();
-            //     }).catch((error) => {
-            //         this.logger.error(`Failed to set OnOff: ${error}`);
-            //         reject();
-            //     });
-            // } else {
-            //     this.logger.error(`Device does not have OnOff cluster`);
-            //     reject();
-            // }
         });
+    }
+
+    get onOffState(): boolean {
+        return this._onOffState;
     }
 }

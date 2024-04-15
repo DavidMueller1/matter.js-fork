@@ -342,30 +342,46 @@ export default class PrivacyhubBackend {
         });
 
 
-        this.app.get('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
+        this.app.get('/nodes/:nodeId/:endpointId//onOff', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
-            this.privacyhubNode.connectToNode(nodeId).then((node) => {
-                const devices = node.getDevices();
-                if (devices[0]) {
-                    const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-                    if (onOffCluster !== undefined) {
-                        onOffCluster.attributes.onOff.get(true).then((state) => {
-                            res.send(JSON.stringify({
-                                state: state
-                            }));
-                        }).catch((error) => {
-                            res.status(500).send(`Error getting state: ${error}`);
-                        });
-                    } else {
-                        res.status(500).send(`Device does not have OnOff cluster`);
-                    }
-                } else {
-                    res.status(500).send(`Node has no devices`);
-                }
-            }).catch((error) => {
-                res.status(500).send(`Error connecting to node: ${error}`);
-                throw error;
-            });
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof OnOffPluginUnit) {
+                res.send(JSON.stringify({
+                    state: device.onOffState
+                }));
+            } else {
+                res.status(500).send(`Device is not an OnOffPluginUnit`);
+            }
+
+            // this.privacyhubNode.connectToNode(nodeId).then((node) => {
+            //     const devices = node.getDevices();
+            //     if (devices[0]) {
+            //         const onOffCluster = devices[0].getClusterClient(OnOffCluster);
+            //         if (onOffCluster !== undefined) {
+            //             onOffCluster.attributes.onOff.get(true).then((state) => {
+            //                 res.send(JSON.stringify({
+            //                     state: state
+            //                 }));
+            //             }).catch((error) => {
+            //                 res.status(500).send(`Error getting state: ${error}`);
+            //             });
+            //         } else {
+            //             res.status(500).send(`Device does not have OnOff cluster`);
+            //         }
+            //     } else {
+            //         res.status(500).send(`Node has no devices`);
+            //     }
+            // }).catch((error) => {
+            //     res.status(500).send(`Error connecting to node: ${error}`);
+            //     throw error;
+            // });
         });
 
 
