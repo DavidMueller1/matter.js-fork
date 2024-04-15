@@ -26,6 +26,22 @@ export default class OnOffPluginUnit extends BaseDevice {
     override initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             super.initialize().then(() => {
+                // Subscribe to OnOff command
+                this.io.on('onOffCommand', (data) => {
+                    this.logger.info(`Received OnOff command: ${JSON.stringify(data)}`);
+                    if (data.nodeId === this.nodeId.toString() && data.endpointId === this.endpointId.toString()) {
+                        let toggle = false;
+                        if (data.state === undefined) {
+                            toggle = true;
+                        }
+                        this.switchOnOff(data.state, toggle).then(() => {
+                            this.logger.info(`Switched OnOff to ${data.state}`);
+                        }).catch(() => {
+                            this.logger.error(`Failed to switch OnOff to ${data.state}`);
+                        });
+                    }
+                });
+
                 // Subscribe to OnOff attribute
                 const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
                 if (onOffCluster !== undefined) {
@@ -47,21 +63,6 @@ export default class OnOffPluginUnit extends BaseDevice {
                     this.logger.error(`Device does not have OnOff cluster`);
                     reject();
                 }
-
-                // Subscribe to OnOff command
-                this.io.on('onOffCommand', (data) => {
-                    if (data.nodeId === this.nodeId.toString() && data.endpointId === this.endpointId.toString()) {
-                        let toggle = false;
-                        if (data.state === undefined) {
-                            toggle = true;
-                        }
-                        this.switchOnOff(data.state, toggle).then(() => {
-                            this.logger.info(`Switched OnOff to ${data.state}`);
-                        }).catch(() => {
-                            this.logger.error(`Failed to switch OnOff to ${data.state}`);
-                        });
-                    }
-                });
             }).catch((error) => {
                 reject(error);
             });
