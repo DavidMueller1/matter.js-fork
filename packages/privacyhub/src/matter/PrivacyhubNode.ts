@@ -8,7 +8,7 @@ import {
     GeneralCommissioning,
     OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
-import { NodeId } from "@project-chip/matter-node.js/datatype";
+import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
 import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
@@ -30,6 +30,7 @@ export const knownTypes: Record<number, string> = {
 
 type CommissionedNode = {
     nodeId: NodeId;
+    endpointId: EndpointNumber;
     vendor: string | undefined;
     product: string | undefined;
     type: string;
@@ -216,6 +217,7 @@ export default class PrivacyhubNode {
                         const type = knownTypes[deviceType] || "Unknown";
                         commissionedNodes.push({
                             nodeId: node.nodeId,
+                            endpointId: endpoint.getId(),
                             vendor: details?.basicInformationData?.vendorName?.toString(),
                             product: details?.basicInformationData?.productName?.toString(),
                             type,
