@@ -345,7 +345,7 @@ export default class PrivacyhubBackend {
         });
 
 
-        this.app.get('/nodes/:nodeId/:endpointId//onOff', (req: Request, res: Response) => {
+        this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
