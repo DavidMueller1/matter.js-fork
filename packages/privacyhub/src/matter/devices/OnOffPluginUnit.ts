@@ -33,6 +33,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                         this.logger.info(`OnOff state changed to ${state}`);
                         this.io.emit('onOffState', {
                             nodeId: this.nodeId.toString(),
+                            endpointId: this.endpointId.toString(),
                             state: state
                         });
                     }, 1, 10).then(() => {
@@ -46,6 +47,21 @@ export default class OnOffPluginUnit extends BaseDevice {
                     this.logger.error(`Device does not have OnOff cluster`);
                     reject();
                 }
+
+                // Subscribe to OnOff command
+                this.io.on('onOffCommand', (data) => {
+                    if (data.nodeId === this.nodeId.toString() && data.endpointId === this.endpointId.toString()) {
+                        let toggle = false;
+                        if (data.state === undefined) {
+                            toggle = true;
+                        }
+                        this.switchOnOff(data.state, toggle).then(() => {
+                            this.logger.info(`Switched OnOff to ${data.state}`);
+                        }).catch(() => {
+                            this.logger.error(`Failed to switch OnOff to ${data.state}`);
+                        });
+                    }
+                });
             }).catch((error) => {
                 reject(error);
             });
