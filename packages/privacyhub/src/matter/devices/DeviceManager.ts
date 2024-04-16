@@ -35,19 +35,22 @@ export default class DeviceManager {
                 const basicInformation = node.getRootClusterClient(BasicInformationCluster);
                 if (basicInformation !== undefined) {
                     basicInformation.getUniqueIdAttribute().then((uniqueId) => {
-                        this.logger.info(`Unique ID for node ${nodeId.toString()}: ${uniqueId}`);
+                        if (uniqueId === undefined) {
+                            reject("Failed to get unique ID");
+                            return;
+                        }
                         const devices: BaseDevice[] = [];
                         node.getDevices().forEach((device) => {
                             const type = device.getDeviceTypes()[0];
                             switch (type.code) {
                                 case 266:
-                                    const onOffPluginUnit = new OnOffPluginUnit("", nodeId, device.getId(), node, device, commissioningController, io);
+                                    const onOffPluginUnit = new OnOffPluginUnit(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
                                     this.devices.push(onOffPluginUnit);
                                     devices.push(onOffPluginUnit);
                                     break;
                                 default:
                                     device.determineUniqueID()
-                                    const unknownDevice = new BaseDevice("", nodeId, device.getId(), node, device, commissioningController, io);
+                                    const unknownDevice = new BaseDevice(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
                                     this.devices.push(unknownDevice);
                                     devices.push(unknownDevice);
                                     break;

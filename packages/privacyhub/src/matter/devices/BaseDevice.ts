@@ -7,7 +7,7 @@ import { type } from "typedoc/dist/lib/output/themes/default/partials/type.js";
 import { resolve } from "eslint-import-resolver-typescript";
 import * as console from "console";
 import { NodeStateInformation } from "@project-chip/matter.js/src/device/PairedNode.js";
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 export enum ConnectionStatus {
     CONNECTED,
@@ -21,17 +21,17 @@ export enum PrivacyState {
 }
 
 // DB schema
-interface DbDevice {
-    nodeId: string;
-    endpointId: string;
+interface IDevice {
+    uniqueId: string;
     type: number;
 }
 
-const deviceSchema = new Schema<DbDevice>({
-    nodeId: { type: String, required: true },
-    endpointId: { type: String, required: true },
+const deviceSchema = new Schema<IDevice>({
+    uniqueId: { type: String, required: true },
     type: { type: Number, required: true },
-})
+});
+
+const Device = model<IDevice>('Device', deviceSchema);
 
 export default class BaseDevice {
 
@@ -89,7 +89,28 @@ export default class BaseDevice {
     }
 
     protected initialize(): Promise<void> {
-        return Promise.resolve();
+        return new Promise<void>((resolve, reject) => {
+            // Generate DB document if it does not exist
+            Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {
+                if (device) {
+                    // Device exists
+                    resolve();
+                } else {
+                    // Device does not exist, create it
+                    const newDevice = new Device({
+                        uniqueId: this._uniqueId,
+                        type: this.endpoint.getDeviceTypes()[0],
+                    });
+                    newDevice.save().then(() => {
+                        resolve();
+                    }).catch((error) => {
+                        reject(error);
+                    });
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        });
         // return new Promise<void>((resolve, reject) => {
         //     this.connectToNode().then(() => {
         //         // TODO check if connected
