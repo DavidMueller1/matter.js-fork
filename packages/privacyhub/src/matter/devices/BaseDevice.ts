@@ -109,6 +109,8 @@ export default class BaseDevice {
 
     protected initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED)
+
             // Generate DB document if it does not exist
             Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {
                 if (device) {
@@ -147,13 +149,14 @@ export default class BaseDevice {
         this.logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
         this.connectionStatus = status;
 
+        // Notify the client
         this.io.emit('connectionStatus', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
             status: this.connectionStatus,
         });
 
-        // Check if this is the BaseDevice
+        // Add state change to DB
         if (this instanceof BaseDevice) {
             BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 if (state) {
