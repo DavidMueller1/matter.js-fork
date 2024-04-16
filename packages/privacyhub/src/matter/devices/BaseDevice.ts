@@ -23,11 +23,13 @@ export enum PrivacyState {
 // DB schema
 interface IDevice {
     uniqueId: string;
+    endpointId: string;
     type: number;
 }
 
 const deviceSchema = new Schema<IDevice>({
     uniqueId: { type: String, required: true },
+    endpointId: { type: String, required: true },
     type: { type: Number, required: true },
 });
 
@@ -99,6 +101,7 @@ export default class BaseDevice {
                     // Device does not exist, create it
                     const newDevice = new Device({
                         uniqueId: this._uniqueId,
+                        endpointId: this._endpointId.toString(),
                         type: this.endpoint.getDeviceTypes()[0].code,
                     });
                     newDevice.save().then(() => {
