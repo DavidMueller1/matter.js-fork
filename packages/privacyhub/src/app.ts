@@ -71,14 +71,11 @@ Ble.get = singleton(
         }),
 );
 
-// Setup DbController
-if (!process.env.MONGO_URI) {
-    throw new Error("MONGO_URI environment variable is not set");
-}
+
 
 const logger = Logger.get("app");
 
-const dbController = new DbController(process.env.MONGO_URI);
+const dbController = DbController.getInstance();
 await dbController.connect();
 
 const privacyhubNode = new PrivacyhubNode();

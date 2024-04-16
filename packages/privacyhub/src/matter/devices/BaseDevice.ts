@@ -7,6 +7,7 @@ import { type } from "typedoc/dist/lib/output/themes/default/partials/type.js";
 import { resolve } from "eslint-import-resolver-typescript";
 import * as console from "console";
 import { NodeStateInformation } from "@project-chip/matter.js/src/device/PairedNode.js";
+import { Schema } from "mongoose";
 
 export enum ConnectionStatus {
     CONNECTED,
@@ -19,11 +20,25 @@ export enum PrivacyState {
     ALL_ACCESS,
 }
 
+// DB schema
+interface DbDevice {
+    nodeId: string;
+    endpointId: string;
+    type: number;
+}
+
+const deviceSchema = new Schema<DbDevice>({
+    nodeId: { type: String, required: true },
+    endpointId: { type: String, required: true },
+    type: { type: Number, required: true },
+})
+
 export default class BaseDevice {
 
     protected commissioningController: CommissioningController;
     protected io: Server;
 
+    protected _uniqueId: string;
     protected _nodeId: NodeId;
     protected _endpointId: EndpointNumber;
 
@@ -37,6 +52,7 @@ export default class BaseDevice {
     protected stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void;
 
     constructor(
+        uniqueId: string,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,
@@ -45,6 +61,7 @@ export default class BaseDevice {
         io: Server,
         stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void
     ){
+        this._uniqueId = uniqueId;
         this._nodeId = nodeId;
         this._endpointId = endpointId;
         this.pairedNode = pairedNode;

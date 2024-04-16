@@ -5,11 +5,14 @@ import { NodeId } from "@project-chip/matter-node.js/datatype";
 import OnOffPluginUnit from "./OnOffPluginUnit.js";
 import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
 import { EndpointNumber } from "@project-chip/matter.js/datatype";
+import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
+import { Logger } from "@project-chip/matter-node.js/log";
 
 export default class DeviceManager {
 
     private static _instance: DeviceManager;
 
+    private logger: Logger = Logger.get("DeviceManager");
     private devices: BaseDevice[] = [];
 
     private constructor() {}
@@ -29,23 +32,34 @@ export default class DeviceManager {
                     this.deviceStateInformationCallback(peerNodeId, state);
                 },
             }).then((node: PairedNode) => {
-                const devices: BaseDevice[] = [];
-                node.getDevices().forEach((device) => {
-                    const type = device.getDeviceTypes()[0];
-                    switch (type.code) {
-                        case 266:
-                            const onOffPluginUnit = new OnOffPluginUnit(nodeId, device.getId(), node, device, commissioningController, io);
-                            this.devices.push(onOffPluginUnit);
-                            devices.push(onOffPluginUnit);
-                            break;
-                        default:
-                            const unknownDevice = new BaseDevice(nodeId, device.getId(), node, device, commissioningController, io);
-                            this.devices.push(unknownDevice);
-                            devices.push(unknownDevice);
-                            break;
-                    }
-                });
-                resolve(devices);
+                const basicInformation = node.getRootClusterClient(BasicInformationCluster);
+                if (basicInformation !== undefined) {
+                    basicInformation.getUniqueIdAttribute().then((uniqueId) => {
+                        this.logger.info(`Unique ID for node ${nodeId.toString()}: ${uniqueId}`);
+                        const devices: BaseDevice[] = [];
+                        node.getDevices().forEach((device) => {
+                            const type = device.getDeviceTypes()[0];
+                            switch (type.code) {
+                                case 266:
+                                    const onOffPluginUnit = new OnOffPluginUnit("", nodeId, device.getId(), node, device, commissioningController, io);
+                                    this.devices.push(onOffPluginUnit);
+                                    devices.push(onOffPluginUnit);
+                                    break;
+                                default:
+                                    device.determineUniqueID()
+                                    const unknownDevice = new BaseDevice("", nodeId, device.getId(), node, device, commissioningController, io);
+                                    this.devices.push(unknownDevice);
+                                    devices.push(unknownDevice);
+                                    break;
+                            }
+                        });
+                        resolve(devices);
+                    }).catch((error) => {
+                        reject("Failed to get unique ID: " + error);
+                    });
+                } else {
+                    reject("Failed to get basic information");
+                }
             }).catch((error) => {
                 console.log(`Error connecting to node: ${error}`);
                 reject(error);

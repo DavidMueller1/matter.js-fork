@@ -10,6 +10,7 @@ export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
     constructor(
+        uniqueId: string,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,
@@ -18,7 +19,7 @@ export default class OnOffPluginUnit extends BaseDevice {
         io: Server,
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
-        super(nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
+        super(uniqueId, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         // this.onOffCallback = onOffCallback;
         this.logger = Logger.get("OnOffPluginUnit");
     }

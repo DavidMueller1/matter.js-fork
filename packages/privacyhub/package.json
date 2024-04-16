@@ -55,7 +55,8 @@
     "express-jsdoc-swagger": "^1.8.0",
     "express-oas-validator": "^3.0.1",
     "socket.io": "^4.7.5",
-    "mongodb": "^6.5.0"
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.3.1"
   },
   "engines": {
     "_comment": "For Crypto.hkdf support",
