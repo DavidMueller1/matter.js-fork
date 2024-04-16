@@ -35,6 +35,23 @@ const deviceSchema = new Schema<IDevice>({
 
 const Device = model<IDevice>('Device', deviceSchema);
 
+
+export interface IBaseDeviceState {
+    uniqueId: string;
+    endpointId: string;
+    connectionStatus: ConnectionStatus;
+    timestamp: number;
+}
+
+const baseDeviceStateSchema = new Schema<IBaseDeviceState>({
+    uniqueId: { type: String, required: true },
+    endpointId: { type: String, required: true },
+    connectionStatus: { type: Number, required: true },
+    timestamp: { type: Number, required: true },
+});
+
+const BaseDeviceState = model<IBaseDeviceState>('BaseDeviceState', baseDeviceStateSchema);
+
 export default class BaseDevice {
 
     protected commissioningController: CommissioningController;
@@ -135,6 +152,41 @@ export default class BaseDevice {
             endpointId: this.endpointId.toString(),
             status: this.connectionStatus,
         });
+
+        // Check if this is the BaseDevice
+        if (this instanceof BaseDevice) {
+            BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
+                if (state) {
+                    if (state.connectionStatus !== this.connectionStatus) {
+                        const newState = new BaseDeviceState({
+                            uniqueId: this._uniqueId,
+                            endpointId: this._endpointId.toString(),
+                            connectionStatus: this.connectionStatus,
+                            timestamp: Date.now(),
+                        });
+                        newState.save().then(() => {
+                            this.logger.info(`Saved new state ${this.connectionStatus}`);
+                        }).catch((error) => {
+                            this.logger.error(`Failed to save new state: ${error}`);
+                        });
+                    }
+                } else {
+                    const newState = new BaseDeviceState({
+                        uniqueId: this._uniqueId,
+                        endpointId: this._endpointId.toString(),
+                        connectionStatus: this.connectionStatus,
+                        timestamp: Date.now(),
+                    });
+                    newState.save().then(() => {
+                        this.logger.info(`Saved new state ${this.connectionStatus}`);
+                    }).catch((error) => {
+                        this.logger.error(`Failed to save new state: ${error}`);
+                    });
+                }
+            }).catch((error) => {
+                this.logger.error(`Failed to get state: ${error}`);
+            });
+        }
     }
 
 
