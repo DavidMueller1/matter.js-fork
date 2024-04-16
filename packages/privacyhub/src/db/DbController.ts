@@ -33,7 +33,7 @@ export default class DbController {
 
     connect = (): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
-            connect(this.URI).then(() => {
+            connect(this.URI, { dbName: "PrivacyhubDB" }).then(() => {
                 this.logger.info("Connected to database");
                 resolve();
             }).catch((error) => {
