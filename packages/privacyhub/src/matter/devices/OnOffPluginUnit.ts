@@ -1,10 +1,30 @@
 import { PairedNode, Endpoint, NodeStateInformation } from "@project-chip/matter-node.js/device";
-import BaseDevice from "./BaseDevice.js";
+import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
 import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import { model, Schema } from "mongoose";
+
+// DB Schemas
+export interface IOnOffPluginUnitState {
+    uniqueId: string;
+    endpointId: string;
+    connectionStatus: ConnectionStatus;
+    onOffState: boolean;
+    timestamp: number;
+}
+
+const onOffPluginUnitStateSchema = new Schema<IOnOffPluginUnitState>({
+    uniqueId: { type: String, required: true },
+    endpointId: { type: String, required: true },
+    connectionStatus: { type: Number, required: true },
+    onOffState: { type: Boolean },
+    timestamp: { type: Number, required: true },
+});
+
+const OnOffPluginUnitState = model<IOnOffPluginUnitState>('OnOffPluginUnitState', onOffPluginUnitStateSchema);
 
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
@@ -36,10 +56,31 @@ export default class OnOffPluginUnit extends BaseDevice {
                     onOffCluster.subscribeOnOffAttribute((state) => {
                         this._onOffState = state;
                         this.logger.info(`OnOff state changed to ${this._onOffState}`);
+
                         this.io.emit('onOffState', {
                             nodeId: this.nodeId.toString(),
                             endpointId: this.endpointId.toString(),
                             state: this._onOffState
+                        });
+
+                        // Check if the state is different from the last db entry
+                        OnOffPluginUnitState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
+                            if (doc === null || doc.onOffState !== state || doc.connectionStatus !== this.connectionStatus) {
+                                const newDoc = new OnOffPluginUnitState({
+                                    uniqueId: this.nodeId.toString(),
+                                    endpointId: this.endpointId.toString(),
+                                    connectionStatus: this.connectionStatus,
+                                    onOffState: state,
+                                    timestamp: Date.now()
+                                });
+                                newDoc.save().then(() => {
+                                    this.logger.info(`Saved OnOff state to DB`);
+                                }).catch((error) => {
+                                    this.logger.error(`Failed to save OnOff state to DB: ${error}`);
+                                });
+                            }
+                        }).catch((error) => {
+                            this.logger.error(`Failed to query DB: ${error}`);
                         });
                     }, 1, 10).then(() => {
                         this.logger.debug(`Subscribed to OnOff attribute`);

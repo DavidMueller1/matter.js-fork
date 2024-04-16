@@ -102,6 +102,7 @@ export default class BaseDevice {
         });
     }
 
+    // Set the device as a base device
     setBaseDevice() {
         this.isBaseDevice = true;
     }
