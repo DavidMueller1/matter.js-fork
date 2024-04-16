@@ -99,7 +99,7 @@ export default class BaseDevice {
                     // Device does not exist, create it
                     const newDevice = new Device({
                         uniqueId: this._uniqueId,
-                        type: this.endpoint.getDeviceTypes()[0],
+                        type: this.endpoint.getDeviceTypes()[0].code,
                     });
                     newDevice.save().then(() => {
                         resolve();
