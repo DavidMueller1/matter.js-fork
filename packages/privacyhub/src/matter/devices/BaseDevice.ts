@@ -53,6 +53,7 @@ const baseDeviceStateSchema = new Schema<IBaseDeviceState>({
 const BaseDeviceState = model<IBaseDeviceState>('BaseDeviceState', baseDeviceStateSchema);
 
 export default class BaseDevice {
+    protected isBaseDevice = true;
 
     protected commissioningController: CommissioningController;
     protected io: Server;
@@ -133,16 +134,6 @@ export default class BaseDevice {
                 reject(error);
             });
         });
-        // return new Promise<void>((resolve, reject) => {
-        //     this.connectToNode().then(() => {
-        //         // TODO check if connected
-        //         this.connectionStatus = ConnectionStatus.CONNECTED;
-        //         resolve();
-        //     }).catch((error) => {
-        //         this.connectionStatus = ConnectionStatus.DISCONNECTED;
-        //         reject(error);
-        //     });
-        // });
     }
 
     setConnectionStatus(status: ConnectionStatus) {
@@ -157,7 +148,7 @@ export default class BaseDevice {
         });
 
         // Add state change to DB
-        if (this instanceof BaseDevice) {
+        if (this.isBaseDevice) {
             BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 if (state) {
                     if (state.connectionStatus !== this.connectionStatus) {

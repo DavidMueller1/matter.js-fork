@@ -20,7 +20,7 @@ export default class OnOffPluginUnit extends BaseDevice {
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
         super(uniqueId, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
-        // this.onOffCallback = onOffCallback;
+        this.isBaseDevice = false;
         this.logger = Logger.get("OnOffPluginUnit");
     }
 
