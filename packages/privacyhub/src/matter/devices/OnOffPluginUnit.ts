@@ -54,6 +54,8 @@ export default class OnOffPluginUnit extends BaseDevice {
                 const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
                 if (onOffCluster !== undefined) {
                     onOffCluster.subscribeOnOffAttribute((state) => {
+                        if (this._onOffState === state) return;
+
                         this._onOffState = state;
                         this.logger.info(`OnOff state changed to ${this._onOffState}`);
 
