@@ -91,6 +91,8 @@ export default class BaseDevice {
         this.stateInformationCallback = stateInformationCallback;
         this.logger = Logger.get("BaseDevice");
 
+        this.setBaseDevice();
+
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId}`);
             this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
@@ -98,6 +100,10 @@ export default class BaseDevice {
             this.logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         });
+    }
+
+    setBaseDevice() {
+        this.isBaseDevice = true;
     }
 
     get nodeId(): NodeId {

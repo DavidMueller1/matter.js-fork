@@ -9,8 +9,6 @@ import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
-    override isBaseDevice = false;
-
     constructor(
         uniqueId: string,
         nodeId: NodeId,
@@ -23,6 +21,10 @@ export default class OnOffPluginUnit extends BaseDevice {
     ) {
         super(uniqueId, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         this.logger = Logger.get("OnOffPluginUnit");
+    }
+
+    override setBaseDevice() {
+        this.isBaseDevice = false;
     }
 
     override initialize(): Promise<void> {
