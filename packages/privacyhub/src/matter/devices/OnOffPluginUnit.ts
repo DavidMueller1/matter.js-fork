@@ -69,8 +69,8 @@ export default class OnOffPluginUnit extends BaseDevice {
                         OnOffPluginUnitState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
                             if (doc === null || doc.onOffState !== state || doc.connectionStatus !== this.connectionStatus) {
                                 const newDoc = new OnOffPluginUnitState({
-                                    uniqueId: this.nodeId.toString(),
-                                    endpointId: this.endpointId.toString(),
+                                    uniqueId: this._uniqueId.toString(),
+                                    endpointId: this._endpointId.toString(),
                                     connectionStatus: this.connectionStatus,
                                     onOffState: state,
                                     timestamp: Date.now()
