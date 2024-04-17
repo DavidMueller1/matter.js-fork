@@ -124,6 +124,16 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
+    override getHistory(from: number, to: number): Promise<IOnOffPluginUnitState[]> {
+        return new Promise<IOnOffPluginUnitState[]>((resolve, reject) => {
+            OnOffPluginUnitState.find({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
+                resolve(docs);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
     get onOffState(): boolean {
         return this._onOffState;
     }

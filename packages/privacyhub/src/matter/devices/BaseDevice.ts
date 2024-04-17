@@ -190,6 +190,16 @@ export default class BaseDevice {
         }
     }
 
+    getHistory(from: number, to: number): Promise<IBaseDeviceState[]> {
+        return new Promise<IBaseDeviceState[]>((resolve, reject) => {
+            BaseDeviceState.find<IBaseDeviceState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).then((states) => {
+                resolve(states);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
 
     getDeviceObject<T extends BaseDevice>(type: new () => T): T | undefined {
         if (this instanceof type) {

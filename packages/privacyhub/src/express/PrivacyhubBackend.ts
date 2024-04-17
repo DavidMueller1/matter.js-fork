@@ -313,35 +313,6 @@ export default class PrivacyhubBackend {
             } else {
                 res.status(500).send(`Device is not an OnOffPluginUnit`);
             }
-
-            // this.privacyhubNode.connectToNode(nodeId).then((node) => {
-            //     const devices = node.getDevices();
-            //     if (devices[0]) {
-            //         const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-            //         if (onOffCluster !== undefined) {
-            //             if (toggle) {
-            //                 onOffCluster.toggle().then(() => {
-            //                     res.send("Toggled successfully");
-            //                 }).catch((error) => {
-            //                     res.status(500).send(`Error toggling: ${error}`);
-            //                 });
-            //             } else {
-            //                 (newState ? onOffCluster.on() : onOffCluster.off()).then(() => {
-            //                     res.send("Set state successfully");
-            //                 }).catch((error) => {
-            //                     res.status(500).send(`Error setting state: ${error}`);
-            //                 });
-            //             }
-            //         } else {
-            //             res.status(500).send(`Device does not have OnOff cluster`);
-            //         }
-            //     } else {
-            //         res.status(500).send(`Node has no devices`);
-            //     }
-            // }).catch((error) => {
-            //     res.status(500).send(`Error connecting to node: ${error}`);
-            //     throw error;
-            // });
         });
 
 
@@ -362,29 +333,26 @@ export default class PrivacyhubBackend {
             } else {
                 res.status(500).send(`Device is not an OnOffPluginUnit`);
             }
+        });
 
-            // this.privacyhubNode.connectToNode(nodeId).then((node) => {
-            //     const devices = node.getDevices();
-            //     if (devices[0]) {
-            //         const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-            //         if (onOffCluster !== undefined) {
-            //             onOffCluster.attributes.onOff.get(true).then((state) => {
-            //                 res.send(JSON.stringify({
-            //                     state: state
-            //                 }));
-            //             }).catch((error) => {
-            //                 res.status(500).send(`Error getting state: ${error}`);
-            //             });
-            //         } else {
-            //             res.status(500).send(`Device does not have OnOff cluster`);
-            //         }
-            //     } else {
-            //         res.status(500).send(`Node has no devices`);
-            //     }
-            // }).catch((error) => {
-            //     res.status(500).send(`Error connecting to node: ${error}`);
-            //     throw error;
-            // });
+        this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const from = req.query.from ? parseInt(req.query.from as string) : 0;
+            const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            device.getHistory(0, Date.now()).then((history) => {
+                res.send(JSON.stringify(history));
+            }).catch((error) => {
+                res.status(500).send(`Error getting history: ${error}`);
+            });
         });
 
 
@@ -405,32 +373,6 @@ export default class PrivacyhubBackend {
                 throw error;
             });
         });
-
-        // this.app.post('/nodes/:nodeId/onOff', (req: Request, res: Response) => {
-        //     const nodeId = NodeId(BigInt(req.params.nodeId));
-        //     this.privacyhubNode.connectToNode(nodeId).then((node) => {
-        //         const devices = node.getDevices();
-        //         if (devices[0]) {
-        //             const onOffCluster = devices[0].getClusterClient(OnOffCluster);
-        //             if (onOffCluster !== undefined) {
-        //                 onOffCluster.toggle().then(() => {
-        //                     res.send("Toggled successfully");
-        //                 }).catch((error) => {
-        //                     res.status(500).send(`Error toggling: ${error}`);
-        //                 });
-        //             }
-        //         }
-        //         // const devices = node.getDevices();
-        //         // for (const device of devices) {
-        //         //     const deviceTypes = device.getDeviceTypes()
-        //         //     // const clusterServer = device.getClusterServerById(ClusterId(6));
-        //         //     this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
-        //         // }
-        //     }).catch((error) => {
-        //         res.status(500).send(`Error connecting to node: ${error}`);
-        //         throw error;
-        //     });
-        // });
 
         /**
          * Color HSV
