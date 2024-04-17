@@ -16,6 +16,12 @@ export interface IOnOffPluginUnitState {
     timestamp: number;
 }
 
+export interface IReturnOnOffPluginUnitState {
+    connectionStatus: ConnectionStatus;
+    onOffState: boolean;
+    timestamp: number;
+}
+
 const onOffPluginUnitStateSchema = new Schema<IOnOffPluginUnitState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
@@ -124,10 +130,16 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
-    override getHistory(from: number, to: number): Promise<IOnOffPluginUnitState[]> {
-        return new Promise<IOnOffPluginUnitState[]>((resolve, reject) => {
-            OnOffPluginUnitState.find({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
-                resolve(docs);
+    override getHistory(from: number, to: number): Promise<IReturnOnOffPluginUnitState[]> {
+        return new Promise<IReturnOnOffPluginUnitState[]>((resolve, reject) => {
+            OnOffPluginUnitState.find<IOnOffPluginUnitState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
+                resolve(docs.map((doc) => {
+                    return {
+                        connectionStatus: doc.connectionStatus,
+                        onOffState: doc.onOffState,
+                        timestamp: doc.timestamp
+                    };
+                }));
             }).catch((error) => {
                 reject(error);
             });

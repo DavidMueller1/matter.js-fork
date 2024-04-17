@@ -43,6 +43,11 @@ export interface IBaseDeviceState {
     timestamp: number;
 }
 
+export interface IReturnBaseDeviceState {
+    connectionStatus: ConnectionStatus;
+    timestamp: number;
+}
+
 const baseDeviceStateSchema = new Schema<IBaseDeviceState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
@@ -190,10 +195,15 @@ export default class BaseDevice {
         }
     }
 
-    getHistory(from: number, to: number): Promise<IBaseDeviceState[]> {
-        return new Promise<IBaseDeviceState[]>((resolve, reject) => {
-            BaseDeviceState.find<IBaseDeviceState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).then((states) => {
-                resolve(states);
+    getHistory(from: number, to: number): Promise<IReturnBaseDeviceState[]> {
+        return new Promise<IReturnBaseDeviceState[]>((resolve, reject) => {
+            BaseDeviceState.find<IBaseDeviceState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).then((docs) => {
+                resolve(docs.map((doc) => {
+                    return {
+                        connectionStatus: doc.connectionStatus,
+                        timestamp: doc.timestamp
+                    };
+                }));
             }).catch((error) => {
                 reject(error);
             });
