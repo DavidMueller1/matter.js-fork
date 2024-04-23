@@ -72,8 +72,9 @@ Ble.get = singleton(
 );
 
 
-
 const logger = Logger.get("app");
+
+logger.info(`HCI ID: ${parseInt(process.env.HCI_ID || "0")}`);
 
 const dbController = DbController.getInstance();
 await dbController.connect();

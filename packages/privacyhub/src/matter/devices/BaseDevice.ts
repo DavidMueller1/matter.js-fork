@@ -217,16 +217,4 @@ export default class BaseDevice {
         }
         return undefined;
     }
-
-    // static connectToNode(nodeId: string, commissioningController: CommissioningController): Promise<PairedNode> {
-    //     return new Promise( (resolve, reject) => {
-    //         // const node = await this.commissioningController.connectNode(nodeId, {
-    //         commissioningController.connectNode(NodeId(Number(nodeId))).then((node: PairedNode) => {
-    //             resolve(node);
-    //         }).catch((error) => {
-    //             console.log(`Error connecting to node: ${error}`);
-    //             reject(error);
-    //         });
-    //     });
-    // }
 }
