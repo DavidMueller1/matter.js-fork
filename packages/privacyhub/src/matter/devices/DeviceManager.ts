@@ -8,6 +8,7 @@ import { EndpointNumber } from "@project-chip/matter.js/datatype";
 import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { ignoreTypes } from "../PrivacyhubNode.js";
+import ContactSensor from "./ContactSensor.js";
 
 export default class DeviceManager {
 
@@ -53,6 +54,11 @@ export default class DeviceManager {
                                     const onOffPluginUnit = new OnOffPluginUnit(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
                                     this.devices.push(onOffPluginUnit);
                                     devices.push(onOffPluginUnit);
+                                    break;
+                                case 21:
+                                    const contactSensor = new ContactSensor(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
+                                    this.devices.push(contactSensor);
+                                    devices.push(contactSensor);
                                     break;
                                 default:
                                     device.determineUniqueID()
