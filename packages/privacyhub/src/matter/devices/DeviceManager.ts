@@ -7,6 +7,7 @@ import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
 import { EndpointNumber } from "@project-chip/matter.js/datatype";
 import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
+import { ignoreTypes } from "../PrivacyhubNode.js";
 
 export default class DeviceManager {
 
@@ -42,6 +43,10 @@ export default class DeviceManager {
                         const devices: BaseDevice[] = [];
                         node.getDevices().forEach((device) => {
                             const type = device.getDeviceTypes()[0];
+                            if (type.code in ignoreTypes) {
+                                this.logger.debug(`Ignoring device type ${type.code}`);
+                                return;
+                            }
                             this.logger.info(`Device types: ${JSON.stringify(device.getDeviceTypes())}`);
                             switch (type.code) {
                                 case 266:

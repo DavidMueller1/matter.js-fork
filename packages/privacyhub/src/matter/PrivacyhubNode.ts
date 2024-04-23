@@ -26,6 +26,11 @@ import BaseDevice from "./devices/BaseDevice.js";
 
 export const knownTypes: Record<number, string> = {
     266: "OnOffPluginUnit",
+    21: "ContactSensor"
+};
+
+export const ignoreTypes: Record<number, string> = {
+    17: "PowerSource"
 };
 
 type CommissionedNode = {
