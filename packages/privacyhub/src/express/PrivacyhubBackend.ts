@@ -265,11 +265,16 @@ export default class PrivacyhubBackend {
          * @apiSuccess {Object[]} nodes List of nodes
          */
         this.app.get('/nodes', (_, res: Response) => {
-            this.privacyhubNode.getCommissionedNodes().then((nodes) => {
-                res.send(stringifyWithBigint(nodes));
-            }).catch((error) => {
-                res.status(500).send(`Error getting nodes: ${error}`);
+            const nodes = this.deviceManager.getDevices().map((device) => {
+                return {
+                    nodeId: device.nodeId,
+                    endpointId: device.endpointId,
+                    vendor: device.vendor,
+                    product: device.product,
+                    type: device.type,
+                }
             });
+            res.send(stringifyIgnoreCircular(nodes));
         });
 
 

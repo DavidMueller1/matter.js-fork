@@ -66,6 +66,8 @@ export default class BaseDevice {
     protected _uniqueId: string;
     protected _nodeId: NodeId;
     protected _endpointId: EndpointNumber;
+    protected _vendor: string | undefined;
+    protected _product: string | undefined;
 
     protected pairedNode: PairedNode;
     protected endpoint: Endpoint;
@@ -98,6 +100,8 @@ export default class BaseDevice {
 
         this.setBaseDevice();
 
+        this.getVendorAndProduct();
+
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
             this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
@@ -118,6 +122,18 @@ export default class BaseDevice {
 
     get endpointId(): EndpointNumber {
         return this._endpointId;
+    }
+
+    get vendor() {
+        return this._vendor;
+    }
+
+    get product() {
+        return this._product;
+    }
+
+    get type(): number {
+        return this.endpoint.getDeviceTypes()[0].code;
     }
 
     protected initialize(): Promise<void> {
@@ -146,6 +162,14 @@ export default class BaseDevice {
                 reject(error);
             });
         });
+    }
+
+    getVendorAndProduct(): void {
+        const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
+        const details = nodeDetails.find((n) => n.nodeId === this.nodeId);
+
+        this._vendor = details?.basicInformationData?.vendorName?.toString();
+        this._product = details?.basicInformationData?.productName?.toString();
     }
 
     setConnectionStatus(status: ConnectionStatus) {
