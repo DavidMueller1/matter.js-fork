@@ -271,7 +271,7 @@ export default class PrivacyhubBackend {
                     endpointId: device.endpointId,
                     vendor: device.vendor,
                     product: device.product,
-                    type: device.type,
+                    type: knownTypes[device.type] ?? "Unknown",
                 }
             });
             res.send(stringifyIgnoreCircular(nodes));
