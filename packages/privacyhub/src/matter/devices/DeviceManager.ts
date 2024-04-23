@@ -42,7 +42,7 @@ export default class DeviceManager {
                         const devices: BaseDevice[] = [];
                         node.getDevices().forEach((device) => {
                             const type = device.getDeviceTypes()[0];
-                            this.logger.info(`Device types: ${device.getDeviceTypes().toString()}`);
+                            this.logger.info(`Device types: ${JSON.stringify(device.getDeviceTypes())}`);
                             switch (type.code) {
                                 case 266:
                                     const onOffPluginUnit = new OnOffPluginUnit(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
