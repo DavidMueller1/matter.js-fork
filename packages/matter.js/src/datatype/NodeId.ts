@@ -6,7 +6,6 @@
 
 import { UnexpectedDataError } from "../common/MatterError.js";
 import { Crypto } from "../crypto/Crypto.js";
-import { MatterCoreSpecificationV1_0 } from "../spec/Specifications.js";
 import { TlvUInt64 } from "../tlv/TlvNumber.js";
 import { TlvWrapper } from "../tlv/TlvWrapper.js";
 import { Endian } from "../util/ByteArray.js";
@@ -19,7 +18,7 @@ import { CaseAuthenticatedTag } from "./CaseAuthenticatedTag.js";
  * A Node Identifier (Node ID) is a 64-bit number that uniquely identifies an individual Node or a
  * group of Nodes on a Fabric.
  *
- * @see {@link MatterCoreSpecificationV1_0} § 2.5.5
+ * @see {@link MatterSpecification.v10.Core} § 2.5.5
  */
 export type NodeId = Branded<bigint, "NodeId">;
 
@@ -50,11 +49,18 @@ export namespace NodeId {
      */
     export const getRandomOperationalNodeId = (): NodeId => {
         while (true) {
-            const randomBigInt = BigInt("0x" + Crypto.getRandomData(8).toHex());
+            const randomBigInt = Crypto.getRandomBigInt(8);
             if (randomBigInt >= OPERATIONAL_NODE_MIN && randomBigInt <= OPERATIONAL_NODE_MAX) {
                 return NodeId(randomBigInt);
             }
         }
+    };
+
+    /**
+     * Returns whether the given Node ID is an Operational Node ID.
+     */
+    export const isOperationalNodeId = (nodeId: NodeId): boolean => {
+        return nodeId >= OPERATIONAL_NODE_MIN && nodeId <= OPERATIONAL_NODE_MAX;
     };
 
     /** A Group Node ID is a 64-bit Node ID that contains a particular Group ID in the lower half of the Node ID. */

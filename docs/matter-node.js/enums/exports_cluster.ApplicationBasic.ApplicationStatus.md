@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.3.4.2
+MatterSpecification.v11.Cluster § 6.3.4.2
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ Application is running but not visible to the user.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:53
+packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:62
 
 ___
 
@@ -39,7 +39,7 @@ Application is running, is visible to the user, and is the active target for inp
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:49
+packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:58
 
 ___
 
@@ -51,7 +51,7 @@ Application is running and visible, but is not the active target for input.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:57
+packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:66
 
 ___
 
@@ -63,4 +63,4 @@ Application is not running.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:45
+packages/matter.js/dist/esm/cluster/definitions/ApplicationBasicCluster.d.ts:54

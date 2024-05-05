@@ -8,7 +8,7 @@ These are optional features supported by UnitLocalizationCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.5.4
+MatterSpecification.v11.Core § 11.5.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ The Node can be configured to use different units of temperature when conveying 
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/UnitLocalizationCluster.d.ts:39
+packages/matter.js/dist/esm/cluster/definitions/UnitLocalizationCluster.d.ts:55

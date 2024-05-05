@@ -9,7 +9,7 @@ the Action field of the ApplyUpdateResponse command. See (Section 11.19.6.5.4.1,
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.19.6.4.2
+MatterSpecification.v11.Core § 11.19.6.4.2
 
 ## Table of contents
 
@@ -29,7 +29,7 @@ Wait at least the given delay time.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:109
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:130
 
 ___
 
@@ -41,7 +41,7 @@ The OTA Provider is conveying a desire to rescind a previously provided Software
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:113
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:134
 
 ___
 
@@ -53,4 +53,4 @@ Apply the update.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:105
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:126

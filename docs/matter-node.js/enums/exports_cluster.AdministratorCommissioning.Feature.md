@@ -8,7 +8,7 @@ These are optional features supported by AdministratorCommissioningCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.18.4
+MatterSpecification.v11.Core § 11.18.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ Node supports Basic Commissioning Method.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:130
+packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:188

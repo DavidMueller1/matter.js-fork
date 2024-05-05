@@ -23,16 +23,16 @@ import { ClusterId } from "../../datatype/ClusterId.js";
 import { CommandId } from "../../datatype/CommandId.js";
 import { EndpointNumber } from "../../datatype/EndpointNumber.js";
 import { EventId } from "../../datatype/EventId.js";
+import { EventNumber } from "../../datatype/EventNumber.js";
 import { EndpointInterface } from "../../endpoint/EndpointInterface.js";
+import { Diagnostic } from "../../log/Diagnostic.js";
 import { Logger } from "../../log/Logger.js";
 import { MessageExchange } from "../../protocol/MessageExchange.js";
 import { ProtocolHandler } from "../../protocol/ProtocolHandler.js";
 import { EventHandler } from "../../protocol/interaction/EventHandler.js";
 import { NoAssociatedFabricError, SecureSession, assertSecureSession } from "../../session/SecureSession.js";
-import { Session } from "../../session/Session.js";
 import { TlvNoArguments } from "../../tlv/TlvNoArguments.js";
 import { TypeFromSchema } from "../../tlv/TlvSchema.js";
-import { toHexString } from "../../util/Number.js";
 import { decodeAttributeValueWithSchema, normalizeAttributeData } from "./AttributeDataDecoder.js";
 import {
     AttributeReportPayload,
@@ -42,6 +42,7 @@ import {
 } from "./AttributeDataEncoder.js";
 import { InteractionEndpointStructure } from "./InteractionEndpointStructure.js";
 import {
+    InteractionRecipient,
     InteractionServerMessenger,
     InvokeRequest,
     InvokeResponse,
@@ -94,7 +95,7 @@ export interface AttributeWithPath {
 
 export interface EventWithPath {
     path: TypeFromSchema<typeof TlvEventPath>;
-    event: EventServer<any>;
+    event: EventServer<any, any>;
 }
 
 export interface CommandWithPath {
@@ -129,7 +130,7 @@ export function clusterPathToId({ nodeId, endpointId, clusterId }: TypeFromSchem
 /**
  * Translates interactions from the Matter protocol to Matter.js APIs.
  */
-export class InteractionServer implements ProtocolHandler<MatterDevice> {
+export class InteractionServer implements ProtocolHandler<MatterDevice>, InteractionRecipient {
     #endpointStructure;
     #nextSubscriptionId = Crypto.getRandomUInt32();
     readonly #subscriptionMap = new Map<number, SubscriptionHandler>();
@@ -153,16 +154,15 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
         return INTERACTION_PROTOCOL_ID;
     }
 
+    get isClosing() {
+        return this.#isClosing;
+    }
+
     async onNewExchange(exchange: MessageExchange<MatterDevice>) {
+        // Note - changes here must be copied to TransactionalInteractionServer as it does not call super() to avoid
+        // the stack frame
         if (this.#isClosing) return; // We are closing, ignore anything newly incoming
-        await new InteractionServerMessenger(exchange).handleRequest(
-            (readRequest, message) => this.handleReadRequest(exchange, readRequest, message),
-            (writeRequest, message) => this.handleWriteRequest(exchange, writeRequest, message),
-            (subscribeRequest, messenger, message) =>
-                this.handleSubscribeRequest(exchange, subscribeRequest, messenger, message),
-            (invokeRequest, message) => this.handleInvokeRequest(exchange, invokeRequest, message),
-            timedRequest => this.handleTimedRequest(exchange, timedRequest),
-        );
+        await new InteractionServerMessenger(exchange).handleRequest(this);
     }
 
     async handleReadRequest(
@@ -251,7 +251,7 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
                 const { nodeId, endpointId, clusterId } = path;
 
                 const { value, version } = await tryCatchAsync(
-                    async () => this.readAttribute(attribute, exchange.session, isFabricFiltered, message),
+                    async () => this.readAttribute(attribute, exchange, isFabricFiltered, message),
                     NoAssociatedFabricError,
                     async () => {
                         // TODO: Remove when we remove legacy API
@@ -362,8 +362,8 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
                 }
                 eventReportsPayload.push(
                     ...reportsForPath.sort((a, b) => {
-                        const eventNumberA = a.eventData?.eventNumber ?? 0;
-                        const eventNumberB = b.eventData?.eventNumber ?? 0;
+                        const eventNumberA = a.eventData?.eventNumber ?? EventNumber(0);
+                        const eventNumberB = b.eventData?.eventNumber ?? EventNumber(0);
                         if (eventNumberA > eventNumberB) {
                             return 1;
                         } else if (eventNumberA < eventNumberB) {
@@ -387,11 +387,11 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
 
     protected async readAttribute(
         attribute: AnyAttributeServer<any>,
-        session: Session<MatterDevice>,
+        exchange: MessageExchange<MatterDevice>,
         isFabricFiltered: boolean,
         message: Message,
     ) {
-        return attribute.getWithVersion(session, isFabricFiltered, message);
+        return attribute.getWithVersion(exchange.session, isFabricFiltered, message);
     }
 
     async handleWriteRequest(
@@ -587,13 +587,7 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
                         );
                     }
 
-                    await this.writeAttribute(
-                        attribute,
-                        value,
-                        exchange.session,
-                        message,
-                        receivedWithinTimedInteraction,
-                    );
+                    await this.writeAttribute(attribute, value, exchange, message, receivedWithinTimedInteraction);
                 } catch (error: any) {
                     if (attributes.length === 1) {
                         // For Multi-Attribute-Writes we ignore errors
@@ -666,11 +660,11 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
     protected async writeAttribute(
         attribute: AttributeServer<any>,
         value: any,
-        session: Session<MatterDevice>,
+        exchange: MessageExchange<MatterDevice>,
         message: Message,
         _receivedWithinTimedInteraction?: boolean,
     ) {
-        attribute.set(value, session, message);
+        attribute.set(value, exchange.session, message);
     }
 
     async handleSubscribeRequest(
@@ -783,7 +777,7 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
         try {
             // Send initial data report to prime the subscription with initial data
             await subscriptionHandler.sendInitialReport(messenger, attribute =>
-                this.readAttribute(attribute, session, false, message),
+                this.readAttribute(attribute, exchange, false, message),
             );
         } catch (error: any) {
             logger.error(
@@ -963,7 +957,7 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
                         async () =>
                             await this.invokeCommand(
                                 command,
-                                exchange.session,
+                                exchange,
                                 commandFields ?? TlvNoArguments.encodeTlv(commandFields),
                                 message,
                                 endpoint,
@@ -971,8 +965,8 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
                             ),
                         StatusResponseError,
                         async error => {
-                            const errorLogText = `Error ${toHexString(error.code)}${
-                                error.clusterCode !== undefined ? `/${toHexString(error.clusterCode)}` : ""
+                            const errorLogText = `Error ${Diagnostic.hex(error.code)}${
+                                error.clusterCode !== undefined ? `/${Diagnostic.hex(error.clusterCode)}` : ""
                             } while invoking command: ${error.message}`;
                             if (error instanceof ValidationError) {
                                 logger.info(
@@ -1016,13 +1010,13 @@ export class InteractionServer implements ProtocolHandler<MatterDevice> {
 
     protected async invokeCommand(
         command: CommandServer<any, any>,
-        session: Session<MatterDevice>,
+        exchange: MessageExchange<MatterDevice>,
         commandFields: any,
         message: Message,
         endpoint: EndpointInterface,
         _receivedWithinTimedInteraction = false,
     ) {
-        return command.invoke(session, commandFields, message, endpoint);
+        return command.invoke(exchange.session, commandFields, message, endpoint);
     }
 
     handleTimedRequest(exchange: MessageExchange<MatterDevice>, { timeout, interactionModelRevision }: TimedRequest) {

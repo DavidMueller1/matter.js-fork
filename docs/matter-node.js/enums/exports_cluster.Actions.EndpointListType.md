@@ -9,7 +9,7 @@ created logical grouping of the endpoints (e.g. bridged devices) based on locati
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.14.4.5
+MatterSpecification.v11.Core § 9.14.4.5
 
 ## Table of contents
 
@@ -33,11 +33,11 @@ not use this for anything else than just to know which endpoints would be affect
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.14.4.5.1
+MatterSpecification.v11.Core § 9.14.4.5.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:282
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:291
 
 ___
 
@@ -55,11 +55,11 @@ adds a bridged device or creates a new room).
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.14.4.5.2
+MatterSpecification.v11.Core § 9.14.4.5.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:294
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:303
 
 ___
 
@@ -78,8 +78,8 @@ control as a group, so Matter controllers could provide the user with a way to d
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.14.4.5.3
+MatterSpecification.v11.Core § 9.14.4.5.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:307
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:316

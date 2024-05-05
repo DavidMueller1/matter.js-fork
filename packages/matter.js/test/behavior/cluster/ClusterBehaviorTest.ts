@@ -12,12 +12,45 @@ import { LevelControlServer } from "../../../src/behavior/definitions/level-cont
 import { NetworkCommissioningServer } from "../../../src/behavior/definitions/network-commissioning/NetworkCommissioningServer.js";
 import { OnOffServer } from "../../../src/behavior/definitions/on-off/OnOffServer.js";
 import { StateType } from "../../../src/behavior/state/StateType.js";
+import { Attribute } from "../../../src/cluster/Cluster.js";
+import { ClusterType } from "../../../src/cluster/ClusterType.js";
 import { ElementModifier } from "../../../src/cluster/mutation/ElementModifier.js";
-import { ClusterModel } from "../../../src/model/index.js";
-import { EventEmitter, Observable } from "../../../src/util/Observable.js";
+import { ClusterId } from "../../../src/datatype/ClusterId.js";
+import { AttributeElement, ClusterModel } from "../../../src/model/index.js";
+import { TlvBoolean } from "../../../src/tlv/TlvBoolean.js";
+import { TlvNullable } from "../../../src/tlv/TlvNullable.js";
+import { TlvInt32 } from "../../../src/tlv/TlvNumber.js";
+import { TlvString } from "../../../src/tlv/TlvString.js";
+import { AsyncObservable, BasicObservable, EventEmitter, Observable } from "../../../src/util/Observable.js";
 import { MaybePromise } from "../../../src/util/Promises.js";
 import { MockEndpoint } from "../../endpoint/mock-endpoint.js";
 import { My, MyBehavior, MyCluster } from "./cluster-behavior-test-util.js";
+
+class MyEventedBehavior extends MyBehavior {
+    declare events: MyEventedBehavior.Events;
+}
+
+namespace MyEventedBehavior {
+    export class Events extends MyBehavior.Events {
+        somethingHappened = new Observable<[]>();
+    }
+}
+
+class BehaviorWithCustomMethods extends MyBehavior.with("Awesome") {
+    foo() {
+        return true;
+    }
+
+    bar() {
+        return 4;
+    }
+}
+
+namespace BehaviorWithCustomMethods {
+    export declare const ExtensionInterface: {
+        bar(): number;
+    };
+}
 
 describe("ClusterBehavior", () => {
     type Match<Input, Type> = Input extends Type ? true : false;
@@ -65,7 +98,7 @@ describe("ClusterBehavior", () => {
 
             ({}) as MyBehavior satisfies {
                 events: EventEmitter & {
-                    reqAttr$Change: Observable<[value: string, oldValue: string, context?: ActionContext]>;
+                    reqAttr$Changed: AsyncObservable<[value: string, oldValue: string, context?: ActionContext]>;
                 };
             };
 
@@ -86,7 +119,7 @@ describe("ClusterBehavior", () => {
             true satisfies MyBehavior["state"]["optAttr"];
             (() => true) satisfies MyBehavior["optCmd"];
             ((..._args: any[]) => true) satisfies MyBehavior["optCmd"];
-            ({}) as Match<MyBehavior["events"], { optAttr$Change: {} }> satisfies false;
+            ({}) as Match<MyBehavior["events"], { optAttr$Changed: {} }> satisfies false;
             ({}) as Match<MyBehavior["events"], { optEv: {} }> satisfies false;
             ({}) as Match<MyBehavior, { optCmd: (...args: any[]) => any }> satisfies true;
         });
@@ -97,8 +130,8 @@ describe("ClusterBehavior", () => {
                 const behavior = agent.myCluster;
                 expect(behavior.state.reqAttr).equals("hello");
                 expect(behavior.reqCmd).is.a("function");
-                expect(behavior.events.reqAttr$Change.constructor.name).equals("Emitter");
-                expect(behavior.events.reqEv.constructor.name).equals("Emitter");
+                expect(behavior.events.reqAttr$Changed).instanceof(BasicObservable);
+                expect(behavior.events.reqEv).instanceof(BasicObservable);
             });
         });
 
@@ -107,7 +140,7 @@ describe("ClusterBehavior", () => {
             await endpoint.act(agent => {
                 const behavior = agent.myCluster;
                 expect(behavior.state.optAttr).undefined;
-                expect(behavior.events.optAttr$Change?.constructor.name).equals("Emitter");
+                expect(behavior.events.optAttr$Changed).instanceof(BasicObservable);
                 expect(behavior.events.optEv).undefined;
             });
         });
@@ -123,6 +156,60 @@ describe("ClusterBehavior", () => {
                 }
             };
             Ignored;
+        });
+
+        it("assigns correct default values", () => {
+            const MyBehavior = ClusterBehavior.for(
+                ClusterType({
+                    name: "MyCluster",
+                    id: ClusterId(1),
+                    revision: 1,
+                    attributes: {
+                        attr1: Attribute(1, TlvNullable(TlvInt32)),
+                        attr2: Attribute(2, TlvInt32, { default: 123 }),
+                        attr3: Attribute(3, TlvString, { default: "abc" }),
+                        attr4: Attribute(4, TlvBoolean),
+                    },
+                }),
+                new ClusterModel({
+                    name: "MyCluster",
+                    id: 1,
+                    children: [
+                        AttributeElement({ id: 1, name: "Attr1", type: "int32", quality: "X" }),
+                        AttributeElement({ id: 2, name: "Attr2", type: "int32", default: 123 }),
+                        AttributeElement({ id: 3, name: "Attr3", type: "string", default: "abc" }),
+                        AttributeElement({ id: 4, name: "Attr4", type: "bool" }),
+                    ],
+                }),
+            );
+
+            expect(MyBehavior.defaults.attr1).equals(null);
+            expect(MyBehavior.defaults.attr2).equals(123);
+            expect(MyBehavior.defaults.attr3).equals("abc");
+            expect(MyBehavior.defaults.attr4).equals(undefined);
+        });
+
+        it("carries forward non-command methods", () => {
+            ({}) as BehaviorWithCustomMethods satisfies { foo(): boolean };
+
+            const WithRevertedFeature = BehaviorWithCustomMethods.for(MyCluster);
+
+            ({}) as InstanceType<typeof WithRevertedFeature> satisfies { foo(): boolean };
+
+            class FooOverrideBehavior extends WithRevertedFeature {
+                // Note -- limitation due to https://github.com/microsoft/TypeScript/issues/27965 requires us to
+                // override as an instance function rather than a method
+                override foo = () => {
+                    return false;
+                };
+
+                // This is in ExtensionInterface so TS bug above does not apply
+                override bar() {
+                    return 5;
+                }
+            }
+
+            ({}) as InstanceType<typeof FooOverrideBehavior> satisfies { foo(): boolean };
         });
     });
 
@@ -149,6 +236,15 @@ describe("ClusterBehavior", () => {
             const AlteredBehavior = MyBehavior.alter({});
             AlteredBehavior.id satisfies "myCluster";
             expect(AlteredBehavior.id).equals("myCluster");
+        });
+
+        it("extends correct event class", () => {
+            const base = new MyEventedBehavior.Events();
+            expect(typeof base.somethingHappened?.on).equals("function");
+
+            const Altered = MyEventedBehavior.alter({});
+            const altered = new Altered.Events();
+            expect(typeof altered.somethingHappened?.on).equals("function");
         });
     });
 
@@ -216,6 +312,10 @@ describe("ClusterBehavior", () => {
 
             const Events2 = MyBi.Events;
             ({}) as InstanceType<typeof Events2> satisfies EventEmitter;
+
+            const eventsInstance = new Events2();
+            eventsInstance.startUp satisfies Observable;
+            expect(eventsInstance.startUp).not.undefined;
         });
 
         it("sets defaults for newly-enabled properties", () => {

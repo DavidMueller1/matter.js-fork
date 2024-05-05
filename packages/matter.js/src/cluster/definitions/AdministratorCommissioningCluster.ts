@@ -8,7 +8,6 @@
 
 import { MutableCluster } from "../../cluster/mutation/MutableCluster.js";
 import { Command, TlvNoResponse, AccessLevel, Attribute } from "../../cluster/Cluster.js";
-import { MatterCoreSpecificationV1_1 } from "../../spec/Specifications.js";
 import { TlvObject, TlvField } from "../../tlv/TlvObject.js";
 import { TlvUInt16, TlvEnum, TlvUInt32 } from "../../tlv/TlvNumber.js";
 import { TypeFromSchema } from "../../tlv/TlvSchema.js";
@@ -25,19 +24,35 @@ export namespace AdministratorCommissioning {
     /**
      * Input to the AdministratorCommissioning openBasicCommissioningWindow command
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.2
+     * @see {@link MatterSpecification.v11.Core} § 11.18.8.2
      */
-    export const TlvOpenBasicCommissioningWindowRequest = TlvObject({ commissioningTimeout: TlvField(0, TlvUInt16) });
+    export const TlvOpenBasicCommissioningWindowRequest = TlvObject({
+        /**
+         * This field shall specify the time in seconds during which commissioning session establishment is allowed by
+         * the Node. This is known as Open Basic Commissioning Window (OBCW). This timeout shall follow guidance as
+         * specified in Announcement Duration.
+         *
+         * When a Node receives the Open Basic Commissioning Window command, it shall begin advertising on DNS-SD as
+         * described in Section 4.3.1, “Commissionable Node Discovery” and for a time period as described in Section
+         * 11.18.8.2.1, “CommissioningTimeout Field”. When the command is received by a SED, it shall enter into active
+         * mode and set its fast-polling interval to SLEEPY_AC
+         *
+         * TIVE_INTERVAL for at least the entire duration of the CommissioningTimeout.
+         *
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.2.1
+         */
+        commissioningTimeout: TlvField(0, TlvUInt16)
+    });
 
     /**
      * Input to the AdministratorCommissioning openBasicCommissioningWindow command
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.2
+     * @see {@link MatterSpecification.v11.Core} § 11.18.8.2
      */
     export interface OpenBasicCommissioningWindowRequest extends TypeFromSchema<typeof TlvOpenBasicCommissioningWindowRequest> {}
 
     /**
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.5.1
+     * @see {@link MatterSpecification.v11.Core} § 11.18.5.1
      */
     export enum CommissioningWindowStatus {
         /**
@@ -59,7 +74,7 @@ export namespace AdministratorCommissioning {
     /**
      * Input to the AdministratorCommissioning openCommissioningWindow command
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1
+     * @see {@link MatterSpecification.v11.Core} § 11.18.8.1
      */
     export const TlvOpenCommissioningWindowRequest = TlvObject({
         /**
@@ -69,7 +84,7 @@ export namespace AdministratorCommissioning {
          * and to accepting of new commissioning sessions; it does not apply to abortion of connections, i.e., a
          * commissioning session SHOULD NOT abort prematurely upon expiration of this timeout.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1.1
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1.1
          */
         commissioningTimeout: TlvField(0, TlvUInt16),
 
@@ -81,7 +96,7 @@ export namespace AdministratorCommissioning {
          * from an ephemeral passcode (See PAKE). It shall be deleted by the Node at the end of commissioning or
          * expiration of OCW, and shall be deleted by the existing Administrator after sending it to the Node(s).
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1.2
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1.2
          */
         pakePasscodeVerifier: TlvField(1, TlvByteString.bound({ length: 97 })),
 
@@ -90,7 +105,7 @@ export namespace AdministratorCommissioning {
          * Discriminator) for discovery by the new Administrator. The new Administrator can find and filter DNS-SD
          * records by long discriminator to locate and initiate commissioning with the appropriate Node.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1.3
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1.3
          */
         discriminator: TlvField(2, TlvUInt16.bound({ max: 4095 })),
 
@@ -101,7 +116,7 @@ export namespace AdministratorCommissioning {
          * match the range specified in Section 3.9, “Password-Based Key Derivation Function (PBKDF)”, within the
          * definition of the Crypto_PBKDFParameterSet.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1.4
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1.4
          */
         iterations: TlvField(3, TlvUInt32.bound({ min: 1000, max: 100000 })),
 
@@ -119,7 +134,7 @@ export namespace AdministratorCommissioning {
          * mode and set its fast-polling interval to SLEEPY_ACTIVE_INTERVAL for at least the entire duration of the
          * CommissioningTimeout.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1.5
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1.5
          */
         salt: TlvField(4, TlvByteString.bound({ minLength: 16, maxLength: 32 }))
     });
@@ -127,7 +142,7 @@ export namespace AdministratorCommissioning {
     /**
      * Input to the AdministratorCommissioning openCommissioningWindow command
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1
+     * @see {@link MatterSpecification.v11.Core} § 11.18.8.1
      */
     export interface OpenCommissioningWindowRequest extends TypeFromSchema<typeof TlvOpenCommissioningWindowRequest> {}
 
@@ -135,21 +150,21 @@ export namespace AdministratorCommissioning {
         /**
          * Could not be completed because another commissioning is in progress
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.6
+         * @see {@link MatterSpecification.v11.Core} § 11.18.6
          */
         Busy = 2,
 
         /**
          * Provided PAKE parameters were incorrectly formatted or otherwise invalid
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.6
+         * @see {@link MatterSpecification.v11.Core} § 11.18.6
          */
         PakeParameterError = 3,
 
         /**
          * No commissioning window was currently open
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.6
+         * @see {@link MatterSpecification.v11.Core} § 11.18.6
          */
         WindowNotOpen = 4
     }
@@ -178,18 +193,7 @@ export namespace AdministratorCommissioning {
              * CommissioningComplete command, see Section 5.5, “Commissioning Flows”. The new Administrator shall
              * discover the Node on the IP network using DNS-based Service Discovery (DNS-SD) for commissioning.
              *
-             * This field shall specify the time in seconds during which commissioning session establishment is allowed
-             * by the Node. This is known as Open Basic Commissioning Window (OBCW). This timeout shall follow guidance
-             * as specified in Announcement Duration.
-             *
-             * When a Node receives the Open Basic Commissioning Window command, it shall begin advertising on DNS-SD
-             * as described in Section 4.3.1, “Commissionable Node Discovery” and for a time period as described in
-             * Section 11.18.8.2.1, “CommissioningTimeout Field”. When the command is received by a SED, it shall enter
-             * into active mode and set its fast-polling interval to SLEEPY_AC
-             *
-             * TIVE_INTERVAL for at least the entire duration of the CommissioningTimeout.
-             *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.2
+             * @see {@link MatterSpecification.v11.Core} § 11.18.8.2
              */
             openBasicCommissioningWindow: Command(
                 0x1,
@@ -204,7 +208,7 @@ export namespace AdministratorCommissioning {
     /**
      * These are optional features supported by AdministratorCommissioningCluster.
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18.4
+     * @see {@link MatterSpecification.v11.Core} § 11.18.4
      */
     export enum Feature {
         /**
@@ -242,7 +246,7 @@ export namespace AdministratorCommissioning {
              * Note that an initial commissioning window is not opened using either the OCW command or the OBCW
              * command, and therefore this attribute shall be set to WindowNotOpen on initial commissioning.
              *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.7.1
+             * @see {@link MatterSpecification.v11.Core} § 11.18.7.1
              */
             windowStatus: Attribute(0x0, TlvEnum<CommissioningWindowStatus>()),
 
@@ -256,7 +260,7 @@ export namespace AdministratorCommissioning {
              *
              * When the WindowStatus attribute is set to WindowNotOpen, this attribute shall be set to null.
              *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.7.2
+             * @see {@link MatterSpecification.v11.Core} § 11.18.7.2
              */
             adminFabricIndex: Attribute(0x1, TlvNullable(TlvFabricIndex)),
 
@@ -269,7 +273,7 @@ export namespace AdministratorCommissioning {
              *
              * When the WindowStatus attribute is set to WindowNotOpen, this attribute shall be set to null.
              *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.7.3
+             * @see {@link MatterSpecification.v11.Core} § 11.18.7.3
              */
             adminVendorId: Attribute(0x2, TlvNullable(TlvVendorId))
         },
@@ -305,7 +309,7 @@ export namespace AdministratorCommissioning {
              *
              * In case of any other parameter error, this command shall fail with a status code of COMMAND_INVALID.
              *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1
+             * @see {@link MatterSpecification.v11.Core} § 11.18.8.1
              */
             openCommissioningWindow: Command(
                 0x0,
@@ -325,7 +329,7 @@ export namespace AdministratorCommissioning {
              * If no commissioning window was open at time of receipt, this command shall fail with a cluster specific
              * status code of WindowNotOpen.
              *
-             * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.3
+             * @see {@link MatterSpecification.v11.Core} § 11.18.8.3
              */
             revokeCommissioning: Command(
                 0x2,
@@ -360,7 +364,7 @@ export namespace AdministratorCommissioning {
      * AdministratorCommissioningCluster supports optional features that you can enable with the
      * AdministratorCommissioningCluster.with() factory method.
      *
-     * @see {@link MatterCoreSpecificationV1_1} § 11.18
+     * @see {@link MatterSpecification.v11.Core} § 11.18
      */
     export interface Cluster extends Identity<typeof ClusterInstance> {}
 

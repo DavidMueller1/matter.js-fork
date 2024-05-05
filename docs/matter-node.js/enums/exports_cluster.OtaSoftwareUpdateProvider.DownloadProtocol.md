@@ -10,7 +10,7 @@ NOT be supported, as there is no way to authenticate the involved participants.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.19.6.4.3
+MatterSpecification.v11.Core § 11.19.6.4.3
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ Indicates support for asynchronous BDX.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:25
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:27
 
 ___
 
@@ -43,7 +43,7 @@ Indicates support for synchronous BDX.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:21
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:23
 
 ___
 
@@ -55,7 +55,7 @@ Indicates support for HTTPS.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:29
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:31
 
 ___
 
@@ -67,4 +67,4 @@ Indicates support for vendor specific protocol.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:33
+packages/matter.js/dist/esm/cluster/definitions/OtaSoftwareUpdateProviderCluster.d.ts:35

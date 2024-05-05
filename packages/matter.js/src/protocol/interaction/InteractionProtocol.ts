@@ -10,6 +10,7 @@ import { TlvClusterId } from "../../datatype/ClusterId.js";
 import { TlvCommandId } from "../../datatype/CommandId.js";
 import { TlvEndpointNumber } from "../../datatype/EndpointNumber.js";
 import { TlvEventId } from "../../datatype/EventId.js";
+import { TlvEventNumber } from "../../datatype/EventNumber.js";
 import { TlvNodeId } from "../../datatype/NodeId.js";
 import { TlvAny } from "../../tlv/TlvAny.js";
 import { TlvArray } from "../../tlv/TlvArray.js";
@@ -21,7 +22,7 @@ import { StatusCode } from "./StatusCode.js";
 
 // Data structures
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.2 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.2 */
 export const TlvAttributePath = TlvTaggedList({
     // AttributePathIB
     enableTagCompression: TlvOptionalField(0, TlvBoolean),
@@ -32,7 +33,7 @@ export const TlvAttributePath = TlvTaggedList({
     listIndex: TlvOptionalField(5, TlvNullable(TlvUInt16)),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.8 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.8 */
 export const TlvEventPath = TlvTaggedList({
     // EventPathIB
     nodeId: TlvOptionalField(0, TlvNodeId),
@@ -42,11 +43,11 @@ export const TlvEventPath = TlvTaggedList({
     isUrgent: TlvOptionalField(4, TlvBoolean),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.9 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.9 */
 export const TlvEventData = TlvObject({
     // EventDataIB
     path: TlvField(0, TlvEventPath),
-    eventNumber: TlvField(1, TlvUInt64),
+    eventNumber: TlvField(1, TlvEventNumber),
     priority: TlvField(2, TlvEnum<EventPriority>()),
     epochTimestamp: TlvOptionalField(3, TlvPosixMs),
     systemTimestamp: TlvOptionalField(4, TlvSysTimeMS),
@@ -55,14 +56,14 @@ export const TlvEventData = TlvObject({
     data: TlvOptionalField(7, TlvAny),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.6 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.6 */
 export const TlvEventFilter = TlvObject({
     // EventFilterIB
     nodeId: TlvOptionalField(0, TlvNodeId),
     eventMin: TlvField(1, TlvUInt64),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.7 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.7 */
 export const TlvClusterPath = TlvTaggedList({
     // ClusterPathIB
     nodeId: TlvOptionalField(0, TlvNodeId),
@@ -70,28 +71,28 @@ export const TlvClusterPath = TlvTaggedList({
     clusterId: TlvField(2, TlvClusterId),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.3 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.3 */
 export const TlvDataVersionFilter = TlvObject({
     // DataVersionFilterIB
     path: TlvField(0, TlvClusterPath),
     dataVersion: TlvField(1, TlvUInt32),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.17 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.17 */
 export const TlvStatus = TlvObject({
     // StatusIB
     status: TlvOptionalField(0, TlvEnum<StatusCode>()),
     clusterStatus: TlvOptionalField(1, TlvEnum<StatusCode>()),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.16 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.16 */
 export const TlvAttributeStatus = TlvObject({
     // AttributeStatusIB
     path: TlvField(0, TlvAttributePath),
     status: TlvField(1, TlvStatus),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.4 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.4 */
 export const TlvAttributeData = TlvObject({
     // AttributeDataIB version for Non-Reports
     dataVersion: TlvOptionalField(0, TlvUInt32),
@@ -106,28 +107,28 @@ export const TlvAttributeReportData = TlvObject({
     data: TlvField(2, TlvAny),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.5 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.5 */
 export const TlvAttributeReport = TlvObject({
     // AttributeReportIB
     attributeStatus: TlvOptionalField(0, TlvAttributeStatus),
     attributeData: TlvOptionalField(1, TlvAttributeReportData),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.15 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.15 */
 export const TlvEventStatus = TlvObject({
     // EventStatusIB
     path: TlvField(0, TlvEventPath),
     status: TlvField(1, TlvStatus),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.10 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.10 */
 export const TlvEventReport = TlvObject({
     // EventReportIB
     eventStatus: TlvOptionalField(0, TlvEventStatus),
     eventData: TlvOptionalField(1, TlvEventData),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.11 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.11 */
 export const TlvCommandPath = TlvTaggedList({
     // CommandPathIB
     endpointId: TlvOptionalField(0, TlvEndpointNumber),
@@ -135,21 +136,21 @@ export const TlvCommandPath = TlvTaggedList({
     commandId: TlvField(2, TlvCommandId),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.12 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.12 */
 export const TlvCommandData = TlvObject({
     // CommandDataIB
     commandPath: TlvField(0, TlvCommandPath),
     commandFields: TlvOptionalField(1, TlvAny),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.14 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.14 */
 export const TlvCommandStatus = TlvObject({
     // CommandStatusIB
     commandPath: TlvField(0, TlvCommandPath),
     status: TlvField(1, TlvStatus),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.5.13 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.5.13 */
 export const TlvInvokeResponseData = TlvObject({
     // InvokeResponseIB
     command: TlvOptionalField(0, TlvCommandData),
@@ -158,13 +159,13 @@ export const TlvInvokeResponseData = TlvObject({
 
 // Request/Response Messages
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.1 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.1 */
 export const TlvStatusResponse = TlvObject({
     status: TlvField(0, TlvEnum<StatusCode>()),
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.2 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.2 */
 export const TlvReadRequest = TlvObject({
     attributeRequests: TlvOptionalField(0, TlvArray(TlvAttributePath)),
     eventRequests: TlvOptionalField(1, TlvArray(TlvEventPath)),
@@ -174,7 +175,7 @@ export const TlvReadRequest = TlvObject({
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.3 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.3 */
 export const TlvDataReport = TlvObject({
     subscriptionId: TlvOptionalField(0, TlvUInt32),
     attributeReports: TlvOptionalField(1, TlvArray(TlvAttributeReport)),
@@ -194,7 +195,7 @@ export const TlvDataReportForSend = TlvObject({
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.4 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.4 */
 export const TlvSubscribeRequest = TlvObject({
     keepSubscriptions: TlvField(0, TlvBoolean),
     minIntervalFloorSeconds: TlvField(1, TlvUInt16),
@@ -207,14 +208,14 @@ export const TlvSubscribeRequest = TlvObject({
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.5 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.5 */
 export const TlvSubscribeResponse = TlvObject({
     subscriptionId: TlvField(0, TlvUInt32),
     maxInterval: TlvField(2, TlvUInt16),
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.9 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.9 */
 export const TlvInvokeRequest = TlvObject({
     suppressResponse: TlvField(0, TlvBoolean),
     timedRequest: TlvField(1, TlvBoolean),
@@ -222,20 +223,20 @@ export const TlvInvokeRequest = TlvObject({
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.10 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.10 */
 export const TlvInvokeResponse = TlvObject({
     suppressResponse: TlvField(0, TlvBoolean),
     invokeResponses: TlvField(1, TlvArray(TlvInvokeResponseData)),
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.8 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.8 */
 export const TlvTimedRequest = TlvObject({
     timeout: TlvField(0, TlvUInt16),
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.6 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.6 */
 export const TlvWriteRequest = TlvObject({
     suppressResponse: TlvOptionalField(0, TlvBoolean),
     timedRequest: TlvField(1, TlvBoolean),
@@ -244,7 +245,7 @@ export const TlvWriteRequest = TlvObject({
     interactionModelRevision: TlvField(0xff, TlvUInt8),
 });
 
-/** @see {@link MatterCoreSpecificationV1_0}, section 10.6.7 */
+/** @see {@link MatterSpecification.v10.Core}, section 10.6.7 */
 export const TlvWriteResponse = TlvObject({
     writeResponses: TlvField(0, TlvArray(TlvAttributeStatus)),
     interactionModelRevision: TlvField(0xff, TlvUInt8),

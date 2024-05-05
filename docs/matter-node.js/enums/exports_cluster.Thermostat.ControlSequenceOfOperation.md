@@ -8,7 +8,7 @@ The value of the Thermostat controlSequenceOfOperation attribute
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.3.7.23
+MatterSpecification.v11.Cluster § 4.3.7.23
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ All modes are possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:55
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:233
 
 ___
 
@@ -43,7 +43,7 @@ All modes are possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:59
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:237
 
 ___
 
@@ -55,7 +55,7 @@ Heat and Emergency are not possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:39
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:217
 
 ___
 
@@ -67,7 +67,7 @@ Heat and Emergency are not possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:43
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:221
 
 ___
 
@@ -79,7 +79,7 @@ Cool and precooling (see Terms) are not possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:47
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:225
 
 ___
 
@@ -91,4 +91,4 @@ Cool and precooling are not possible
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:51
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:229

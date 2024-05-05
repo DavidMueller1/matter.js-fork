@@ -206,7 +206,7 @@ ___
 
 Ƭ **TlvTag**: `Object`
 
-MatterCoreSpecificationV1_0 § A.2
+MatterSpecification.v10.Core § A.2
 
 #### Type declaration
 
@@ -651,7 +651,7 @@ ___
 
 ### TlvBitmap
 
-▸ **TlvBitmap**\<`T`\>(`underlyingSchema`, `bitSchema`): [`TlvWrapper`](../classes/exports_tlv.TlvWrapper.md)\<[`TypeFromBitSchema`](exports_schema.md#typefrombitschema)\<`T`\>, `number`\>
+▸ **TlvBitmap**\<`T`\>(`underlyingSchema`, `bitSchema`): [`TlvWrapper`](../classes/exports_tlv.TlvWrapper.md)\<[`TypeFromPartialBitSchema`](exports_schema.md#typefrompartialbitschema)\<`T`\>, `number`\>
 
 #### Type parameters
 
@@ -668,7 +668,7 @@ ___
 
 #### Returns
 
-[`TlvWrapper`](../classes/exports_tlv.TlvWrapper.md)\<[`TypeFromBitSchema`](exports_schema.md#typefrombitschema)\<`T`\>, `number`\>
+[`TlvWrapper`](../classes/exports_tlv.TlvWrapper.md)\<[`TypeFromPartialBitSchema`](exports_schema.md#typefrompartialbitschema)\<`T`\>, `number`\>
 
 #### Defined in
 

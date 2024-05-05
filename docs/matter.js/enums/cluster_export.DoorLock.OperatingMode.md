@@ -15,7 +15,7 @@ all other commands and requests.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12
+MatterSpecification.v11.Cluster § 5.2.6.12
 
 ## Table of contents
 
@@ -39,11 +39,11 @@ Commands.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12.4
+MatterSpecification.v11.Cluster § 5.2.6.12.4
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:163](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L163)
+[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:805](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L805)
 
 ___
 
@@ -55,11 +55,11 @@ The lock operates normally. All interfaces are enabled.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12.1
+MatterSpecification.v11.Cluster § 5.2.6.12.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:138](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L138)
+[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:780](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L780)
 
 ___
 
@@ -72,11 +72,11 @@ validation (e.g. a lock for a business during work hours).
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12.5
+MatterSpecification.v11.Cluster § 5.2.6.12.5
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:171](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L171)
+[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:813](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L813)
 
 ___
 
@@ -90,11 +90,11 @@ users, presumably inside the property, will have control over the entrance.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12.3
+MatterSpecification.v11.Cluster § 5.2.6.12.3
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:154](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L154)
+[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:796](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L796)
 
 ___
 
@@ -106,8 +106,8 @@ Only remote interaction is enabled. The keypad shall only be operable by the mas
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 5.2.6.12.2
+MatterSpecification.v11.Cluster § 5.2.6.12.2
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:145](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L145)
+[packages/matter.js/src/cluster/definitions/DoorLockCluster.ts:787](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DoorLockCluster.ts#L787)

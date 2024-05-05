@@ -68,7 +68,7 @@
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:51
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:52
 
 ## Properties
 
@@ -78,7 +78,7 @@ matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:51
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:45
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:46
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:46
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:47
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:49
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:50
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:146
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:147
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:261
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:262
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:48
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:49
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:47
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:48
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:50
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:51
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:260
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:261
 
 ## Accessors
 
@@ -172,7 +172,7 @@ matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:260
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:263
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:264
 
 ## Methods
 
@@ -186,7 +186,7 @@ matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:263
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:262
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:263
 
 ___
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:54
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:55
 
 ___
 
@@ -231,7 +231,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:66
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:67
 
 ___
 
@@ -253,7 +253,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:62
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:63
 
 ___
 
@@ -284,7 +284,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:122
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:123
 
 ___
 
@@ -315,7 +315,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:129
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:130
 
 ___
 
@@ -339,7 +339,7 @@ ___
 | `options.endpointId` | [`EndpointNumber`](../modules/internal_.md#endpointnumber) |
 | `options.event` | `E` |
 | `options.isFabricFiltered?` | `boolean` |
-| `options.minimumEventNumber?` | `number` \| `bigint` |
+| `options.minimumEventNumber?` | [`EventNumber`](../modules/internal_.md#eventnumber) |
 
 #### Returns
 
@@ -347,7 +347,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:139
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:140
 
 ___
 
@@ -370,7 +370,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:78
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:79
 
 ___
 
@@ -395,7 +395,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:100
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:101
 
 ___
 
@@ -418,7 +418,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:91
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:92
 
 ___
 
@@ -451,7 +451,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:243
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:244
 
 ___
 
@@ -483,7 +483,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:252
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:253
 
 ___
 
@@ -496,7 +496,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `subscriptionId` | `number` |
-| `listener` | (`dataReport`: [`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeReports`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeData`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `data`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TlvStream`](../modules/internal_.md#tlvstream)\> ; `dataVersion`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number`\> ; `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`AttributeId`](../modules/internal_.md#attributeid)\> ; `clusterId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`ClusterId`](../modules/internal_.md#clusterid)\> ; `enableTagCompression`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `endpointId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EndpointNumber`](../modules/internal_.md#endpointnumber)\> ; `listIndex`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<``null`` \| `number`\> ; `nodeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`NodeId`](../modules/internal_.md#nodeid)\>  }\>\>  }\>\> ; `attributeStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`AttributeId`](../modules/internal_.md#attributeid)\> ; `clusterId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`ClusterId`](../modules/internal_.md#clusterid)\> ; `enableTagCompression`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `endpointId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EndpointNumber`](../modules/internal_.md#endpointnumber)\> ; `listIndex`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<``null`` \| `number`\> ; `nodeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`NodeId`](../modules/internal_.md#nodeid)\>  }\>\> ; `status`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `clusterStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`StatusCode`](../enums/internal_.StatusCode.md)\> ; `status`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`StatusCode`](../enums/internal_.StatusCode.md)\>  }\>\>  }\>\>  }\>[]\> ; `eventReports`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `eventData`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `data`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TlvStream`](../modules/internal_.md#tlvstream)\> ; `deltaEpochTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number` \| `bigint`\> ; `deltaSystemTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number` \| `bigint`\> ; `epochTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number` \| `bigint`\> ; `eventNumber`: [`FieldType`](../interfaces/internal_.FieldType.md)\<`number` \| `bigint`\> ; `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `clusterId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`ClusterId`](../modules/internal_.md#clusterid)\> ; `endpointId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EndpointNumber`](../modules/internal_.md#endpointnumber)\> ; `eventId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EventId`](../modules/internal_.md#eventid)\> ; `isUrgent`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `nodeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`NodeId`](../modules/internal_.md#nodeid)\>  }\>\> ; `priority`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`EventPriority`](../enums/internal_.EventPriority.md)\> ; `systemTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number` \| `bigint`\>  }\>\> ; `eventStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `clusterId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`ClusterId`](../modules/internal_.md#clusterid)\> ; `endpointId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EndpointNumber`](../modules/internal_.md#endpointnumber)\> ; `eventId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`EventId`](../modules/internal_.md#eventid)\> ; `isUrgent`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `nodeId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`NodeId`](../modules/internal_.md#nodeid)\>  }\>\> ; `status`: [`FieldType`](../interfaces/internal_.FieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `clusterStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`StatusCode`](../enums/internal_.StatusCode.md)\> ; `status`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`StatusCode`](../enums/internal_.StatusCode.md)\>  }\>\>  }\>\>  }\>[]\> ; `interactionModelRevision`: [`FieldType`](../interfaces/internal_.FieldType.md)\<`number`\> ; `moreChunkedMessages`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `subscriptionId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number`\> ; `suppressResponse`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\>  }\>) => `void` |
+| `listener` | (`dataReport`: [`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeReports`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `attributeData`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `data`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `dataVersion`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\> ; `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\>  }\>\> ; `attributeStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `status`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\>  }\>\>  }\>[]\> ; `eventReports`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `eventData`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `data`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\> ; `deltaEpochTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\> ; `deltaSystemTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\> ; `epochTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\> ; `eventNumber`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `priority`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `systemTimestamp`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<...\>  }\>\> ; `eventStatus`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<[`TypeFromFields`](../modules/internal_.md#typefromfields)\<\{ `path`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\> ; `status`: [`FieldType`](../interfaces/internal_.FieldType.md)\<...\>  }\>\>  }\>[]\> ; `interactionModelRevision`: [`FieldType`](../interfaces/internal_.FieldType.md)\<`number`\> ; `moreChunkedMessages`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\> ; `subscriptionId`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`number`\> ; `suppressResponse`: [`OptionalFieldType`](../interfaces/internal_.OptionalFieldType.md)\<`boolean`\>  }\>) => `void` |
 
 #### Returns
 
@@ -504,7 +504,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:52
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:53
 
 ___
 
@@ -524,7 +524,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:53
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:54
 
 ___
 
@@ -559,7 +559,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:147
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:148
 
 ___
 
@@ -583,7 +583,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:159
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:160
 
 ___
 
@@ -613,7 +613,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:195
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:196
 
 ___
 
@@ -649,7 +649,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:171
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:172
 
 ___
 
@@ -677,7 +677,7 @@ ___
 | `options.listener?` | (`value`: [`DecodedEventData`](../modules/internal_.md#decodedeventdata)\<`T`\>) => `void` |
 | `options.maxIntervalCeilingSeconds` | `number` |
 | `options.minIntervalFloorSeconds` | `number` |
-| `options.minimumEventNumber?` | `number` \| `bigint` |
+| `options.minimumEventNumber?` | [`EventNumber`](../modules/internal_.md#eventnumber) |
 | `options.updateTimeoutHandler?` | [`TimerCallback`](../modules/internal_.md#timercallback) |
 
 #### Returns
@@ -686,7 +686,7 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:183
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:184
 
 ___
 
@@ -717,4 +717,4 @@ ___
 
 #### Defined in
 
-matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:214
+matter.js/dist/esm/protocol/interaction/InteractionClient.d.ts:215

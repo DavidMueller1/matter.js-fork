@@ -12,7 +12,7 @@ import type { NodeJsEnvironment } from "./NodeJsEnvironment.js";
 const logger = Logger.get("ProcessManager");
 
 /**
- * ProcessManager watches Node.js signals SIGINT and SIGUSR2 to interrupt the Matter.js runtime and trigger Matter.js
+ * ProcessManager watches Node.js signals SIGINT and SIGUSR2 to terminate the Matter.js runtime and trigger Matter.js
  * diagnostics respectively.  It sets the process exit code to 0 if the runtime completes without error and to 1 if the
  * runtime crashes.
  *
@@ -34,6 +34,7 @@ const logger = Logger.get("ProcessManager");
  */
 export class ProcessManager implements Destructable {
     protected runtime: RuntimeService;
+    #signalHandlersInstalled = false;
 
     constructor(protected env: Environment) {
         this.runtime = env.get(RuntimeService);
@@ -63,12 +64,19 @@ export class ProcessManager implements Destructable {
     }
 
     protected startListener = () => {
-        if (this.hasSignalSupport) {
-            process.on("SIGINT", this.interruptHandler);
-            process.on("SIGTERM", this.interruptHandler);
-            process.on("SIGUSR2", this.diagnosticHandler);
-            process.on("exit", this.exitHandler);
-        }
+        this.env.vars.use(() => {
+            if (this.hasSignalSupport) {
+                if (this.#signalHandlersInstalled) {
+                    return;
+                }
+                process.on("SIGINT", this.interruptHandler);
+                process.on("SIGTERM", this.interruptHandler);
+                process.on("SIGUSR2", this.diagnosticHandler);
+                process.on("exit", this.exitHandler);
+            } else {
+                this.#ignoreSignals();
+            }
+        });
     };
 
     protected stopListener = () => {
@@ -85,7 +93,8 @@ export class ProcessManager implements Destructable {
         }
     };
 
-    protected interruptHandler = () => {
+    protected interruptHandler = (signal: string) => {
+        process.off(signal, this.interruptHandler);
         this.runtime.cancel();
     };
 
@@ -96,16 +105,16 @@ export class ProcessManager implements Destructable {
     };
 
     protected diagnosticHandler = () => {
-        if (this.hasSignalSupport) {
-            process.on("SIGUSR2", this.env.diagnose);
-        }
         this.env.diagnose();
     };
 
     #ignoreSignals() {
-        process.off("SIGINT", this.interruptHandler);
-        process.off("SIGTERM", this.interruptHandler);
-        process.off("SIGUSR2", this.diagnosticHandler);
-        process.off("exit", this.exitHandler);
+        if (this.#signalHandlersInstalled) {
+            process.off("SIGINT", this.interruptHandler);
+            process.off("SIGTERM", this.interruptHandler);
+            process.off("SIGUSR2", this.diagnosticHandler);
+            process.off("exit", this.exitHandler);
+            this.#signalHandlersInstalled = false;
+        }
     }
 }

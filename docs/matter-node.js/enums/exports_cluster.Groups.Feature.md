@@ -8,7 +8,7 @@ These are optional features supported by GroupsCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.3.4
+MatterSpecification.v11.Cluster § 1.3.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ The ability to store a name for a group.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GroupsCluster.d.ts:137
+packages/matter.js/dist/esm/cluster/definitions/GroupsCluster.d.ts:226

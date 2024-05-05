@@ -8,7 +8,7 @@ Schema to encode an array or string in TLV.
 
 **`See`**
 
-MatterCoreSpecificationV1_0 § A.11.2 and A.11.4
+MatterSpecification.v10.Core § A.11.2 and A.11.4
 
 ## Type parameters
 
@@ -97,7 +97,7 @@ ___
 
 ### maxLength
 
-• `Private` `Readonly` **maxLength**: `any`
+• `Readonly` **maxLength**: `number`
 
 #### Defined in
 
@@ -107,7 +107,7 @@ ___
 
 ### minLength
 
-• `Private` `Readonly` **minLength**: `any`
+• `Readonly` **minLength**: `number`
 
 #### Defined in
 

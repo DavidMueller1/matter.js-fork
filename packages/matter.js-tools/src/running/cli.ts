@@ -72,6 +72,7 @@ export async function main(argv = process.argv) {
         // Our behavior in response to SIGINT should mirror the child process's.  So ignore the signal locally, only
         // quitting once the child process does
         process.on("SIGINT", () => {});
+        process.on("SIGTERM", () => {});
 
         process.exitCode = await executeNode(script, argv);
     }

@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.2
+MatterSpecification.v11.Cluster § 4.2.6.2
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ This value sets the pump to run with the local settings of the pump, regardless 
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:106
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:107
 
 ___
 
@@ -39,7 +39,7 @@ This value sets the pump to run at its maximum possible speed.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:102
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:103
 
 ___
 
@@ -51,7 +51,7 @@ This value sets the pump to run at the minimum possible speed it can without bei
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:98
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:99
 
 ___
 
@@ -67,8 +67,8 @@ between 0% and 100%, e.g., by means of the Level Control cluster
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.2.1
+MatterSpecification.v11.Cluster § 4.2.6.2.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:94
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:95

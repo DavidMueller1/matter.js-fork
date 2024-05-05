@@ -8,7 +8,7 @@ These are optional features supported by PressureMeasurementCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 2.4.4
+MatterSpecification.v11.Cluster § 2.4.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ The cluster is capable of extended range and resolution
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PressureMeasurementCluster.d.ts:22
+packages/matter.js/dist/esm/cluster/definitions/PressureMeasurementCluster.d.ts:71

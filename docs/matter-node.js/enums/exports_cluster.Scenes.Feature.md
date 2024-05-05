@@ -8,7 +8,7 @@ These are optional features supported by ScenesCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.4.4
+MatterSpecification.v11.Cluster § 1.4.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ The ability to store a name for a scene.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ScenesCluster.d.ts:358
+packages/matter.js/dist/esm/cluster/definitions/ScenesCluster.d.ts:493

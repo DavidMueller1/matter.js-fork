@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.3
+MatterSpecification.v11.Core § 11.10.4.3
 
 ## Table of contents
 
@@ -27,11 +27,11 @@ shall be used by a Client to request that logs are transferred using BDX as defi
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.3.2
+MatterSpecification.v11.Core § 11.10.4.3.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:61
+packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:63
 
 ___
 
@@ -45,8 +45,8 @@ shall be used by a Client to request that logs are transferred using the LogCont
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.3.1
+MatterSpecification.v11.Core § 11.10.4.3.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:53
+packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:55

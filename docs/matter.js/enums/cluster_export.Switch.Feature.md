@@ -8,7 +8,7 @@ These are optional features supported by SwitchCluster.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 1.11.4
+MatterSpecification.v11.Cluster § 1.11.4
 
 ## Table of contents
 
@@ -30,7 +30,7 @@ LatchingSwitch
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:81](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L81)
+[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:285](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L285)
 
 ___
 
@@ -42,7 +42,7 @@ MomentarySwitch
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:86](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L86)
+[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:290](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L290)
 
 ___
 
@@ -54,7 +54,7 @@ MomentarySwitchLongPress
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:96](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L96)
+[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:300](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L300)
 
 ___
 
@@ -66,7 +66,7 @@ MomentarySwitchMultiPress
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:101](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L101)
+[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:305](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L305)
 
 ___
 
@@ -78,4 +78,4 @@ MomentarySwitchRelease
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:91](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L91)
+[packages/matter.js/src/cluster/definitions/SwitchCluster.ts:295](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SwitchCluster.ts#L295)

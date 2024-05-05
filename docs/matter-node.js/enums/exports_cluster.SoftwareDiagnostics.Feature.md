@@ -8,7 +8,7 @@ These are optional features supported by SoftwareDiagnosticsCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.12.4
+MatterSpecification.v11.Core § 11.12.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ Node makes available the metrics for high watermark related to memory consumptio
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/SoftwareDiagnosticsCluster.d.ts:82
+packages/matter.js/dist/esm/cluster/definitions/SoftwareDiagnosticsCluster.d.ts:133

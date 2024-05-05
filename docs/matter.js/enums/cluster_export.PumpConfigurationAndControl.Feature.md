@@ -8,7 +8,7 @@ These are optional features supported by PumpConfigurationAndControlCluster.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.2.4
+MatterSpecification.v11.Cluster § 4.2.4
 
 ## Table of contents
 
@@ -34,7 +34,7 @@ Supports operating in automatic mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:258](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L258)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:523](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L523)
 
 ___
 
@@ -48,7 +48,7 @@ Supports operating in compensated pressure mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:230](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L230)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:495](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L495)
 
 ___
 
@@ -62,7 +62,7 @@ Supports operating in constant flow mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:237](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L237)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:502](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L502)
 
 ___
 
@@ -76,7 +76,7 @@ Supports operating in constant pressure mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:223](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L223)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:488](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L488)
 
 ___
 
@@ -90,7 +90,7 @@ Supports operating in constant speed mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:244](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L244)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:509](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L509)
 
 ___
 
@@ -104,7 +104,7 @@ Supports operating in constant temperature mode
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:251](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L251)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:516](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L516)
 
 ___
 
@@ -118,4 +118,4 @@ Supports operating using local settings
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:265](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L265)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:530](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L530)

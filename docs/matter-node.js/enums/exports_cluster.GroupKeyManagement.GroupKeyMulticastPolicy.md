@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.2.6.2
+MatterSpecification.v11.Core § 11.2.6.2
 
 ## Table of contents
 
@@ -27,11 +27,11 @@ The 16-bit Group Identifier of the Multicast Address shall be 0xFFFF.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.2.6.2.2
+MatterSpecification.v11.Core § 11.2.6.2.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GroupKeyManagementCluster.d.ts:87
+packages/matter.js/dist/esm/cluster/definitions/GroupKeyManagementCluster.d.ts:101
 
 ___
 
@@ -45,8 +45,8 @@ The 16-bit Group Identifier of the Multicast Address shall be the Group ID of th
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.2.6.2.1
+MatterSpecification.v11.Core § 11.2.6.2.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GroupKeyManagementCluster.d.ts:79
+packages/matter.js/dist/esm/cluster/definitions/GroupKeyManagementCluster.d.ts:93

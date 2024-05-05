@@ -8,7 +8,7 @@ These are optional features supported by ApplicationLauncherCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.4.2
+MatterSpecification.v11.Cluster § 6.4.2
 
 ## Table of contents
 
@@ -29,4 +29,4 @@ supported application catalogs
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ApplicationLauncherCluster.d.ts:219
+packages/matter.js/dist/esm/cluster/definitions/ApplicationLauncherCluster.d.ts:280

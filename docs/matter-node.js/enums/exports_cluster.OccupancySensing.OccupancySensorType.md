@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 2.7.5.2
+MatterSpecification.v11.Cluster § 2.7.5.2
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ Indicates a physical contact sensor.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:41
+packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:42
 
 ___
 
@@ -39,7 +39,7 @@ Indicates a passive infrared sensor.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:29
+packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:30
 
 ___
 
@@ -51,7 +51,7 @@ Indicates a passive infrared and ultrasonic sensor.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:37
+packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:38
 
 ___
 
@@ -63,4 +63,4 @@ Indicates a ultrasonic sensor.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:33
+packages/matter.js/dist/esm/cluster/definitions/OccupancySensingCluster.d.ts:34

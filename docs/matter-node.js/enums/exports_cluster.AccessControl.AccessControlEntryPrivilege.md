@@ -10,7 +10,7 @@ This value implicitly grants View privileges
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.10.4.2
+MatterSpecification.v11.Core § 9.10.4.2
 
 ## Table of contents
 
@@ -34,11 +34,11 @@ This value implicitly grants Manage, Operate, Proxy View & View privileges
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.10.4.2.3
+MatterSpecification.v11.Core § 9.10.4.2.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:49
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:51
 
 ___
 
@@ -52,11 +52,11 @@ This value implicitly grants Operate & View privileges
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.10.4.2.2
+MatterSpecification.v11.Core § 9.10.4.2.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:41
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:43
 
 ___
 
@@ -70,11 +70,11 @@ This value implicitly grants View privileges
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.10.4.2.1
+MatterSpecification.v11.Core § 9.10.4.2.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:33
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:35
 
 ___
 
@@ -86,7 +86,7 @@ Can read and observe all (as seen by a Proxy)
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:25
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:27
 
 ___
 
@@ -98,4 +98,4 @@ Can read and observe all (except Access Control Cluster and as seen by a non-Pro
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:21
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:23

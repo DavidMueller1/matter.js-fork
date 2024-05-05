@@ -9,7 +9,6 @@
 import { MaybePromise } from "../../../util/Promises.js";
 import { TypeFromSchema } from "../../../tlv/TlvSchema.js";
 import { AdministratorCommissioning } from "../../../cluster/definitions/AdministratorCommissioningCluster.js";
-import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
 
 /**
  * This command is used by a current Administrator to instruct a Node to go into commissioning mode. The Enhanced
@@ -40,7 +39,7 @@ import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
  *
  * In case of any other parameter error, this command shall fail with a status code of COMMAND_INVALID.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1
+ * @see {@link MatterSpecification.v11.Core} § 11.18.8.1
  */
 export type OpenCommissioningWindowRequest = TypeFromSchema<typeof AdministratorCommissioning.TlvOpenCommissioningWindowRequest>;
 
@@ -63,18 +62,7 @@ export type OpenCommissioningWindowRequest = TypeFromSchema<typeof Administrator
  * see Section 5.5, “Commissioning Flows”. The new Administrator shall discover the Node on the IP network using
  * DNS-based Service Discovery (DNS-SD) for commissioning.
  *
- * This field shall specify the time in seconds during which commissioning session establishment is allowed by the
- * Node. This is known as Open Basic Commissioning Window (OBCW). This timeout shall follow guidance as specified in
- * Announcement Duration.
- *
- * When a Node receives the Open Basic Commissioning Window command, it shall begin advertising on DNS-SD as described
- * in Section 4.3.1, “Commissionable Node Discovery” and for a time period as described in Section 11.18.8.2.1,
- * “CommissioningTimeout Field”. When the command is received by a SED, it shall enter into active mode and set its
- * fast-polling interval to SLEEPY_AC
- *
- * TIVE_INTERVAL for at least the entire duration of the CommissioningTimeout.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.2
+ * @see {@link MatterSpecification.v11.Core} § 11.18.8.2
  */
 export type OpenBasicCommissioningWindowRequest = TypeFromSchema<typeof AdministratorCommissioning.TlvOpenBasicCommissioningWindowRequest>;
 
@@ -109,7 +97,7 @@ export namespace AdministratorCommissioningInterface {
          *
          * In case of any other parameter error, this command shall fail with a status code of COMMAND_INVALID.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.1
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.1
          */
         openCommissioningWindow(request: OpenCommissioningWindowRequest): MaybePromise;
 
@@ -123,7 +111,7 @@ export namespace AdministratorCommissioningInterface {
          * If no commissioning window was open at time of receipt, this command shall fail with a cluster specific
          * status code of WindowNotOpen.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.3
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.3
          */
         revokeCommissioning(): MaybePromise;
     }
@@ -148,18 +136,7 @@ export namespace AdministratorCommissioningInterface {
          * command, see Section 5.5, “Commissioning Flows”. The new Administrator shall discover the Node on the IP
          * network using DNS-based Service Discovery (DNS-SD) for commissioning.
          *
-         * This field shall specify the time in seconds during which commissioning session establishment is allowed by
-         * the Node. This is known as Open Basic Commissioning Window (OBCW). This timeout shall follow guidance as
-         * specified in Announcement Duration.
-         *
-         * When a Node receives the Open Basic Commissioning Window command, it shall begin advertising on DNS-SD as
-         * described in Section 4.3.1, “Commissionable Node Discovery” and for a time period as described in Section
-         * 11.18.8.2.1, “CommissioningTimeout Field”. When the command is received by a SED, it shall enter into active
-         * mode and set its fast-polling interval to SLEEPY_AC
-         *
-         * TIVE_INTERVAL for at least the entire duration of the CommissioningTimeout.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.18.8.2
+         * @see {@link MatterSpecification.v11.Core} § 11.18.8.2
          */
         openBasicCommissioningWindow(request: OpenBasicCommissioningWindowRequest): MaybePromise;
     }

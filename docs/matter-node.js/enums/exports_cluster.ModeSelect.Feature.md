@@ -8,7 +8,7 @@ These are optional features supported by ModeSelectCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.8.4
+MatterSpecification.v11.Cluster § 1.8.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ Dependency with the On/Off cluster
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ModeSelectCluster.d.ts:112
+packages/matter.js/dist/esm/cluster/definitions/ModeSelectCluster.d.ts:152

@@ -46,10 +46,6 @@ about the open sessions and their status.
 
 ▸ (`fabricIndex`): `void`
 
-This callback is called when sessions to the device are established, closed or subscriptions get added or
-removed. The provided fabricIndex can be used together with getActiveSessionInformation() to get more details
-about the open sessions and their status.
-
 ##### Parameters
 
 | Name | Type |
@@ -62,7 +58,7 @@ about the open sessions and their status.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:191](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L191)
+[packages/matter.js/src/CommissioningServer.ts:200](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L200)
 
 ___
 
@@ -74,7 +70,7 @@ Optional Vendor specific additional BLE Advertisement data.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:126](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L126)
+[packages/matter.js/src/CommissioningServer.ts:130](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L130)
 
 ___
 
@@ -87,20 +83,29 @@ not set here.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:155](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L155)
+[packages/matter.js/src/CommissioningServer.ts:159](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L159)
 
 ___
 
 ### certificates
 
-• `Optional` **certificates**: [`OperationalCredentialsServerConf`](cluster_export.OperationalCredentialsServerConf.md)
+• `Optional` **certificates**: `Object`
 
 Vendor specific certificates to be used for the OperationalCredentials cluster. If not set Test certificates
 (official Chip tool test Root certificate is used) are generated automatically.
 
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `certificationDeclaration` | `Uint8Array` |
+| `deviceCertificate` | `Uint8Array` |
+| `deviceIntermediateCertificate` | `Uint8Array` |
+| `devicePrivateKey` | `Uint8Array` |
+
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:168](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L168)
+[packages/matter.js/src/CommissioningServer.ts:172](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L172)
 
 ___
 
@@ -116,10 +121,6 @@ fabricIndex can be used together with getCommissionedFabricInformation() to get 
 
 ▸ (`fabricIndex`): `void`
 
-This callback is called when the device is commissioned or decommissioned to a fabric/controller. The provided
-fabricIndex can be used together with getCommissionedFabricInformation() to get more details about the fabric
-(or if this fabricIndex is missing it was deleted).
-
 ##### Parameters
 
 | Name | Type |
@@ -132,7 +133,7 @@ fabricIndex can be used together with getCommissionedFabricInformation() to get 
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:184](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L184)
+[packages/matter.js/src/CommissioningServer.ts:193](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L193)
 
 ___
 
@@ -144,7 +145,7 @@ Should the device directly be announced automatically by the MatterServer of man
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:129](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L129)
+[packages/matter.js/src/CommissioningServer.ts:133](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L133)
 
 ___
 
@@ -156,7 +157,7 @@ The device name to be used for the BasicInformation cluster.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:108](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L108)
+[packages/matter.js/src/CommissioningServer.ts:112](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L112)
 
 ___
 
@@ -168,7 +169,7 @@ The device type to be used for the BasicInformation cluster.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:111](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L111)
+[packages/matter.js/src/CommissioningServer.ts:115](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L115)
 
 ___
 
@@ -180,19 +181,19 @@ The Discriminator to use for initial commissioning.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:120](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L120)
+[packages/matter.js/src/CommissioningServer.ts:124](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L124)
 
 ___
 
 ### flowType
 
-• `Optional` **flowType**: [`CommissionningFlowType`](../enums/schema_export.CommissionningFlowType.md)
+• `Optional` **flowType**: [`CommissioningFlowType`](../enums/schema_export.CommissioningFlowType.md)
 
 The Flow type of the Commissioning flow used in announcements.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:123](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L123)
+[packages/matter.js/src/CommissioningServer.ts:127](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L127)
 
 ___
 
@@ -205,7 +206,7 @@ Use these options to limit the allowed countries for regulatory configuration.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:174](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L174)
+[packages/matter.js/src/CommissioningServer.ts:183](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L183)
 
 ___
 
@@ -217,7 +218,7 @@ IPv4 listener address, defaults to all interfaces.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:102](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L102)
+[packages/matter.js/src/CommissioningServer.ts:106](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L106)
 
 ___
 
@@ -229,7 +230,7 @@ IPv6 listener address, defaults to all interfaces.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:105](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L105)
+[packages/matter.js/src/CommissioningServer.ts:109](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L109)
 
 ___
 
@@ -241,7 +242,7 @@ The next endpoint ID to be assigned to a new endpoint.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:114](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L114)
+[packages/matter.js/src/CommissioningServer.ts:118](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L118)
 
 ___
 
@@ -253,7 +254,7 @@ The passcode/pin of the device to use for initial commissioning.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:117](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L117)
+[packages/matter.js/src/CommissioningServer.ts:121](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L121)
 
 ___
 
@@ -265,7 +266,7 @@ Port of the server, normally automatically managed.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:99](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L99)
+[packages/matter.js/src/CommissioningServer.ts:103](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L103)
 
 ___
 
@@ -278,7 +279,7 @@ and inside the range requested by the connected controller.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:135](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L135)
+[packages/matter.js/src/CommissioningServer.ts:139](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L139)
 
 ___
 
@@ -292,7 +293,7 @@ limits.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:142](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L142)
+[packages/matter.js/src/CommissioningServer.ts:146](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L146)
 
 ___
 
@@ -306,4 +307,4 @@ powered on in parallel not all send at the same timepoint.
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:149](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L149)
+[packages/matter.js/src/CommissioningServer.ts:153](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L153)

@@ -8,7 +8,7 @@ These are optional features supported by EthernetNetworkDiagnosticsCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.15.4
+MatterSpecification.v11.Core § 11.15.4
 
 ## Table of contents
 
@@ -30,7 +30,7 @@ transmission of packets on the ethernet interface.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/EthernetNetworkDiagnosticsCluster.d.ts:74
+packages/matter.js/dist/esm/cluster/definitions/EthernetNetworkDiagnosticsCluster.d.ts:152
 
 ___
 
@@ -44,4 +44,4 @@ Node makes available the counts for the number of received and transmitted packe
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/EthernetNetworkDiagnosticsCluster.d.ts:67
+packages/matter.js/dist/esm/cluster/definitions/EthernetNetworkDiagnosticsCluster.d.ts:145

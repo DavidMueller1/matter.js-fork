@@ -15,7 +15,7 @@ all other commands and requests.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12
+MatterSpecification.v11.Cluster § 5.2.6.12
 
 ## Table of contents
 
@@ -39,11 +39,11 @@ Commands.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12.4
+MatterSpecification.v11.Cluster § 5.2.6.12.4
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:121
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:801
 
 ___
 
@@ -55,11 +55,11 @@ The lock operates normally. All interfaces are enabled.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12.1
+MatterSpecification.v11.Cluster § 5.2.6.12.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:99
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:779
 
 ___
 
@@ -72,11 +72,11 @@ validation (e.g. a lock for a business during work hours).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12.5
+MatterSpecification.v11.Cluster § 5.2.6.12.5
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:128
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:808
 
 ___
 
@@ -90,11 +90,11 @@ users, presumably inside the property, will have control over the entrance.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12.3
+MatterSpecification.v11.Cluster § 5.2.6.12.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:113
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:793
 
 ___
 
@@ -106,8 +106,8 @@ Only remote interaction is enabled. The keypad shall only be operable by the mas
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.12.2
+MatterSpecification.v11.Cluster § 5.2.6.12.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:105
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:785

@@ -6,7 +6,7 @@
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.2.6.2
+MatterSpecification.v11.Cluster § 4.2.6.2
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ This value sets the pump to run with the local settings of the pump, regardless 
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:135](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L135)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:136](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L136)
 
 ___
 
@@ -39,7 +39,7 @@ This value sets the pump to run at its maximum possible speed.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:130](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L130)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:131](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L131)
 
 ___
 
@@ -51,7 +51,7 @@ This value sets the pump to run at the minimum possible speed it can without bei
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:125](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L125)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:126](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L126)
 
 ___
 
@@ -67,8 +67,8 @@ between 0% and 100%, e.g., by means of the Level Control cluster
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.2.6.2.1
+MatterSpecification.v11.Cluster § 4.2.6.2.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:120](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L120)
+[packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts:121](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PumpConfigurationAndControlCluster.ts#L121)

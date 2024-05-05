@@ -9,7 +9,6 @@
 import { MaybePromise } from "../../../util/Promises.js";
 import { TypeFromSchema } from "../../../tlv/TlvSchema.js";
 import { Actions } from "../../../cluster/definitions/ActionsCluster.js";
-import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
 
 /**
  * This command triggers an action (state change) on the involved endpoints, in a "fire and forget" manner. Afterwards,
@@ -17,7 +16,7 @@ import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
  *
  * Example: recall a scene on a number of lights.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.1
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.1
  */
 export type InstantActionRequest = TypeFromSchema<typeof Actions.TlvInstantActionRequest>;
 
@@ -32,7 +31,7 @@ export type InstantActionRequest = TypeFromSchema<typeof Actions.TlvInstantActio
  *
  * Example: recall a scene on a number of lights, with a specified transition time.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.2
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.2
  */
 export type InstantActionWithTransitionRequest = TypeFromSchema<typeof Actions.TlvInstantActionWithTransitionRequest>;
 
@@ -46,7 +45,7 @@ export type InstantActionWithTransitionRequest = TypeFromSchema<typeof Actions.T
  * Example: start a sequence of events such as a wake-up experience involving lights moving through several
  * brightness/color combinations and the window covering gradually opening.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.3
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.3
  */
 export type StartActionRequest = TypeFromSchema<typeof Actions.TlvStartActionRequest>;
 
@@ -57,7 +56,7 @@ export type StartActionRequest = TypeFromSchema<typeof Actions.TlvStartActionReq
  * Example: start a dynamic lighting pattern (such as gradually rotating the colors around the setpoints of the scene)
  * on a set of lights for 1 hour (Duration=3600).
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.4
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.4
  */
 export type StartActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvStartActionWithDurationRequest>;
 
@@ -66,7 +65,7 @@ export type StartActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvSt
  *
  * Example: stop a dynamic lighting pattern which was previously started with StartAction.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.5
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.5
  */
 export type StopActionRequest = TypeFromSchema<typeof Actions.TlvStopActionRequest>;
 
@@ -76,7 +75,7 @@ export type StopActionRequest = TypeFromSchema<typeof Actions.TlvStopActionReque
  * Example: pause a dynamic lighting effect (the lights stay at their current color) which was previously started with
  * StartAction.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.6
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.6
  */
 export type PauseActionRequest = TypeFromSchema<typeof Actions.TlvPauseActionRequest>;
 
@@ -91,9 +90,7 @@ export type PauseActionRequest = TypeFromSchema<typeof Actions.TlvPauseActionReq
  * differently in the implementation of the action (e.g. a Pause would be automatically resumed after some hours or
  * during a nightly reset, while an Disable would remain in effect until explicitly enabled again).
  *
- * This field shall indicate the requested duration in seconds.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.7
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.7
  */
 export type PauseActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvPauseActionWithDurationRequest>;
 
@@ -106,7 +103,7 @@ export type PauseActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvPa
  * Example: resume a dynamic lighting effect (the lights' colors will change gradually, continuing from the point they
  * were paused).
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.8
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.8
  */
 export type ResumeActionRequest = TypeFromSchema<typeof Actions.TlvResumeActionRequest>;
 
@@ -115,7 +112,7 @@ export type ResumeActionRequest = TypeFromSchema<typeof Actions.TlvResumeActionR
  *
  * Example: enable a motion sensor to control the lights in an area.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.9
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.9
  */
 export type EnableActionRequest = TypeFromSchema<typeof Actions.TlvEnableActionRequest>;
 
@@ -127,9 +124,7 @@ export type EnableActionRequest = TypeFromSchema<typeof Actions.TlvEnableActionR
  * used to indicated the length of your absence from home. After that period, the presence mimicking behavior will no
  * longer control these lights.
  *
- * This field shall indicate the requested duration in seconds.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.10
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.10
  */
 export type EnableActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvEnableActionWithDurationRequest>;
 
@@ -138,7 +133,7 @@ export type EnableActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvE
  *
  * Example: disable a motion sensor to no longer control the lights in an area.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.11
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.11
  */
 export type DisableActionRequest = TypeFromSchema<typeof Actions.TlvDisableActionRequest>;
 
@@ -150,9 +145,7 @@ export type DisableActionRequest = TypeFromSchema<typeof Actions.TlvDisableActio
  * Example: disable a "wakeup" experience for a period of 1 week when going on holiday (to prevent them from turning on
  * in the morning while you’re not at home). After this period, the wakeup experience will control the lights as before.
  *
- * This field shall indicate the requested duration in seconds.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.12
+ * @see {@link MatterSpecification.v11.Core} § 9.14.6.12
  */
 export type DisableActionWithDurationRequest = TypeFromSchema<typeof Actions.TlvDisableActionWithDurationRequest>;
 
@@ -164,7 +157,7 @@ export namespace ActionsInterface {
          *
          * Example: recall a scene on a number of lights.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.1
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.1
          */
         instantAction(request: InstantActionRequest): MaybePromise;
 
@@ -179,7 +172,7 @@ export namespace ActionsInterface {
          *
          * Example: recall a scene on a number of lights, with a specified transition time.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.2
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.2
          */
         instantActionWithTransition(request: InstantActionWithTransitionRequest): MaybePromise;
 
@@ -193,7 +186,7 @@ export namespace ActionsInterface {
          * Example: start a sequence of events such as a wake-up experience involving lights moving through several
          * brightness/color combinations and the window covering gradually opening.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.3
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.3
          */
         startAction(request: StartActionRequest): MaybePromise;
 
@@ -205,7 +198,7 @@ export namespace ActionsInterface {
          * Example: start a dynamic lighting pattern (such as gradually rotating the colors around the setpoints of the
          * scene) on a set of lights for 1 hour (Duration=3600).
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.4
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.4
          */
         startActionWithDuration(request: StartActionWithDurationRequest): MaybePromise;
 
@@ -215,7 +208,7 @@ export namespace ActionsInterface {
          *
          * Example: stop a dynamic lighting pattern which was previously started with StartAction.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.5
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.5
          */
         stopAction(request: StopActionRequest): MaybePromise;
 
@@ -225,7 +218,7 @@ export namespace ActionsInterface {
          * Example: pause a dynamic lighting effect (the lights stay at their current color) which was previously
          * started with StartAction.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.6
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.6
          */
         pauseAction(request: PauseActionRequest): MaybePromise;
 
@@ -242,9 +235,7 @@ export namespace ActionsInterface {
          * some hours or during a nightly reset, while an Disable would remain in effect until explicitly enabled
          * again).
          *
-         * This field shall indicate the requested duration in seconds.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.7
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.7
          */
         pauseActionWithDuration(request: PauseActionWithDurationRequest): MaybePromise;
 
@@ -257,7 +248,7 @@ export namespace ActionsInterface {
          * Example: resume a dynamic lighting effect (the lights' colors will change gradually, continuing from the
          * point they were paused).
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.8
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.8
          */
         resumeAction(request: ResumeActionRequest): MaybePromise;
 
@@ -266,7 +257,7 @@ export namespace ActionsInterface {
          *
          * Example: enable a motion sensor to control the lights in an area.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.9
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.9
          */
         enableAction(request: EnableActionRequest): MaybePromise;
 
@@ -278,9 +269,7 @@ export namespace ActionsInterface {
          * field is used to indicated the length of your absence from home. After that period, the presence mimicking
          * behavior will no longer control these lights.
          *
-         * This field shall indicate the requested duration in seconds.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.10
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.10
          */
         enableActionWithDuration(request: EnableActionWithDurationRequest): MaybePromise;
 
@@ -289,7 +278,7 @@ export namespace ActionsInterface {
          *
          * Example: disable a motion sensor to no longer control the lights in an area.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.11
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.11
          */
         disableAction(request: DisableActionRequest): MaybePromise;
 
@@ -302,9 +291,7 @@ export namespace ActionsInterface {
          * turning on in the morning while you’re not at home). After this period, the wakeup experience will control
          * the lights as before.
          *
-         * This field shall indicate the requested duration in seconds.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 9.14.6.12
+         * @see {@link MatterSpecification.v11.Core} § 9.14.6.12
          */
         disableActionWithDuration(request: DisableActionWithDurationRequest): MaybePromise;
     }

@@ -8,7 +8,7 @@ These are optional features supported by TimeSyncCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.16.5
+MatterSpecification.v11.Core § 11.16.5
 
 ## Table of contents
 
@@ -30,7 +30,7 @@ Server supports an NTP or SNTP client.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:222
+packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:437
 
 ___
 
@@ -44,7 +44,7 @@ Server supports an NTP server role.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:228
+packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:443
 
 ___
 
@@ -58,4 +58,4 @@ Server supports time zone.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:216
+packages/matter.js/dist/esm/cluster/definitions/TimeSyncCluster.d.ts:431

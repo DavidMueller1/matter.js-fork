@@ -6,8 +6,9 @@
 
 import { Behavior } from "../../behavior/Behavior.js";
 import type { ClusterBehavior } from "../../behavior/cluster/ClusterBehavior.js";
+import { ValidatedElements } from "../../behavior/cluster/ValidatedElements.js";
 import { ActionContext } from "../../behavior/context/ActionContext.js";
-import { NodeActivity } from "../../behavior/context/server/NodeActivity.js";
+import { NodeActivity } from "../../behavior/context/NodeActivity.js";
 import { OfflineContext } from "../../behavior/context/server/OfflineContext.js";
 import { DescriptorServer } from "../../behavior/definitions/descriptor/DescriptorServer.js";
 import { BehaviorBacking } from "../../behavior/internal/BehaviorBacking.js";
@@ -17,6 +18,8 @@ import { Lifecycle, UninitializedDependencyError } from "../../common/Lifecycle.
 import { ImplementationError, InternalError, ReadOnlyError } from "../../common/MatterError.js";
 import { Diagnostic } from "../../log/Diagnostic.js";
 import { Logger } from "../../log/Logger.js";
+import { FeatureSet } from "../../model/index.js";
+import { EventEmitter } from "../../util/Observable.js";
 import { MaybePromise } from "../../util/Promises.js";
 import { BasicSet } from "../../util/Set.js";
 import { camelize, describeList } from "../../util/String.js";
@@ -57,13 +60,50 @@ export class Behaviors {
         return Diagnostic.lifecycleList(this.status);
     }
 
+    get detailedDiagnostic() {
+        return Object.entries(this.#supported).map(([name, type]) => {
+            const backing = this.#backings[name];
+
+            const result = [Diagnostic(backing?.status ?? Lifecycle.Status.Inactive, name)];
+
+            if (!(type as ClusterBehavior.Type).cluster) {
+                return result;
+            }
+
+            const elementDiagnostic = Array<unknown>();
+
+            const elements = new ValidatedElements(type as ClusterBehavior.Type);
+
+            const features = new FeatureSet((type as ClusterBehavior.Type).cluster.supportedFeatures);
+            if (features.size) {
+                elementDiagnostic.push([Diagnostic.strong("features"), features]);
+            }
+
+            if (elements.attributes.size) {
+                elementDiagnostic.push([Diagnostic.strong("attributes"), elements.attributes]);
+            }
+            if (elements.commands.size) {
+                elementDiagnostic.push([Diagnostic.strong("commands"), elements.commands]);
+            }
+            if (elements.events.size) {
+                elementDiagnostic.push([Diagnostic.strong("events"), elements.events]);
+            }
+
+            if (elementDiagnostic.length) {
+                result.push(Diagnostic.list(elementDiagnostic));
+            }
+
+            return result;
+        });
+    }
+
     constructor(endpoint: Endpoint, supported: SupportedBehaviors, options: Record<string, object | undefined>) {
         if (typeof supported !== "object") {
             throw new ImplementationError('Endpoint "behaviors" option must be an array of Behavior.Type instances');
         }
 
         this.#endpoint = endpoint;
-        this.#supported = supported;
+        this.#supported = { ...supported };
         this.#options = options;
 
         // DescriptorBehavior is unequivocally mandatory
@@ -71,15 +111,15 @@ export class Behaviors {
             this.#supported.descriptor = DescriptorServer;
         }
 
-        for (const id in supported) {
-            const type = supported[id];
+        for (const id in this.#supported) {
+            const type = this.#supported[id];
             if (!(type.prototype instanceof Behavior)) {
                 throw new ImplementationError(`${endpoint}.${id}" is not a Behavior.Type`);
             }
             if (typeof type.id !== "string") {
                 throw new ImplementationError(`${endpoint}.${id} has no ID`);
             }
-            this.#augmentPartShortcuts(type);
+            this.#augmentEndpoint(type);
         }
     }
 
@@ -140,7 +180,7 @@ export class Behaviors {
 
         this.#supported[type.id] = type;
 
-        this.#augmentPartShortcuts(type);
+        this.#augmentEndpoint(type);
 
         this.#endpoint.lifecycle.change(EndpointLifecycle.Change.ServersChanged);
 
@@ -489,7 +529,10 @@ export class Behaviors {
         return myType;
     }
 
-    #augmentPartShortcuts(type: Behavior.Type) {
+    /**
+     * Updates endpoint "state" and "events" properties to include properties for our implementations.
+     */
+    #augmentEndpoint(type: Behavior.Type) {
         Object.defineProperty(this.#endpoint.state, type.id, {
             get: () => {
                 return this.#backingFor("state", type).stateView;
@@ -502,9 +545,13 @@ export class Behaviors {
             enumerable: true,
         });
 
+        let events: undefined | EventEmitter;
         Object.defineProperty(this.#endpoint.events, type.id, {
             get: () => {
-                return this.#backingFor("events", type).events;
+                if (!events) {
+                    events = new type.Events();
+                }
+                return events;
             },
 
             enumerable: true,
