@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
+import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 
 // DB Schemas
 export interface IOnOffPluginUnitState {
@@ -36,6 +37,9 @@ const OnOffPluginUnitState = model<IOnOffPluginUnitState>('OnOffPluginUnitState'
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
+    // @ts-expect-error not implemented yet TODO
+    private virtualDevice: VirtualOnOffPluginUnit;
+
     constructor(
         uniqueId: string,
         type: DeviceTypeId,
@@ -49,6 +53,7 @@ export default class OnOffPluginUnit extends BaseDevice {
     ) {
         super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         this.logger = Logger.get("OnOffPluginUnit");
+        this.virtualDevice = new VirtualOnOffPluginUnit(nodeId, type, pairedNode);
     }
 
     override setBaseDevice() {
