@@ -9,6 +9,7 @@ import { BasicInformationCluster, DescriptorCluster } from "@project-chip/matter
 import { Logger } from "@project-chip/matter-node.js/log";
 import { ignoreTypes } from "../PrivacyhubNode.js";
 import ContactSensor from "./ContactSensor.js";
+import { stringifyWithBigint } from "../../util/Util.js";
 
 export default class DeviceManager {
 
@@ -38,8 +39,11 @@ export default class DeviceManager {
                 if (descriptor !== undefined) {
                     descriptor.getServerListAttribute().then((serverList) => {
                         this.logger.info(`Server list: ${JSON.stringify(serverList)}`);
-                        this.logger.info(`TYPE: ${descriptor._type}`);
-                        this.logger.info(`TYPE: ${descriptor.getDeviceTypeListAttribute()}`);
+                        descriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
+                            this.logger.info(`Device type list: ${stringifyWithBigint(deviceTypeList)}`);
+                        }).catch((error) => {
+                            this.logger.error(`Failed to get device type list: ${error}`);
+                        });
 
                         const basicInformation = node.getRootClusterClient(BasicInformationCluster);
                         if (basicInformation !== undefined) {
