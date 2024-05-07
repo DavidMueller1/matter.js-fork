@@ -360,23 +360,23 @@ export default class PrivacyhubBackend {
         });
 
 
-        this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
-            const nodeId = NodeId(BigInt(req.params.nodeId));
-            this.privacyhubNode.connectToNode(nodeId).then((node) => {
-                const devices = node.getDevices();
-                const endpoints = [];
-                for (const device of devices) {
-                    const deviceTypes = device.getDeviceTypes()
-                    // const clusterServer = device.getClusterServerById(ClusterId(6));
-                    this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
-                    endpoints.push(deviceTypes);
-                }
-                res.send(stringifyIgnoreCircular(endpoints));
-            }).catch((error) => {
-                res.status(500).send(`Error connecting to node: ${error}`);
-                throw error;
-            });
-        });
+        // this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
+        //     const nodeId = NodeId(BigInt(req.params.nodeId));
+        //     this.privacyhubNode.connectToNode(nodeId).then((node) => {
+        //         const devices = node.getDevices();
+        //         const endpoints = [];
+        //         for (const device of devices) {
+        //             const deviceTypes = device.getDeviceTypes()
+        //             // const clusterServer = device.getClusterServerById(ClusterId(6));
+        //             this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+        //             endpoints.push(deviceTypes);
+        //         }
+        //         res.send(stringifyIgnoreCircular(endpoints));
+        //     }).catch((error) => {
+        //         res.status(500).send(`Error connecting to node: ${error}`);
+        //         throw error;
+        //     });
+        // });
 
         /**
          * Color HSV

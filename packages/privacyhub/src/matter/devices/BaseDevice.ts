@@ -1,7 +1,8 @@
-import { PairedNode, NodeStateInformation, Endpoint } from "@project-chip/matter-node.js/device";
+import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter-node.js";
-import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
+import { NodeId, EndpointNumber, ClusterId } from "@project-chip/matter-node.js/datatype";
+import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import { Server } from "socket.io";
 import { Schema, model } from "mongoose";
 
@@ -64,9 +65,10 @@ export default class BaseDevice {
     protected _endpointId: EndpointNumber;
     protected _vendor: string | undefined;
     protected _product: string | undefined;
+    protected _type: ClusterId;
 
     protected pairedNode: PairedNode;
-    protected endpoint: Endpoint;
+    protected endpoint: EndpointInterface;
     protected logger: Logger;
 
     protected connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
@@ -76,15 +78,17 @@ export default class BaseDevice {
 
     constructor(
         uniqueId: string,
+        type: ClusterId,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,
-        endpoint: Endpoint,
+        endpoint: EndpointInterface,
         commissioningController: CommissioningController,
         io: Server,
         stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void
     ){
         this._uniqueId = uniqueId;
+        this._type = type;
         this._nodeId = nodeId;
         this._endpointId = endpointId;
         this.pairedNode = pairedNode;
@@ -129,7 +133,7 @@ export default class BaseDevice {
     }
 
     get type(): number {
-        return this.endpoint.getDeviceTypes()[0].code;
+        return this._type;
     }
 
     protected initialize(): Promise<void> {
@@ -146,7 +150,7 @@ export default class BaseDevice {
                     const newDevice = new Device({
                         uniqueId: this._uniqueId,
                         endpointId: this._endpointId.toString(),
-                        type: this.endpoint.getDeviceTypes()[0].code,
+                        type: this._type,
                     });
                     newDevice.save().then(() => {
                         resolve();

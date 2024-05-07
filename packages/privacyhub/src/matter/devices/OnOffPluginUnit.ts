@@ -1,11 +1,12 @@
-import { PairedNode, Endpoint, NodeStateInformation } from "@project-chip/matter-node.js/device";
+import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
-import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import { NodeId, EndpointNumber, ClusterId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
+import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 
 // DB Schemas
 export interface IOnOffPluginUnitState {
@@ -37,15 +38,16 @@ export default class OnOffPluginUnit extends BaseDevice {
 
     constructor(
         uniqueId: string,
+        type: ClusterId,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,
-        endpoint: Endpoint,
+        endpoint: EndpointInterface,
         commissioningController: CommissioningController,
         io: Server,
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
-        super(uniqueId, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
+        super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         this.logger = Logger.get("OnOffPluginUnit");
     }
 

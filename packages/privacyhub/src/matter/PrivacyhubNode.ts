@@ -8,13 +8,13 @@ import {
     GeneralCommissioning,
     // OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
-import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
+import { NodeId } from "@project-chip/matter-node.js/datatype";
 import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
 import { ManualPairingCodeCodec } from "@project-chip/matter-node.js/schema";
 import { StorageBackendDisk, StorageManager } from "@project-chip/matter-node.js/storage";
-import { stringifyWithBigint } from "../util/Util.js";
+// import { stringifyWithBigint } from "../util/Util.js";
 
 export const knownTypes: Record<number, string> = {
     266: "OnOffPluginUnit",
@@ -25,13 +25,13 @@ export const ignoreTypes: Record<number, string> = {
     17: "PowerSource"
 };
 
-type CommissionedNode = {
-    nodeId: NodeId;
-    endpointId: EndpointNumber;
-    vendor: string | undefined;
-    product: string | undefined;
-    type: string;
-};
+// type CommissionedNode = {
+//     nodeId: NodeId;
+//     endpointId: EndpointNumber;
+//     vendor: string | undefined;
+//     product: string | undefined;
+//     type: string;
+// };
 
 const wifiSsid = "Rate mal";
 const wifiCredentials = "30484188001738191733";
@@ -199,40 +199,40 @@ export default class PrivacyhubNode {
         });
     }
 
-    getCommissionedNodes(): Promise<CommissionedNode[]> {
-        return new Promise<CommissionedNode[]>( (resolve, reject) => {
-            const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
-            this.logger.debug(`==NODE DETAILS: ${stringifyWithBigint(nodeDetails)}`);
-            this.reconnectAllNodes().then((nodes) => {
-                const commissionedNodes: CommissionedNode[] = [];
-                for (const node of nodes) {
-                    const endpoints = node.getDevices();
-                    const details = nodeDetails.find((n) => n.nodeId === node.nodeId);
-                    for (const endpoint of endpoints) {
-                        const types = endpoint.getDeviceTypes();
-                        const deviceType = types[0].code;
-                        const type = knownTypes[deviceType] || "Unknown";
-                        commissionedNodes.push({
-                            nodeId: node.nodeId,
-                            endpointId: endpoint.getId(),
-                            vendor: details?.basicInformationData?.vendorName?.toString(),
-                            product: details?.basicInformationData?.productName?.toString(),
-                            type,
-                        });
-                    }
-                }
-                resolve(commissionedNodes);
-            }).catch((error) => {
-                this.logger.error(`Error reconnecting to nodes: ${error}`);
-                reject(error);
-            });
-        });
-
-        // const nodes = this.commissioningController.getCommissionedNodesDetails();
-        // this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
-        //
-        // return nodes;
-    }
+    // getCommissionedNodes(): Promise<CommissionedNode[]> {
+    //     return new Promise<CommissionedNode[]>( (resolve, reject) => {
+    //         const nodeDetails = this.commissioningController.getCommissionedNodesDetails();
+    //         this.logger.debug(`==NODE DETAILS: ${stringifyWithBigint(nodeDetails)}`);
+    //         this.reconnectAllNodes().then((nodes) => {
+    //             const commissionedNodes: CommissionedNode[] = [];
+    //             for (const node of nodes) {
+    //                 const endpoints = node.getDevices();
+    //                 const details = nodeDetails.find((n) => n.nodeId === node.nodeId);
+    //                 for (const endpoint of endpoints) {
+    //                     const types = endpoint.getDeviceTypes();
+    //                     const deviceType = types[0].code;
+    //                     const type = knownTypes[deviceType] || "Unknown";
+    //                     commissionedNodes.push({
+    //                         nodeId: node.nodeId,
+    //                         endpointId: endpoint.getId(),
+    //                         vendor: details?.basicInformationData?.vendorName?.toString(),
+    //                         product: details?.basicInformationData?.productName?.toString(),
+    //                         type,
+    //                     });
+    //                 }
+    //             }
+    //             resolve(commissionedNodes);
+    //         }).catch((error) => {
+    //             this.logger.error(`Error reconnecting to nodes: ${error}`);
+    //             reject(error);
+    //         });
+    //     });
+    //
+    //     // const nodes = this.commissioningController.getCommissionedNodesDetails();
+    //     // this.logger.debug(`Commissioned nodes: ${stringifyWithBigint(nodes)}`);
+    //     //
+    //     // return nodes;
+    // }
 
     async reconnectAllNodes() {
         return this.commissioningController.connect();
