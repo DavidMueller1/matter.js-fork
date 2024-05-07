@@ -52,7 +52,18 @@ export default class OnOffPluginUnit extends BaseDevice {
     ) {
         super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         this.logger = Logger.get("OnOffPluginUnit");
-        this.virtualDevice = new VirtualOnOffPluginUnit(nodeId, type, pairedNode);
+        this.virtualDevice = new VirtualOnOffPluginUnit(
+            nodeId,
+            type,
+            pairedNode,
+            (state) => {
+                this.switchOnOff(state).then(() => {
+                    this.logger.info(`Successfully set OnOff state to ${state}`);
+                }).catch((error) => {
+                    this.logger.error(`Failed to set OnOff state to ${state}: ${error}`);
+                });
+            }
+        );
     }
 
     override setBaseDevice() {

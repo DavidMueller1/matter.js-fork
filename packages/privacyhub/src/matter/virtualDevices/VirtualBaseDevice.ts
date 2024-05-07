@@ -3,6 +3,7 @@ import { ServerNode } from "@project-chip/matter.js/node";
 import { PairedNode } from "@project-chip/matter-node.js/device";
 import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
+// import { EventEmitter } from "events";
 
 export default abstract class VirtualBaseDevice {
     protected _nodeId: NodeId;
@@ -20,6 +21,8 @@ export default abstract class VirtualBaseDevice {
     protected existingNode: PairedNode
     protected serverNode: ServerNode | undefined;
 
+    // protected eventEmitter: EventEmitter = new EventEmitter();
+
     protected logger: Logger;
 
     protected constructor(
@@ -32,17 +35,6 @@ export default abstract class VirtualBaseDevice {
         this.existingNode = existingNode;
 
         this.logger = Logger.get("VirtualDevice");
-
-        this.getBasicInformation().then(() => {
-            this.logger.info("Successfully got basic information");
-            this.initializeVirtualDevice().then(() => {
-                this.logger.info("Successfully initialized virtual device");
-            }).catch((error) => {
-                this.logger.error(`Failed to initialize virtual device: ${error}`);
-            });
-        }).catch((error) => {
-            this.logger.error(`Failed to get basic information: ${error}`);
-        });
     }
 
     get nodeId() {

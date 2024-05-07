@@ -11,13 +11,26 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
     constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
-        existingNode: PairedNode
+        existingNode: PairedNode,
+        onOffEventHandler: (state: boolean) => void
     ) {
         super(
             nodeId,
             type,
             existingNode
         );
+
+        this.getBasicInformation().then(() => {
+            this.logger.info("Successfully got basic information");
+            this.initializeVirtualDevice().then(() => {
+                this.logger.info("Successfully initialized virtual device");
+                this.subscribeOnOffState(onOffEventHandler);
+            }).catch((error) => {
+                this.logger.error(`Failed to initialize virtual device: ${error}`);
+            });
+        }).catch((error) => {
+            this.logger.error(`Failed to get basic information: ${error}`);
+        });
     }
 
     override initializeVirtualDevice(): Promise<void> {
@@ -94,5 +107,9 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
         }).catch((error) => {
             this.logger.error(`Failed to set OnOff of virtual device: ${error}`);
         });
+    }
+
+    subscribeOnOffState(handler: (state: boolean) => void) {
+        this.endpoint?.events.onOff.onOff$Changed.on(handler);
     }
 }
