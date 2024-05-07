@@ -2,7 +2,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode, { knownTypes } from "../matter/PrivacyhubNode.js";
-import { stringifyIgnoreCircular } from "../util/Util.js";
+import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
 import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
@@ -238,7 +238,7 @@ export default class PrivacyhubBackend {
                         color: NeoPixelController.hsvToHex(120, 1, 1)
                     });
 
-                    res.status(201).send(JSON.stringify({
+                    res.status(201).send(stringifyWithBigint({
                         nodeId: node.nodeId
                     }));
                 }).catch((error) => {
