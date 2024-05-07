@@ -57,6 +57,17 @@ export default class DeviceManager {
                                 const devices: BaseDevice[] = [];
                                 node.getDevices().forEach((device) => {
                                     this.logger.info(`Device: ${device.getNumber()}`);
+                                    const deviceDescriptor = device.getClusterClient(DescriptorCluster)
+                                    if (deviceDescriptor === undefined) {
+                                        reject("Failed to get device descriptor");
+                                    } else {
+                                        deviceDescriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
+                                            this.logger.info(`===== Device type list: ${stringifyWithBigint(deviceTypeList)}`);
+                                        }).catch((error) => {
+                                            reject("Failed to get device type list: " + error);
+                                        });
+                                    }
+
                                     const type = serverList[0];
                                     if (type in ignoreTypes) {
                                         this.logger.debug(`Ignoring device type ${type}`);
