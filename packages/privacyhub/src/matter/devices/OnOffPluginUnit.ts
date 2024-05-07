@@ -37,7 +37,6 @@ const OnOffPluginUnitState = model<IOnOffPluginUnitState>('OnOffPluginUnitState'
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
-    // @ts-expect-error not implemented yet TODO
     private virtualDevice: VirtualOnOffPluginUnit;
 
     constructor(
