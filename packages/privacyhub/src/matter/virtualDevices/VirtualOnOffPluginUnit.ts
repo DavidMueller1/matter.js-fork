@@ -71,7 +71,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
             }).then((endpoint) => {
                 this.logger.info("Endpoint added");
                 endpoint.events.onOff.onOff$Changed.on(value => {
-                    console.log(`OnOff is now ${value ? "ON" : "OFF"}`);
+                    this.logger.info(`OnOff is now ${value ? "ON" : "OFF"}`);
                 });
                 return this.serverNode?.run();
             }).then(() => {

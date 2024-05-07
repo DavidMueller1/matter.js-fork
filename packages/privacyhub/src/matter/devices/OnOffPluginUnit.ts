@@ -120,7 +120,7 @@ export default class OnOffPluginUnit extends BaseDevice {
             if (onOffCluster !== undefined) {
                 if (toggle) {
                     onOffCluster.toggle().then(() => {
-                        this.virtualDevice.setOnOffState(state);
+                        // this.virtualDevice.setOnOffState(state);
                         resolve();
                     }).catch((error) => {
                         this.logger.error(`Failed to toggle OnOff: ${error}`);
@@ -128,7 +128,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                     });
                 } else {
                     (state ? onOffCluster.on() : onOffCluster.off()).then(() => {
-                        this.virtualDevice.setOnOffState(state);
+                        // this.virtualDevice.setOnOffState(state);
                         resolve();
                     }).catch((error) => {
                         this.logger.error(`Failed to set OnOff: ${error}`);
