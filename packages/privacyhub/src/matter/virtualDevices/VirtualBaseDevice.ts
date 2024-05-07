@@ -35,6 +35,17 @@ export default abstract class VirtualBaseDevice {
         this.existingNode = existingNode;
 
         this.logger = Logger.get("VirtualDevice");
+
+        this.getBasicInformation().then(() => {
+            this.logger.info("Successfully got basic information");
+            this.initializeVirtualDevice().then(() => {
+                this.logger.info("Successfully initialized virtual device");
+            }).catch((error) => {
+                this.logger.error(`Failed to initialize virtual device: ${error}`);
+            });
+        }).catch((error) => {
+            this.logger.error(`Failed to get basic information: ${error}`);
+        });
     }
 
     get nodeId() {

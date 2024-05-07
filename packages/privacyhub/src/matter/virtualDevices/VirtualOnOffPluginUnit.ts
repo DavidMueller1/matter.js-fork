@@ -7,30 +7,20 @@ import VirtualBaseDevice from "./VirtualBaseDevice.js";
 
 export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
     private endpoint: Endpoint<OnOffPlugInUnitDevice> | undefined;
+    private onOffEventCallback: (state: boolean) => void;
 
     constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
         existingNode: PairedNode,
-        onOffEventHandler: (state: boolean) => void
+        onOffEventCallback: (state: boolean) => void
     ) {
         super(
             nodeId,
             type,
             existingNode
         );
-
-        this.getBasicInformation().then(() => {
-            this.logger.info("Successfully got basic information");
-            this.initializeVirtualDevice().then(() => {
-                this.logger.info("Successfully initialized virtual device");
-                this.subscribeOnOffState(onOffEventHandler);
-            }).catch((error) => {
-                this.logger.error(`Failed to initialize virtual device: ${error}`);
-            });
-        }).catch((error) => {
-            this.logger.error(`Failed to get basic information: ${error}`);
-        });
+        this.onOffEventCallback = onOffEventCallback;
     }
 
     override initializeVirtualDevice(): Promise<void> {
@@ -85,6 +75,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                 this.logger.info("Endpoint added");
                 endpoint.events.onOff.onOff$Changed.on(value => {
                     this.logger.info(`OnOff is now ${value ? "ON" : "OFF"}`);
+                    this.onOffEventCallback(value);
                 });
                 return this.serverNode?.run();
             }).then(() => {
@@ -107,9 +98,5 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
         }).catch((error) => {
             this.logger.error(`Failed to set OnOff of virtual device: ${error}`);
         });
-    }
-
-    subscribeOnOffState(handler: (state: boolean) => void) {
-        this.endpoint?.events.onOff.onOff$Changed.on(handler);
     }
 }
