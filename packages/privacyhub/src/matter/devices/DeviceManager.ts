@@ -48,6 +48,7 @@ export default class DeviceManager {
                                 }
                                 const devices: BaseDevice[] = [];
                                 node.getDevices().forEach((device) => {
+                                    this.logger.info(`Device: ${device.getNumber()}`);
                                     const type = serverList[0];
                                     if (type in ignoreTypes) {
                                         this.logger.debug(`Ignoring device type ${type}`);
