@@ -1,7 +1,7 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter-node.js";
-import { NodeId, EndpointNumber, ClusterId } from "@project-chip/matter-node.js/datatype";
+import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter-node.js/datatype";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import { Server } from "socket.io";
 import { Schema, model } from "mongoose";
@@ -65,7 +65,7 @@ export default class BaseDevice {
     protected _endpointId: EndpointNumber;
     protected _vendor: string | undefined;
     protected _product: string | undefined;
-    protected _type: ClusterId;
+    protected _type: DeviceTypeId;
 
     protected pairedNode: PairedNode;
     protected endpoint: EndpointInterface;
@@ -78,7 +78,7 @@ export default class BaseDevice {
 
     constructor(
         uniqueId: string,
-        type: ClusterId,
+        type: DeviceTypeId,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,

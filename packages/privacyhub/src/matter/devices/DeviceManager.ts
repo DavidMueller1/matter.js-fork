@@ -37,38 +37,25 @@ export default class DeviceManager {
             }).then((node: PairedNode) => {
                 this.logger.info(`---------NODE STRUCTURE---------`);
                 node.logStructure();
-                const descriptor = node.getRootClusterClient(DescriptorCluster);
-                if (descriptor !== undefined) {
-                    descriptor.getServerListAttribute().then((serverList) => {
-                        this.logger.info(`Server list: ${JSON.stringify(serverList)}`);
-                        descriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
-                            this.logger.info(`Device type list: ${stringifyWithBigint(deviceTypeList)}`);
-                        }).catch((error) => {
-                            this.logger.error(`Failed to get device type list: ${error}`);
-                        });
+                const basicInformation = node.getRootClusterClient(BasicInformationCluster);
+                if (basicInformation !== undefined) {
+                    basicInformation.getUniqueIdAttribute().then((uniqueId) => {
+                        if (uniqueId === undefined) {
+                            reject("Failed to get unique ID");
+                            return;
+                        }
+                        const devices: BaseDevice[] = [];
+                        node.getDevices().forEach((device) => {
+                            this.logger.info(`Device: ${device.getNumber()}`);
+                            const deviceDescriptor = device.getClusterClient(DescriptorCluster)
+                            if (deviceDescriptor === undefined) {
+                                reject("Failed to get device descriptor");
+                                return;
+                            } else {
+                                deviceDescriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
+                                    this.logger.info(`===== Device type list: ${stringifyWithBigint(deviceTypeList)}`);
 
-                        const basicInformation = node.getRootClusterClient(BasicInformationCluster);
-                        if (basicInformation !== undefined) {
-                            basicInformation.getUniqueIdAttribute().then((uniqueId) => {
-                                if (uniqueId === undefined) {
-                                    reject("Failed to get unique ID");
-                                    return;
-                                }
-                                const devices: BaseDevice[] = [];
-                                node.getDevices().forEach((device) => {
-                                    this.logger.info(`Device: ${device.getNumber()}`);
-                                    const deviceDescriptor = device.getClusterClient(DescriptorCluster)
-                                    if (deviceDescriptor === undefined) {
-                                        reject("Failed to get device descriptor");
-                                    } else {
-                                        deviceDescriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
-                                            this.logger.info(`===== Device type list: ${stringifyWithBigint(deviceTypeList)}`);
-                                        }).catch((error) => {
-                                            reject("Failed to get device type list: " + error);
-                                        });
-                                    }
-
-                                    const type = serverList[0];
+                                    const type = deviceTypeList[0].deviceType;
                                     if (type in ignoreTypes) {
                                         this.logger.debug(`Ignoring device type ${type}`);
                                         return;
@@ -118,19 +105,17 @@ export default class DeviceManager {
                                             devices.push(unknownDevice);
                                             break;
                                     }
+                                }).catch((error) => {
+                                    reject("Failed to get device type list: " + error);
                                 });
-                                resolve(devices);
-                            }).catch((error) => {
-                                reject("Failed to get unique ID: " + error);
-                            });
-                        } else {
-                            reject("Failed to get basic information");
-                        }
+                            }
+                        });
+                        resolve(devices);
                     }).catch((error) => {
-                        reject("Failed to get server list: " + error);
+                        reject("Failed to get unique ID: " + error);
                     });
                 } else {
-                    reject("Failed to get descriptor");
+                    reject("Failed to get basic information");
                 }
             }).catch((error) => {
                 console.log(`Error connecting to node: ${error}`);

@@ -4,7 +4,7 @@ import { BooleanStateCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
-import { NodeId, EndpointNumber, ClusterId } from "@project-chip/matter.js/datatype";
+import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 
@@ -38,7 +38,7 @@ export default class ContactSensor extends BaseDevice {
 
     constructor(
         uniqueId: string,
-        type: ClusterId,
+        type: DeviceTypeId,
         nodeId: NodeId,
         endpointId: EndpointNumber,
         pairedNode: PairedNode,
