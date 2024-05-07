@@ -6,6 +6,7 @@ import { OnOffPlugInUnitDevice } from "@project-chip/matter.js/devices/OnOffPlug
 import VirtualBaseDevice from "./VirtualBaseDevice.js";
 
 export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
+    private endpoint: Endpoint<OnOffPlugInUnitDevice> | undefined;
 
     constructor(
         nodeId: NodeId,
@@ -79,6 +80,18 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
             }).catch((error) => {
                 return reject(error);
             });
+        });
+    }
+
+    setOnOffState(state: boolean) {
+        this.endpoint?.set({
+            onOff: {
+                onOff: state,
+            }
+        }).then(() => {
+            this.logger.info(`Set OnOff of virtual device to ${state}`);
+        }).catch((error) => {
+            this.logger.error(`Failed to set OnOff of virtual device: ${error}`);
         });
     }
 }

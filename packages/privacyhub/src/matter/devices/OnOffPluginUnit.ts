@@ -70,6 +70,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                         if (this._onOffState === state) return;
 
                         this._onOffState = state;
+                        this.virtualDevice.setOnOffState(state);
                         this.logger.info(`OnOff state changed to ${this._onOffState}`);
 
                         this.io.emit('onOffState', {
@@ -127,6 +128,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                     });
                 } else {
                     (state ? onOffCluster.on() : onOffCluster.off()).then(() => {
+                        this.virtualDevice.setOnOffState(state);
                         resolve();
                     }).catch((error) => {
                         this.logger.error(`Failed to set OnOff: ${error}`);
