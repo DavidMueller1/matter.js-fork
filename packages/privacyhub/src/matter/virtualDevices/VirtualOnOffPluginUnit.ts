@@ -61,7 +61,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
             }).then((serverNode) => {
                 this.logger.info("ServerNode created");
                 this.serverNode = serverNode;
-                const endpoint = new Endpoint(
+                this.endpoint = new Endpoint(
                     OnOffPlugInUnitDevice,
                     {
                         id: this.uniqueId,
