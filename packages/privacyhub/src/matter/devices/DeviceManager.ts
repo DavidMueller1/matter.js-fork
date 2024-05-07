@@ -38,6 +38,8 @@ export default class DeviceManager {
                 if (descriptor !== undefined) {
                     descriptor.getServerListAttribute().then((serverList) => {
                         this.logger.info(`Server list: ${JSON.stringify(serverList)}`);
+                        this.logger.info(`TYPE: ${descriptor._type}`);
+                        this.logger.info(`TYPE: ${descriptor.getDeviceTypeListAttribute()}`);
 
                         const basicInformation = node.getRootClusterClient(BasicInformationCluster);
                         if (basicInformation !== undefined) {
