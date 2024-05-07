@@ -8,7 +8,6 @@ import { UnexpectedDataError } from "../common/MatterError.js";
 import { tryCatch } from "../common/TryCatchHandler.js";
 import { ValidationError } from "../common/ValidationError.js";
 import { Globals } from "../model/index.js";
-import { MatterCoreSpecificationV1_0 } from "../spec/Specifications.js";
 import { Merge } from "../util/Type.js";
 import { TlvAny } from "./TlvAny.js";
 import { LengthConstraints } from "./TlvArray.js";
@@ -57,7 +56,7 @@ export type TypeFromFields<F extends TlvFields> = Merge<
 /**
  * Schema to encode an object in TLV.
  *
- * @see {@link MatterCoreSpecificationV1_0} § A.5.1 and § A.11.4
+ * @see {@link MatterSpecification.v10.Core} § A.5.1 and § A.11.4
  */
 export class ObjectSchema<F extends TlvFields> extends TlvSchema<TypeFromFields<F>> {
     private readonly fieldById = new Array<{ name: string; field: FieldType<any> }>();
@@ -68,12 +67,65 @@ export class ObjectSchema<F extends TlvFields> extends TlvSchema<TypeFromFields<
     ) {
         super();
 
+        // TODO Add sorting option to enforce order of fields in encoded TLV If Ty is Structure
+        //  Requirements @see {@link MatterSpecification.Core.v12} § A.2.4
         for (const name in this.fieldDefinitions) {
             const field = this.fieldDefinitions[name];
             if (field.repeated && type !== TlvType.List) {
                 throw new Error("Repeated fields are only allowed in TLV List.");
             }
             this.fieldById[field.id] = { name, field };
+        }
+    }
+
+    #encodeEntryToTlv(writer: TlvWriter, name: string, value: TypeFromFields<F>, forWriteInteraction?: boolean) {
+        const { id, schema, optional: isOptional, repeated: isRepeated } = this.fieldDefinitions[name];
+        const fieldValue = (value as any)[name];
+        if (fieldValue === undefined) {
+            if (!isOptional) {
+                if (forWriteInteraction && id === <number>Globals.FabricIndex.id) {
+                    // FabricIndex field should not be included in encoded data for write interactions
+                    return;
+                }
+                throw new ValidationError(`Missing mandatory field ${name}`, name);
+            }
+            return;
+        }
+        if (isRepeated) {
+            if (!Array.isArray(fieldValue)) {
+                throw new ValidationError(`Repeated field ${name} should be an array.`, name);
+            }
+            for (const element of fieldValue) {
+                schema.encodeTlvInternal(writer, element, { id }, forWriteInteraction);
+            }
+        } else {
+            schema.encodeTlvInternal(writer, fieldValue, { id }, forWriteInteraction);
+        }
+    }
+
+    /**
+     * Encode the object as Structure, by the order of field definitions.
+     */
+    #encodeStructure(writer: TlvWriter, value: TypeFromFields<F>, forWriteInteraction?: boolean) {
+        for (const name in this.fieldDefinitions) {
+            this.#encodeEntryToTlv(writer, name, value, forWriteInteraction);
+        }
+    }
+
+    /**
+     * Encode the object as List, by the order of the fields in the object.
+     */
+    #encodeList(writer: TlvWriter, value: TypeFromFields<F>, forWriteInteraction?: boolean) {
+        const encodedFields = new Set<string>();
+        // Encode object fields
+        for (const name of Object.keys(value)) {
+            this.#encodeEntryToTlv(writer, name, value, forWriteInteraction);
+            encodedFields.add(name);
+        }
+        // Verify the potentially missing fields
+        for (const name in this.fieldDefinitions) {
+            if (encodedFields.has(name)) continue;
+            this.#encodeEntryToTlv(writer, name, value, forWriteInteraction);
         }
     }
 
@@ -84,30 +136,14 @@ export class ObjectSchema<F extends TlvFields> extends TlvSchema<TypeFromFields<
         forWriteInteraction?: boolean,
     ): void {
         writer.writeTag({ type: this.type }, tag);
-        for (const name in this.fieldDefinitions) {
-            const { id, schema, optional: isOptional, repeated: isRepeated } = this.fieldDefinitions[name];
-            const fieldValue = (value as any)[name];
-            if (fieldValue === undefined) {
-                if (!isOptional) {
-                    if (forWriteInteraction && id === <number>Globals.FabricIndex.id) {
-                        // FabricIndex field should not be included in encoded data for write interactions
-                        continue;
-                    }
-                    throw new ValidationError(`Missing mandatory field ${name}`, name);
-                }
-                continue;
-            }
-            if (isRepeated) {
-                if (!Array.isArray(fieldValue)) {
-                    throw new ValidationError(`Repeated field ${name} should be an array.`, name);
-                }
-                for (const element of fieldValue) {
-                    schema.encodeTlvInternal(writer, element, { id }, forWriteInteraction);
-                }
-            } else {
-                schema.encodeTlvInternal(writer, fieldValue, { id }, forWriteInteraction);
-            }
+
+        if (this.type === TlvType.Structure) {
+            // Encode in order of field definitions
+            this.#encodeStructure(writer, value, forWriteInteraction);
+        } else {
+            this.#encodeList(writer, value, forWriteInteraction);
         }
+
         writer.writeTag({ type: TlvType.EndOfContainer });
     }
 

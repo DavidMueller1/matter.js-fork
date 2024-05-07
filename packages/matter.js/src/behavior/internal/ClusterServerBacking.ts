@@ -25,6 +25,7 @@ import { SecureSession } from "../../session/SecureSession.js";
 import { Session } from "../../session/Session.js";
 import { MaybePromise } from "../../util/Promises.js";
 import { camelize } from "../../util/String.js";
+import { isObject } from "../../util/Type.js";
 import { AccessControl } from "../AccessControl.js";
 import { Behavior } from "../Behavior.js";
 import type { ClusterBehavior } from "../cluster/ClusterBehavior.js";
@@ -47,6 +48,10 @@ export class ClusterServerBehaviorBacking extends ServerBehaviorBacking {
 
     get clusterServer() {
         return this.#clusterServer;
+    }
+
+    get runtime() {
+        return this.#server.endpoint.env.runtime;
     }
 
     override get type() {
@@ -77,7 +82,7 @@ export class ClusterServerBehaviorBacking extends ServerBehaviorBacking {
     }
 
     #createClusterServer(behavior: Behavior) {
-        const elements = new ValidatedElements(this.type);
+        const elements = new ValidatedElements(this.type, behavior);
         elements.report();
 
         // Install command handlers that map to implementation methods
@@ -175,7 +180,7 @@ function createCommandHandler(backing: ClusterServerBehaviorBacking, name: strin
 
     const handleCommand: CommandHandler<any, any, any> = ({ request, message }) => {
         let requestDiagnostic: unknown;
-        if (request && typeof request === "object") {
+        if (isObject(request)) {
             requestDiagnostic = Diagnostic.dict(request);
         } else if (request !== undefined) {
             requestDiagnostic = request;
@@ -200,17 +205,31 @@ function createCommandHandler(backing: ClusterServerBehaviorBacking, name: strin
             cluster: behavior.cluster.id,
         });
 
-        let result = (behavior as unknown as Record<string, (arg: any) => any>)[name](request);
+        let isAsync = false;
+        let activity: undefined | Disposable;
+        let result: unknown;
+        try {
+            activity = behavior.context?.activity?.frame(`invoke ${name}`);
 
-        if (trace) {
-            result = MaybePromise.then(
-                result,
+            result = (behavior as unknown as Record<string, (arg: unknown) => unknown>)[name](request);
 
-                output => {
-                    trace.output = result;
-                    return output;
-                },
-            );
+            if (MaybePromise.is(result)) {
+                isAsync = true;
+                result = Promise.resolve(result)
+                    .then(result => {
+                        if (trace) {
+                            trace.output = result;
+                        }
+                        return result;
+                    })
+                    .finally(() => activity?.[Symbol.dispose]());
+            } else if (trace) {
+                trace.output = result;
+            }
+        } finally {
+            if (!isAsync) {
+                activity?.[Symbol.dispose]();
+            }
         }
 
         return result;
@@ -234,6 +253,8 @@ function createAttributeAccessors(
             }
 
             const behavior = behaviorFor(backing, message);
+
+            behavior.context.activity?.frame(`read ${name}`);
 
             const trace = behavior.context.trace;
             if (trace) {
@@ -261,6 +282,8 @@ function createAttributeAccessors(
         set(value, { message }) {
             const behavior = behaviorFor(backing, message);
 
+            behavior.context.activity?.frame(`write ${name}`);
+
             logger.info(
                 "Write",
                 Diagnostic.strong(`${backing}.state.${name}`),
@@ -274,7 +297,7 @@ function createAttributeAccessors(
                 trace.input = value;
             }
 
-            const state = behavior.state as Record<string, any>;
+            const state = behavior.state as Val.Struct;
 
             state[name] = value;
 
@@ -287,7 +310,7 @@ function createAttributeAccessors(
 
 function createChangeHandler(backing: ClusterServerBehaviorBacking, name: string) {
     // Change handler requires an event source
-    const observable = (backing.events as any)[`${name}$Change`] as ClusterEvents.AttributeObservable;
+    const observable = (backing.events as any)[`${name}$Changed`] as ClusterEvents.AttributeObservable;
     if (observable === undefined) {
         return;
     }
@@ -331,6 +354,9 @@ function createEventHandler(backing: ClusterServerBehaviorBacking, name: string)
     }
 
     observable.on((payload, _context) => {
-        eventServer.triggerEvent(payload);
+        const maybePromise = eventServer.triggerEvent(payload);
+        if (MaybePromise.is(maybePromise)) {
+            backing.runtime.add(maybePromise);
+        }
     });
 }

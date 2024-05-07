@@ -211,7 +211,7 @@ class ControllerNode {
                 },
                 passcode: setupPin,
             } as NodeCommissioningOptions;
-            logger.info(`Commissioning ... ${JSON.stringify(options)}`);
+            logger.info(`Commissioning ... ${Logger.toJSON(options)}`);
             const nodeId = await commissioningController.commissionNode(options);
 
             console.log(`Commissioning successfully done with nodeId ${nodeId}`);
@@ -347,8 +347,6 @@ new ControllerNode().start().catch(error => logger.error(error));
 process.on("SIGINT", () => {
     // Clean up on CTRL-C
     // Pragmatic way to make sure the storage is correctly closed before the process ends.
-    storage
-        .close()
-        .then(() => process.exit(0))
-        .catch(() => process.exit(1));
+    storage.close();
+    process.exit(0);
 });

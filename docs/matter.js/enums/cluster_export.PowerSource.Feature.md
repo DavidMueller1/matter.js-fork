@@ -8,7 +8,7 @@ These are optional features supported by PowerSourceCluster.
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.7.4
+MatterSpecification.v11.Core § 11.7.4
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ A battery power source
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:879](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L879)
+[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:1231](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L1231)
 
 ___
 
@@ -45,7 +45,7 @@ A rechargeable battery power source (requires Battery feature)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:886](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L886)
+[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:1238](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L1238)
 
 ___
 
@@ -59,7 +59,7 @@ A replaceable battery power source (requires Battery feature)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:893](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L893)
+[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:1245](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L1245)
 
 ___
 
@@ -73,4 +73,4 @@ A wired power source
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:872](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L872)
+[packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts:1224](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/PowerSourceCluster.ts#L1224)

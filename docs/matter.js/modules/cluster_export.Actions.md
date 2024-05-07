@@ -13,10 +13,32 @@
 - [ActionType](../enums/cluster_export.Actions.ActionType.md)
 - [EndpointListType](../enums/cluster_export.Actions.EndpointListType.md)
 
+### Interfaces
+
+- [ActionFailedEvent](../interfaces/cluster_export.Actions.ActionFailedEvent.md)
+- [ActionStruct](../interfaces/cluster_export.Actions.ActionStruct.md)
+- [Cluster](../interfaces/cluster_export.Actions.Cluster.md)
+- [DisableActionRequest](../interfaces/cluster_export.Actions.DisableActionRequest.md)
+- [DisableActionWithDurationRequest](../interfaces/cluster_export.Actions.DisableActionWithDurationRequest.md)
+- [EnableActionRequest](../interfaces/cluster_export.Actions.EnableActionRequest.md)
+- [EnableActionWithDurationRequest](../interfaces/cluster_export.Actions.EnableActionWithDurationRequest.md)
+- [EndpointListStruct](../interfaces/cluster_export.Actions.EndpointListStruct.md)
+- [InstantActionRequest](../interfaces/cluster_export.Actions.InstantActionRequest.md)
+- [InstantActionWithTransitionRequest](../interfaces/cluster_export.Actions.InstantActionWithTransitionRequest.md)
+- [PauseActionRequest](../interfaces/cluster_export.Actions.PauseActionRequest.md)
+- [PauseActionWithDurationRequest](../interfaces/cluster_export.Actions.PauseActionWithDurationRequest.md)
+- [ResumeActionRequest](../interfaces/cluster_export.Actions.ResumeActionRequest.md)
+- [StartActionRequest](../interfaces/cluster_export.Actions.StartActionRequest.md)
+- [StartActionWithDurationRequest](../interfaces/cluster_export.Actions.StartActionWithDurationRequest.md)
+- [StateChangedEvent](../interfaces/cluster_export.Actions.StateChangedEvent.md)
+- [StopActionRequest](../interfaces/cluster_export.Actions.StopActionRequest.md)
+
 ### Variables
 
 - [Cluster](cluster_export.Actions.md#cluster)
+- [ClusterInstance](cluster_export.Actions.md#clusterinstance)
 - [CommandBits](cluster_export.Actions.md#commandbits)
+- [Complete](cluster_export.Actions.md#complete)
 - [TlvActionFailedEvent](cluster_export.Actions.md#tlvactionfailedevent)
 - [TlvActionStruct](cluster_export.Actions.md#tlvactionstruct)
 - [TlvDisableActionRequest](cluster_export.Actions.md#tlvdisableactionrequest)
@@ -38,49 +60,27 @@
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](cluster_export.ClusterFactory.md#definition)\<\{ `attributes`: \{ `actionList`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `state`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\> ; `supportedCommands`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TypeFromBitSchema`](schema_export.md#typefrombitschema)\<\{ `disableAction`: [`BitFlag`](schema_export.md#bitflag) ; `disableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `enableAction`: [`BitFlag`](schema_export.md#bitflag) ; `enableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `instantAction`: [`BitFlag`](schema_export.md#bitflag) ; `instantActionWithTransition`: [`BitFlag`](schema_export.md#bitflag) ; `pauseAction`: [`BitFlag`](schema_export.md#bitflag) ; `pauseActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `resumeAction`: [`BitFlag`](schema_export.md#bitflag) ; `startAction`: [`BitFlag`](schema_export.md#bitflag) ; `startActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `stopAction`: [`BitFlag`](schema_export.md#bitflag)  }\>\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionType`](../enums/cluster_export.Actions.ActionType.md)\>  }\>[], `any`\> ; `endpointLists`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpoints`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`EndpointNumber`](datatype_export.md#endpointnumber)[]\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`EndpointListType`](../enums/cluster_export.Actions.EndpointListType.md)\>  }\>[], `any`\> ; `setupUrl`: [`OptionalAttribute`](../interfaces/cluster_export.OptionalAttribute.md)\<`string`, `any`\>  } ; `commands`: \{ `disableAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `disableActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `enableAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `enableActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `instantAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `instantActionWithTransition`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\> ; `transitionTime`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `pauseAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `pauseActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `resumeAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `startAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `startActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `stopAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\>  } ; `events`: \{ `actionFailed`: [`Event`](../interfaces/cluster_export.Event.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `error`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionError`](../enums/cluster_export.Actions.ActionError.md)\> ; `invokeId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `newState`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\>  }\>, `any`\> ; `stateChanged`: [`Event`](../interfaces/cluster_export.Event.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `newState`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\>  }\>, `any`\>  } ; `id`: ``37`` = 0x25; `name`: ``"Actions"`` = "Actions"; `revision`: ``1`` = 1 }\>
-
-Actions
-
-This cluster provides a standardized way for a Node (typically a Bridge, but could be any Node) to expose
-
-  • Information about logical grouping of endpoints on the Node (example: lights in a room)
-
-  • Information about named actions that can be performed on such a group of endpoints (example: recall a scene
-    for a group of lights by its name)
-
-  • Commands to trigger such actions
-
-  • Events to receive feedback on the state of such actions.
-
-The information on grouping and available actions is typically provided by the user or Bridge manufacturer via
-some means not defined in Matter, and therefore provided as read-only to Nodes. For example: a
-manufacturer-provided app allows a user to set up logical grouping and create/assign scene for such groups.
-
-Using this cluster, a Node can learn about such logical grouping, provided actions, and trigger such actions.
-
-While the origin of this cluster stems from use cases with a Bridge, its server side may also be implemented on
-any Node which can expose certain grouping, actions or automations to other users.
-
-After defining the attributes, commands and events for this cluster, and the associated data types, several
-examples are provided to illustrate the capabilities of this cluster.
-
-Actions can be defined in a flexible manner to suit the needs of the various nodes implementing this cluster.
-For each action, the commands available for that particular action are defined.
-
-This cluster can be used to expose only the grouping of endpoints without any actions defined by populating the
-EndpointList attribute accordingly and providing an empty list for ActionList.
-
-The term 'action' in the description of this cluster should not be confused with the term 'action' as used in
-the Interaction Model.
-
-**`See`**
-
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14
+• **Cluster**: [`Cluster`](../interfaces/cluster_export.Actions.Cluster.md)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:566](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L566)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:961](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L961)
+
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:963](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L963)
+
+___
+
+### ClusterInstance
+
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/cluster_export.MutableCluster-1.md)\<\{ `attributes`: \{ `actionList`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `state`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\> ; `supportedCommands`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TypeFromPartialBitSchema`](schema_export.md#typefrompartialbitschema)\<\{ `disableAction`: [`BitFlag`](schema_export.md#bitflag) ; `disableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `enableAction`: [`BitFlag`](schema_export.md#bitflag) ; `enableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `instantAction`: [`BitFlag`](schema_export.md#bitflag) ; `instantActionWithTransition`: [`BitFlag`](schema_export.md#bitflag) ; `pauseAction`: [`BitFlag`](schema_export.md#bitflag) ; `pauseActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `resumeAction`: [`BitFlag`](schema_export.md#bitflag) ; `startAction`: [`BitFlag`](schema_export.md#bitflag) ; `startActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `stopAction`: [`BitFlag`](schema_export.md#bitflag)  }\>\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionType`](../enums/cluster_export.Actions.ActionType.md)\>  }\>[], `any`\> ; `endpointLists`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpoints`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`EndpointNumber`](datatype_export.md#endpointnumber)[]\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`EndpointListType`](../enums/cluster_export.Actions.EndpointListType.md)\>  }\>[], `any`\> ; `setupUrl`: [`OptionalAttribute`](../interfaces/cluster_export.OptionalAttribute.md)\<`string`, `any`\>  } ; `commands`: \{ `disableAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `disableActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `enableAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `enableActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `instantAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `instantActionWithTransition`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\> ; `transitionTime`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `pauseAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `pauseActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `resumeAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `startAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `startActionWithDuration`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `duration`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\> ; `stopAction`: [`OptionalCommand`](../interfaces/cluster_export.OptionalCommand.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number`\>  }\>, `void`, `any`\>  } ; `events`: \{ `actionFailed`: [`Event`](../interfaces/cluster_export.Event.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `error`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionError`](../enums/cluster_export.Actions.ActionError.md)\> ; `invokeId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `newState`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\>  }\>, `any`\> ; `stateChanged`: [`Event`](../interfaces/cluster_export.Event.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `invokeId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `newState`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\>  }\>, `any`\>  } ; `id`: ``37`` = 0x25; `name`: ``"Actions"`` = "Actions"; `revision`: ``1`` = 1 }\>
+
+**`See`**
+
+[Cluster](cluster_export.Actions.md#cluster)
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:655](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L655)
 
 ___
 
@@ -92,7 +92,7 @@ Note - The bit allocation of this bitmap shall follow the ID’s of the Commands
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.4.1
+MatterSpecification.v11.Core § 9.14.4.1
 
 #### Type declaration
 
@@ -113,7 +113,17 @@ Note - The bit allocation of this bitmap shall follow the ID’s of the Commands
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:116](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L116)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:118](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L118)
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/cluster_export.Actions.Cluster.md) = `Cluster`
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:964](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L964)
 
 ___
 
@@ -125,27 +135,27 @@ Body of the Actions actionFailed event
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.7.2
+MatterSpecification.v11.Core § 9.14.7.2
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:516](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L516)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:632](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L632)
 
 ___
 
 ### TlvActionStruct
 
-• `Const` **TlvActionStruct**: [`ObjectSchema`](../classes/tlv_export.ObjectSchema.md)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `state`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\> ; `supportedCommands`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TypeFromBitSchema`](schema_export.md#typefrombitschema)\<\{ `disableAction`: [`BitFlag`](schema_export.md#bitflag) ; `disableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `enableAction`: [`BitFlag`](schema_export.md#bitflag) ; `enableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `instantAction`: [`BitFlag`](schema_export.md#bitflag) ; `instantActionWithTransition`: [`BitFlag`](schema_export.md#bitflag) ; `pauseAction`: [`BitFlag`](schema_export.md#bitflag) ; `pauseActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `resumeAction`: [`BitFlag`](schema_export.md#bitflag) ; `startAction`: [`BitFlag`](schema_export.md#bitflag) ; `startActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `stopAction`: [`BitFlag`](schema_export.md#bitflag)  }\>\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionType`](../enums/cluster_export.Actions.ActionType.md)\>  }\>
+• `Const` **TlvActionStruct**: [`ObjectSchema`](../classes/tlv_export.ObjectSchema.md)\<\{ `actionId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `endpointListId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\> ; `name`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `state`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionState`](../enums/cluster_export.Actions.ActionState.md)\> ; `supportedCommands`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TypeFromPartialBitSchema`](schema_export.md#typefrompartialbitschema)\<\{ `disableAction`: [`BitFlag`](schema_export.md#bitflag) ; `disableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `enableAction`: [`BitFlag`](schema_export.md#bitflag) ; `enableActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `instantAction`: [`BitFlag`](schema_export.md#bitflag) ; `instantActionWithTransition`: [`BitFlag`](schema_export.md#bitflag) ; `pauseAction`: [`BitFlag`](schema_export.md#bitflag) ; `pauseActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `resumeAction`: [`BitFlag`](schema_export.md#bitflag) ; `startAction`: [`BitFlag`](schema_export.md#bitflag) ; `startActionWithDuration`: [`BitFlag`](schema_export.md#bitflag) ; `stopAction`: [`BitFlag`](schema_export.md#bitflag)  }\>\> ; `type`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`ActionType`](../enums/cluster_export.Actions.ActionType.md)\>  }\>
 
 This data type holds the details of a single action, and contains the data fields below.
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.4.6
+MatterSpecification.v11.Core § 9.14.4.6
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:210](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L210)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:212](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L212)
 
 ___
 
@@ -157,11 +167,11 @@ Input to the Actions disableAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.11
+MatterSpecification.v11.Core § 9.14.6.11
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:456](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L456)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:551](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L551)
 
 ___
 
@@ -173,11 +183,11 @@ Input to the Actions disableActionWithDuration command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.12
+MatterSpecification.v11.Core § 9.14.6.12
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:466](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L466)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:568](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L568)
 
 ___
 
@@ -189,11 +199,11 @@ Input to the Actions enableAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.9
+MatterSpecification.v11.Core § 9.14.6.9
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:435](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L435)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:516](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L516)
 
 ___
 
@@ -205,11 +215,11 @@ Input to the Actions enableActionWithDuration command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.10
+MatterSpecification.v11.Core § 9.14.6.10
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:445](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L445)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:533](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L533)
 
 ___
 
@@ -230,11 +240,11 @@ This field shall indicate the type of endpoint list, see EndpointListTypeEnum.
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.4.7
+MatterSpecification.v11.Core § 9.14.4.7
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:322](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L322)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:331](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L331)
 
 ___
 
@@ -246,11 +256,11 @@ Input to the Actions instantAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.1
+MatterSpecification.v11.Core § 9.14.6.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:340](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L340)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:365](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L365)
 
 ___
 
@@ -262,11 +272,11 @@ Input to the Actions instantActionWithTransition command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.2
+MatterSpecification.v11.Core § 9.14.6.2
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:350](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L350)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:382](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L382)
 
 ___
 
@@ -278,11 +288,11 @@ Input to the Actions pauseAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.6
+MatterSpecification.v11.Core § 9.14.6.6
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:404](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L404)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:464](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L464)
 
 ___
 
@@ -294,11 +304,11 @@ Input to the Actions pauseActionWithDuration command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.7
+MatterSpecification.v11.Core § 9.14.6.7
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:414](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L414)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:481](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L481)
 
 ___
 
@@ -310,11 +320,11 @@ Input to the Actions resumeAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.8
+MatterSpecification.v11.Core § 9.14.6.8
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:425](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L425)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:499](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L499)
 
 ___
 
@@ -326,11 +336,11 @@ Input to the Actions startAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.3
+MatterSpecification.v11.Core § 9.14.6.3
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:367](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L367)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:406](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L406)
 
 ___
 
@@ -342,11 +352,11 @@ Input to the Actions startActionWithDuration command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.4
+MatterSpecification.v11.Core § 9.14.6.4
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:377](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L377)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:423](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L423)
 
 ___
 
@@ -358,11 +368,11 @@ Body of the Actions stateChanged event
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.7.1
+MatterSpecification.v11.Core § 9.14.7.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:477](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L477)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:586](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L586)
 
 ___
 
@@ -374,8 +384,8 @@ Input to the Actions stopAction command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.14.6.5
+MatterSpecification.v11.Core § 9.14.6.5
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:394](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L394)
+[packages/matter.js/src/cluster/definitions/ActionsCluster.ts:447](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ActionsCluster.ts#L447)

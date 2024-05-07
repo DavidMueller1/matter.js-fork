@@ -8,7 +8,7 @@ These are optional features supported by PulseWidthModulationCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.6.4
+MatterSpecification.v11.Cluster § 1.6.4
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ control.
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:143
+packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:243
 
 ___
 
@@ -45,7 +45,7 @@ Behavior that supports lighting applications
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:136
+packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:236
 
 ___
 
@@ -59,4 +59,4 @@ Dependency with the On/Off cluster
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:130
+packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:230

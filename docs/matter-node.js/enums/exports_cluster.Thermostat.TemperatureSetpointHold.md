@@ -8,7 +8,7 @@ The value of the Thermostat temperatureSetpointHold attribute
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.3.7.30
+MatterSpecification.v11.Cluster § 4.3.7.30
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ Follow scheduling program
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:114
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:292
 
 ___
 
@@ -39,4 +39,4 @@ Maintain current setpoint, regardless of schedule transitions
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:118
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:296

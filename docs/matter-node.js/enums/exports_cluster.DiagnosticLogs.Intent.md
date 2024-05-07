@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.1
+MatterSpecification.v11.Core § 11.10.4.1
 
 ## Table of contents
 
@@ -29,11 +29,11 @@ Node.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.1.3
+MatterSpecification.v11.Core § 11.10.4.1.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:40
+packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:42
 
 ___
 
@@ -48,11 +48,11 @@ support to an end-user.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.1.1
+MatterSpecification.v11.Core § 11.10.4.1.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:22
+packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:24
 
 ___
 
@@ -67,8 +67,8 @@ currently commissioned (and/or connected) or has previously been commissioned (a
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.10.4.1.2
+MatterSpecification.v11.Core § 11.10.4.1.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:31
+packages/matter.js/dist/esm/cluster/definitions/DiagnosticLogsCluster.d.ts:33

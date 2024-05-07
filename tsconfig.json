@@ -1,4 +1,9 @@
 {
+    "compilerOptions": {
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "strictPropertyInitialization": false
+    },
     "files": [],
     "references": [
         { "path": "packages/matter.js-tools" },

@@ -242,6 +242,7 @@ export default class NeoPixelController {
         }
     }
 
+    // @ts-expect-error not yet implemented
     private switchFromPulsing(options: LedStateOptions) {
         // TODO: implement
     }
@@ -376,8 +377,9 @@ export default class NeoPixelController {
         });
     }
 
+    // @ts-expect-error not yet implemented
     private renderPulsing(options: LedStateOptions) {
-
+        // TODO: implement
     }
 
     private fadeToColor(options: LedStateOptions) {
@@ -467,6 +469,7 @@ export default class NeoPixelController {
         const min = Math.min(r, g, b);
         const delta = max - min;
 
+        // eslint-disable-next-line prefer-const
         let h = 0, s = 0, v = max / 255;
 
         if (delta !== 0) {

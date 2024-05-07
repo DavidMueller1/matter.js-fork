@@ -12,51 +12,71 @@
 - [Status](../enums/cluster_export.DiagnosticLogs.Status.md)
 - [TransferProtocol](../enums/cluster_export.DiagnosticLogs.TransferProtocol.md)
 
+### Interfaces
+
+- [Cluster](../interfaces/cluster_export.DiagnosticLogs.Cluster.md)
+- [RetrieveLogsRequest](../interfaces/cluster_export.DiagnosticLogs.RetrieveLogsRequest.md)
+- [RetrieveLogsResponse](../interfaces/cluster_export.DiagnosticLogs.RetrieveLogsResponse.md)
+
 ### Variables
 
 - [Cluster](cluster_export.DiagnosticLogs.md#cluster)
-- [TlvRetrieveLogsRequestRequest](cluster_export.DiagnosticLogs.md#tlvretrievelogsrequestrequest)
+- [ClusterInstance](cluster_export.DiagnosticLogs.md#clusterinstance)
+- [Complete](cluster_export.DiagnosticLogs.md#complete)
+- [TlvRetrieveLogsRequest](cluster_export.DiagnosticLogs.md#tlvretrievelogsrequest)
 - [TlvRetrieveLogsResponse](cluster_export.DiagnosticLogs.md#tlvretrievelogsresponse)
 
 ## Variables
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](cluster_export.ClusterFactory.md#definition)\<\{ `commands`: \{ `retrieveLogsRequest`: [`Command`](../interfaces/cluster_export.Command.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `intent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Intent`](../enums/cluster_export.DiagnosticLogs.Intent.md)\> ; `requestedProtocol`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TransferProtocol`](../enums/cluster_export.DiagnosticLogs.TransferProtocol.md)\> ; `transferFileDesignator`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`string`\>  }\>, [`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `logContent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`Uint8Array`\> ; `status`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Status`](../enums/cluster_export.DiagnosticLogs.Status.md)\> ; `timeSinceBoot`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number` \| `bigint`\> ; `utcTimeStamp`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number` \| `bigint`\>  }\>, `any`\>  } ; `id`: ``50`` = 0x32; `name`: ``"DiagnosticLogs"`` = "DiagnosticLogs"; `revision`: ``1`` = 1 }\>
-
-Diagnostic Logs
-
-This Cluster supports an interface to a Node. It provides commands for retrieving unstructured diagnostic logs
-from a Node that may be used to aid in diagnostics. It will often be the case that unstructured diagnostic logs
-will be Node-wide and not specific to any subset of Endpoints. When present, this Cluster shall be implemented
-once for the Node. The Node SHOULD also implement the BDX Initiator and BDX Sender roles as defined in the BDX
-Protocol.
-
-NOTE Support for Diagnostic Logs cluster is provisional.
-
-**`See`**
-
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.10
+• **Cluster**: [`Cluster`](../interfaces/cluster_export.DiagnosticLogs.Cluster.md)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:247](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L247)
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:282](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L282)
+
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:284](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L284)
 
 ___
 
-### TlvRetrieveLogsRequestRequest
+### ClusterInstance
 
-• `Const` **TlvRetrieveLogsRequestRequest**: [`ObjectSchema`](../classes/tlv_export.ObjectSchema.md)\<\{ `intent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Intent`](../enums/cluster_export.DiagnosticLogs.Intent.md)\> ; `requestedProtocol`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TransferProtocol`](../enums/cluster_export.DiagnosticLogs.TransferProtocol.md)\> ; `transferFileDesignator`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`string`\>  }\>
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/cluster_export.MutableCluster-1.md)\<\{ `commands`: \{ `retrieveLogsRequest`: [`Command`](../interfaces/cluster_export.Command.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `intent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Intent`](../enums/cluster_export.DiagnosticLogs.Intent.md)\> ; `requestedProtocol`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TransferProtocol`](../enums/cluster_export.DiagnosticLogs.TransferProtocol.md)\> ; `transferFileDesignator`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`string`\>  }\>, [`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `logContent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`Uint8Array`\> ; `status`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Status`](../enums/cluster_export.DiagnosticLogs.Status.md)\> ; `timeSinceBoot`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number` \| `bigint`\> ; `utcTimeStamp`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`number` \| `bigint`\>  }\>, `any`\>  } ; `id`: ``50`` = 0x32; `name`: ``"DiagnosticLogs"`` = "DiagnosticLogs"; `revision`: ``1`` = 1 }\>
+
+**`See`**
+
+[Cluster](cluster_export.DiagnosticLogs.md#cluster)
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:254](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L254)
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/cluster_export.DiagnosticLogs.Cluster.md) = `Cluster`
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:285](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L285)
+
+___
+
+### TlvRetrieveLogsRequest
+
+• `Const` **TlvRetrieveLogsRequest**: [`ObjectSchema`](../classes/tlv_export.ObjectSchema.md)\<\{ `intent`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`Intent`](../enums/cluster_export.DiagnosticLogs.Intent.md)\> ; `requestedProtocol`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<[`TransferProtocol`](../enums/cluster_export.DiagnosticLogs.TransferProtocol.md)\> ; `transferFileDesignator`: [`OptionalFieldType`](../interfaces/tlv_export.OptionalFieldType.md)\<`string`\>  }\>
 
 Input to the DiagnosticLogs retrieveLogsRequest command
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.10.5.1
+MatterSpecification.v11.Core § 11.10.5.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:80](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L80)
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:82](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L82)
 
 ___
 
@@ -69,8 +89,8 @@ following.
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.10.5.2
+MatterSpecification.v11.Core § 11.10.5.2
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:198](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L198)
+[packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts:207](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/DiagnosticLogsCluster.ts#L207)

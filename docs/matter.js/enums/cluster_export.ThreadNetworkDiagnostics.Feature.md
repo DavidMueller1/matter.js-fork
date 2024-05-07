@@ -8,7 +8,7 @@ These are optional features supported by ThreadNetworkDiagnosticsCluster.
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.13.4
+MatterSpecification.v11.Core § 11.13.4
 
 ## Table of contents
 
@@ -32,7 +32,7 @@ of packets on the Thread interface.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:460](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L460)
+[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:927](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L927)
 
 ___
 
@@ -46,7 +46,7 @@ Server supports the counts for various MAC layer happenings.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:474](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L474)
+[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:941](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L941)
 
 ___
 
@@ -60,7 +60,7 @@ Server supports the counts for various MLE layer happenings.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:467](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L467)
+[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:934](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L934)
 
 ___
 
@@ -74,4 +74,4 @@ Server supports the counts for the number of received and transmitted packets on
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:452](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L452)
+[packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts:919](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThreadNetworkDiagnosticsCluster.ts#L919)

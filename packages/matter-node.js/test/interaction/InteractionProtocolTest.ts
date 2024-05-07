@@ -14,6 +14,7 @@ import {
     Attributes,
     BasicInformation,
     BasicInformationCluster,
+    ClusterDatasource,
     ClusterServer,
     ClusterServerObj,
     Events,
@@ -27,6 +28,7 @@ import {
     CommandId,
     EndpointNumber,
     EventId,
+    EventNumber,
     FabricId,
     FabricIndex,
     NodeId,
@@ -55,7 +57,7 @@ import {
 } from "@project-chip/matter.js/interaction";
 import { MessageExchange } from "@project-chip/matter.js/protocol";
 import { SecureSession } from "@project-chip/matter.js/session";
-import { StorageBackendMemory, StorageContext, StorageManager } from "@project-chip/matter.js/storage";
+import { StorageBackendMemory, StorageContext, StorageManager, SyncStorage } from "@project-chip/matter.js/storage";
 import {
     TlvArray,
     TlvField,
@@ -216,7 +218,7 @@ const READ_RESPONSE: DataReportPayload = {
                 payload: {
                     softwareVersion: 1,
                 },
-                eventNumber: 1,
+                eventNumber: EventNumber(1),
                 priority: 2,
                 epochTimestamp: 0,
             },
@@ -233,7 +235,7 @@ const READ_RESPONSE: DataReportPayload = {
                 payload: {
                     softwareVersion: 2,
                 },
-                eventNumber: 2,
+                eventNumber: EventNumber(2),
                 priority: 2,
                 epochTimestamp: 0,
             },
@@ -307,7 +309,7 @@ const READ_RESPONSE_WITH_FILTER: DataReportPayload = {
                 payload: {
                     softwareVersion: 2,
                 },
-                eventNumber: 2,
+                eventNumber: EventNumber(2),
                 priority: 2,
                 epochTimestamp: 0,
             },
@@ -866,7 +868,7 @@ describe("InteractionProtocol", () => {
                 },
 
                 changed() {},
-            };
+            } as ClusterDatasource<SyncStorage>;
         }
 
         if (cluster) {

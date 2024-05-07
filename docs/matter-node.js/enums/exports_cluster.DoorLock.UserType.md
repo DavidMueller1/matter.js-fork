@@ -8,7 +8,7 @@ The UserType enum used in various commands shall indicate what the type is for a
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16
+MatterSpecification.v11.Cluster § 5.2.6.16
 
 ## Table of contents
 
@@ -36,11 +36,11 @@ UserStatus value to OccupiedDisabled automatically.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.7
+MatterSpecification.v11.Cluster § 5.2.6.16.7
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:612
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:158
 
 ___
 
@@ -55,11 +55,11 @@ timeout across reboots such that the ExpiringUserTimeout is honored.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.8
+MatterSpecification.v11.Cluster § 5.2.6.16.8
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:621
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:167
 
 ___
 
@@ -72,11 +72,11 @@ to allow a notified Node to alert emergency services or contacts on the user acc
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.6
+MatterSpecification.v11.Cluster § 5.2.6.16.6
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:605
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:151
 
 ___
 
@@ -89,11 +89,11 @@ lock to generate the appropriate event notification to any bound devices.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.5
+MatterSpecification.v11.Cluster § 5.2.6.16.5
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:598
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:144
 
 ___
 
@@ -107,11 +107,11 @@ only user that can disable the user interface (keypad, remote, etc…).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.4
+MatterSpecification.v11.Cluster § 5.2.6.16.4
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:591
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:137
 
 ___
 
@@ -126,11 +126,11 @@ over-the-air for the lock/unlock commands.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.10
+MatterSpecification.v11.Cluster § 5.2.6.16.10
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:636
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:182
 
 ___
 
@@ -142,11 +142,11 @@ User access is restricted by Week Day and/or Year Day schedule.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.9
+MatterSpecification.v11.Cluster § 5.2.6.16.9
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:627
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:173
 
 ___
 
@@ -158,11 +158,11 @@ User has access 24/7 provided proper PIN or RFID is supplied (e.g., owner).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.1
+MatterSpecification.v11.Cluster § 5.2.6.16.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:570
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:116
 
 ___
 
@@ -175,11 +175,11 @@ cleaning worker).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.3
+MatterSpecification.v11.Cluster § 5.2.6.16.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:583
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:129
 
 ___
 
@@ -191,8 +191,8 @@ User has ability to open lock within a specific time period (e.g., guest).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.16.2
+MatterSpecification.v11.Cluster § 5.2.6.16.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:576
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:122

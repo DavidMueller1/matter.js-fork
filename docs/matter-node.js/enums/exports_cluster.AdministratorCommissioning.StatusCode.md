@@ -22,11 +22,11 @@ Could not be completed because another commissioning is in progress
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.18.6
+MatterSpecification.v11.Core § 11.18.6
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:97
+packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:121
 
 ___
 
@@ -38,11 +38,11 @@ Provided PAKE parameters were incorrectly formatted or otherwise invalid
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.18.6
+MatterSpecification.v11.Core § 11.18.6
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:103
+packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:127
 
 ___
 
@@ -54,8 +54,8 @@ No commissioning window was currently open
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.18.6
+MatterSpecification.v11.Core § 11.18.6
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:109
+packages/matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:133

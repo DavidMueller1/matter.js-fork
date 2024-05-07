@@ -8,7 +8,7 @@ These are optional features supported by FanControlCluster.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.4.5
+MatterSpecification.v11.Cluster § 4.4.5
 
 ## Table of contents
 
@@ -31,7 +31,7 @@ Automatic mode supported for fan speed
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:149](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L149)
+[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:249](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L249)
 
 ___
 
@@ -45,7 +45,7 @@ MultiSpeed
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:142](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L142)
+[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:242](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L242)
 
 ___
 
@@ -59,7 +59,7 @@ Rocking movement supported
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:156](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L156)
+[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:256](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L256)
 
 ___
 
@@ -73,4 +73,4 @@ Wind emulation supported
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:163](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L163)
+[packages/matter.js/src/cluster/definitions/FanControlCluster.ts:263](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/FanControlCluster.ts#L263)

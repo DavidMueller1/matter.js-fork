@@ -8,7 +8,7 @@ The value of the DoorLock lockState attribute
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.3.1
+MatterSpecification.v11.Cluster § 5.2.3.1
 
 ## Table of contents
 
@@ -28,7 +28,7 @@ Lock state is fully locked
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:24
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:982
 
 ___
 
@@ -40,7 +40,7 @@ Lock state is not fully locked
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:20
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:978
 
 ___
 
@@ -52,4 +52,4 @@ Lock state is fully unlocked
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:28
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:986

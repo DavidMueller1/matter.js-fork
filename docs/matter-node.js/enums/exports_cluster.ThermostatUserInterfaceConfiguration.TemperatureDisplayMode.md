@@ -8,7 +8,7 @@ The value of the ThermostatUserInterfaceConfiguration temperatureDisplayMode att
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.5.5.1
+MatterSpecification.v11.Cluster § 4.5.5.1
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ Temperature displayed in °C
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.d.ts:19
+packages/matter.js/dist/esm/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.d.ts:20
 
 ___
 
@@ -39,4 +39,4 @@ Temperature displayed in °F
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.d.ts:23
+packages/matter.js/dist/esm/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.d.ts:24

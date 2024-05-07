@@ -8,7 +8,7 @@ These are optional features supported by ContentLauncherCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.7.2
+MatterSpecification.v11.Cluster § 6.7.2
 
 ## Table of contents
 
@@ -29,7 +29,7 @@ Device supports content search (non-app specific)
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:992
+packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:1500
 
 ___
 
@@ -43,4 +43,4 @@ Device supports basic URL-based file playback
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:998
+packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:1506

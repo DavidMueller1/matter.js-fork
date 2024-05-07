@@ -8,7 +8,7 @@ These are optional features supported by AudioOutputCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.5.2
+MatterSpecification.v11.Cluster § 6.5.2
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ Supports updates to output names
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AudioOutputCluster.d.ts:81
+packages/matter.js/dist/esm/cluster/definitions/AudioOutputCluster.d.ts:123

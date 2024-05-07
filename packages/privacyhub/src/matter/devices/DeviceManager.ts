@@ -5,7 +5,7 @@ import { NodeId } from "@project-chip/matter-node.js/datatype";
 import OnOffPluginUnit from "./OnOffPluginUnit.js";
 import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
 import { EndpointNumber } from "@project-chip/matter.js/datatype";
-import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
+import { BasicInformationCluster, DescriptorCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { ignoreTypes } from "../PrivacyhubNode.js";
 import ContactSensor from "./ContactSensor.js";
@@ -34,46 +34,83 @@ export default class DeviceManager {
                     this.deviceStateInformationCallback(peerNodeId, state);
                 },
             }).then((node: PairedNode) => {
-                const basicInformation = node.getRootClusterClient(BasicInformationCluster);
-                if (basicInformation !== undefined) {
-                    basicInformation.getUniqueIdAttribute().then((uniqueId) => {
-                        if (uniqueId === undefined) {
-                            reject("Failed to get unique ID");
-                            return;
+                const descriptor = node.getRootClusterClient(DescriptorCluster);
+                if (descriptor !== undefined) {
+                    descriptor.getServerListAttribute().then((serverList) => {
+                        this.logger.info(`Server list: ${JSON.stringify(serverList)}`);
+
+                        const basicInformation = node.getRootClusterClient(BasicInformationCluster);
+                        if (basicInformation !== undefined) {
+                            basicInformation.getUniqueIdAttribute().then((uniqueId) => {
+                                if (uniqueId === undefined) {
+                                    reject("Failed to get unique ID");
+                                    return;
+                                }
+                                const devices: BaseDevice[] = [];
+                                node.getDevices().forEach((device) => {
+                                    const type = serverList[0];
+                                    if (type in ignoreTypes) {
+                                        this.logger.debug(`Ignoring device type ${type}`);
+                                        return;
+                                    }
+                                    switch (type) {
+                                        case 266:
+                                            const onOffPluginUnit = new OnOffPluginUnit(
+                                                uniqueId,
+                                                type,
+                                                nodeId,
+                                                device.getNumber(),
+                                                node,
+                                                device,
+                                                commissioningController,
+                                                io
+                                            );
+                                            this.devices.push(onOffPluginUnit);
+                                            devices.push(onOffPluginUnit);
+                                            break;
+                                        case 21:
+                                            const contactSensor = new ContactSensor(
+                                                uniqueId,
+                                                type,
+                                                nodeId,
+                                                device.getNumber(),
+                                                node,
+                                                device,
+                                                commissioningController,
+                                                io
+                                            );
+                                            this.devices.push(contactSensor);
+                                            devices.push(contactSensor);
+                                            break;
+                                        default:
+                                            device.determineUniqueID()
+                                            const unknownDevice = new BaseDevice(
+                                                uniqueId,
+                                                type,
+                                                nodeId,
+                                                device.getNumber(),
+                                                node,
+                                                device,
+                                                commissioningController,
+                                                io
+                                            );
+                                            this.devices.push(unknownDevice);
+                                            devices.push(unknownDevice);
+                                            break;
+                                    }
+                                });
+                                resolve(devices);
+                            }).catch((error) => {
+                                reject("Failed to get unique ID: " + error);
+                            });
+                        } else {
+                            reject("Failed to get basic information");
                         }
-                        const devices: BaseDevice[] = [];
-                        node.getDevices().forEach((device) => {
-                            const type = device.getDeviceTypes()[0];
-                            if (type.code in ignoreTypes) {
-                                this.logger.debug(`Ignoring device type ${type.code}`);
-                                return;
-                            }
-                            this.logger.info(`Device types: ${JSON.stringify(device.getDeviceTypes())}`);
-                            switch (type.code) {
-                                case 266:
-                                    const onOffPluginUnit = new OnOffPluginUnit(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
-                                    this.devices.push(onOffPluginUnit);
-                                    devices.push(onOffPluginUnit);
-                                    break;
-                                case 21:
-                                    const contactSensor = new ContactSensor(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
-                                    this.devices.push(contactSensor);
-                                    devices.push(contactSensor);
-                                    break;
-                                default:
-                                    device.determineUniqueID()
-                                    const unknownDevice = new BaseDevice(uniqueId, nodeId, device.getId(), node, device, commissioningController, io);
-                                    this.devices.push(unknownDevice);
-                                    devices.push(unknownDevice);
-                                    break;
-                            }
-                        });
-                        resolve(devices);
                     }).catch((error) => {
-                        reject("Failed to get unique ID: " + error);
+                        reject("Failed to get server list: " + error);
                     });
                 } else {
-                    reject("Failed to get basic information");
+                    reject("Failed to get descriptor");
                 }
             }).catch((error) => {
                 console.log(`Error connecting to node: ${error}`);

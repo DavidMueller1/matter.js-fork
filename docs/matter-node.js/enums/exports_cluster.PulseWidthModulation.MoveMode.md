@@ -8,7 +8,7 @@ The value of PulseWidthModulation.moveMode
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.6.6.2.1
+MatterSpecification.v11.Cluster § 1.6.6.2.1
 
 ## Table of contents
 
@@ -25,7 +25,7 @@ MatterApplicationClusterSpecificationV1_1 § 1.6.6.2.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:44
+packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:68
 
 ___
 
@@ -35,4 +35,4 @@ ___
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:43
+packages/matter.js/dist/esm/cluster/definitions/PulseWidthModulationCluster.d.ts:67

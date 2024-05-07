@@ -8,7 +8,7 @@ These are optional features supported by PumpConfigurationAndControlCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.4
+MatterSpecification.v11.Cluster § 4.2.4
 
 ## Table of contents
 
@@ -34,7 +34,7 @@ Supports operating in automatic mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:217
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:462
 
 ___
 
@@ -48,7 +48,7 @@ Supports operating in compensated pressure mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:193
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:438
 
 ___
 
@@ -62,7 +62,7 @@ Supports operating in constant flow mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:199
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:444
 
 ___
 
@@ -76,7 +76,7 @@ Supports operating in constant pressure mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:187
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:432
 
 ___
 
@@ -90,7 +90,7 @@ Supports operating in constant speed mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:205
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:450
 
 ___
 
@@ -104,7 +104,7 @@ Supports operating in constant temperature mode
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:211
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:456
 
 ___
 
@@ -118,4 +118,4 @@ Supports operating using local settings
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:223
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:468

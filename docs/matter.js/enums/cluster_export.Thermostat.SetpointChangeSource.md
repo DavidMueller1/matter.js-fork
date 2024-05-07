@@ -8,7 +8,7 @@ The value of the Thermostat setpointChangeSource attribute
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.3.7.34
+MatterSpecification.v11.Cluster § 4.3.7.34
 
 ## Table of contents
 
@@ -28,7 +28,7 @@ Externally-initiated setpoint change (e.g., DRLC cluster command, attribute writ
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:242](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L242)
+[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:367](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L367)
 
 ___
 
@@ -40,7 +40,7 @@ Manual, user-initiated setpoint change via the thermostat
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:232](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L232)
+[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:357](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L357)
 
 ___
 
@@ -52,4 +52,4 @@ Schedule/internal programming-initiated setpoint change
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:237](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L237)
+[packages/matter.js/src/cluster/definitions/ThermostatCluster.ts:362](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThermostatCluster.ts#L362)

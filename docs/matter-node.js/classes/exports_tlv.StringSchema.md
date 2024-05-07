@@ -8,7 +8,7 @@ Schema to encode an byte string or an Utf8 string in TLV.
 
 **`See`**
 
-MatterCoreSpecificationV1_0 § A.11.2
+MatterSpecification.v10.Core § A.11.2
 
 ## Type parameters
 
@@ -86,7 +86,7 @@ packages/matter.js/dist/esm/tlv/TlvString.d.ts:22
 
 ### maxLength
 
-• `Private` `Readonly` **maxLength**: `any`
+• `Readonly` **maxLength**: `number`
 
 #### Defined in
 
@@ -96,7 +96,7 @@ ___
 
 ### minLength
 
-• `Private` `Readonly` **minLength**: `any`
+• `Readonly` **minLength**: `number`
 
 #### Defined in
 

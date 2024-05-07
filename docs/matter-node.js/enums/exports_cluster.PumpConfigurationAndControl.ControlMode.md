@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3
+MatterSpecification.v11.Cluster § 4.2.6.3
 
 ## Table of contents
 
@@ -34,11 +34,11 @@ pump is entirely determined by the pump.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.6
+MatterSpecification.v11.Cluster § 4.2.6.3.6
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:174
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:175
 
 ___
 
@@ -55,11 +55,11 @@ MaxMeasuredValue] attributes of the remote flow sensor.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.4
+MatterSpecification.v11.Cluster § 4.2.6.3.4
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:152
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:153
 
 ___
 
@@ -76,11 +76,11 @@ MaxConstPressure] attributes. In case of a remote pressure sensor, this will be 
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.2
+MatterSpecification.v11.Cluster § 4.2.6.3.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:131
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:132
 
 ___
 
@@ -95,11 +95,11 @@ attributes.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.1
+MatterSpecification.v11.Cluster § 4.2.6.3.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:120
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:121
 
 ___
 
@@ -116,11 +116,11 @@ attributes. In case of a remote temperature sensor, this will be the range deriv
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.5
+MatterSpecification.v11.Cluster § 4.2.6.3.5
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:163
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:164
 
 ___
 
@@ -136,8 +136,8 @@ flow ⇒ lower internal setpoint).
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.2.6.3.3
+MatterSpecification.v11.Cluster § 4.2.6.3.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:141
+packages/matter.js/dist/esm/cluster/definitions/PumpConfigurationAndControlCluster.d.ts:142

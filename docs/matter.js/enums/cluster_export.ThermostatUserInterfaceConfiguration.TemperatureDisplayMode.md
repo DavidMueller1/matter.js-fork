@@ -8,7 +8,7 @@ The value of the ThermostatUserInterfaceConfiguration temperatureDisplayMode att
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 4.5.5.1
+MatterSpecification.v11.Cluster § 4.5.5.1
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ Temperature displayed in °C
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts:24](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts#L24)
+[packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts:25](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts#L25)
 
 ___
 
@@ -39,4 +39,4 @@ Temperature displayed in °F
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts:29](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts#L29)
+[packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts:30](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ThermostatUserInterfaceConfigurationCluster.ts#L30)

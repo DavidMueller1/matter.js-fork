@@ -129,7 +129,7 @@ ___
 
 ### getTagByteLength
 
-▸ **getTagByteLength**(`tag?`): ``2`` \| ``1`` \| ``3`` \| ``5`` \| ``7`` \| ``9``
+▸ **getTagByteLength**(`tag?`): ``1`` \| ``2`` \| ``3`` \| ``5`` \| ``7`` \| ``9``
 
 #### Parameters
 
@@ -139,7 +139,7 @@ ___
 
 #### Returns
 
-``2`` \| ``1`` \| ``3`` \| ``5`` \| ``7`` \| ``9``
+``1`` \| ``2`` \| ``3`` \| ``5`` \| ``7`` \| ``9``
 
 #### Defined in
 
@@ -216,7 +216,7 @@ ___
 
 **`See`**
 
-MatterCoreSpecificationV1_0 § A.7
+MatterSpecification.v10.Core § A.7
 
 #### Defined in
 
@@ -270,7 +270,7 @@ ___
 
 **`See`**
 
-MatterCoreSpecificationV1_0 § A.7 & A.8
+MatterSpecification.v10.Core § A.7 & A.8
 
 #### Defined in
 

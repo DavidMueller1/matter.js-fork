@@ -6,26 +6,48 @@
 
 ## Table of contents
 
+### Interfaces
+
+- [Cluster](../interfaces/cluster_export.ProxyDiscovery.Cluster.md)
+
 ### Variables
 
 - [Cluster](cluster_export.ProxyDiscovery.md#cluster)
+- [ClusterInstance](cluster_export.ProxyDiscovery.md#clusterinstance)
+- [Complete](cluster_export.ProxyDiscovery.md#complete)
 
 ## Variables
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](cluster_export.ClusterFactory.md#definition)\<\{ `commands`: \{ `proxyDiscoverRequest`: [`Command`](../interfaces/cluster_export.Command.md)\<`void`, `void`, `any`\>  } ; `id`: ``67`` = 0x43; `name`: ``"ProxyDiscovery"`` = "ProxyDiscovery"; `revision`: ``1`` = 1 }\>
-
-Proxy Discovery
-
-This cluster contains commands needed to do proxy discovery as defined in the Section 9.15.7.3, “Step 2: Proxy
-Discovery” and Section 9.15.7.4, “Step 3: Proxy Response” steps of the overall Section 9.15.7, “Proxy Discovery
-& Assignment Flow”.
-
-**`See`**
-
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.15.13
+• **Cluster**: [`Cluster`](../interfaces/cluster_export.ProxyDiscovery.Cluster.md)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts:24](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts#L24)
+[packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts:41](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts#L41)
+
+[packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts:43](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts#L43)
+
+___
+
+### ClusterInstance
+
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/cluster_export.MutableCluster-1.md)\<\{ `commands`: \{ `proxyDiscoverRequest`: [`Command`](../interfaces/cluster_export.Command.md)\<`void`, `void`, `any`\>  } ; `id`: ``67`` = 0x43; `name`: ``"ProxyDiscovery"`` = "ProxyDiscovery"; `revision`: ``1`` = 1 }\>
+
+**`See`**
+
+[Cluster](cluster_export.ProxyDiscovery.md#cluster)
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts:19](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts#L19)
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/cluster_export.ProxyDiscovery.Cluster.md) = `Cluster`
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts:45](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ProxyDiscoveryCluster.ts#L45)

@@ -8,7 +8,7 @@ The value of the Thermostat acLouverPosition attribute
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.3.7.49
+MatterSpecification.v11.Cluster § 4.3.7.49
 
 ## Table of contents
 
@@ -30,7 +30,7 @@ Fully Closed
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:302
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:480
 
 ___
 
@@ -42,7 +42,7 @@ Half Open
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:314
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:492
 
 ___
 
@@ -54,7 +54,7 @@ Fully Open
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:306
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:484
 
 ___
 
@@ -66,7 +66,7 @@ Quarter Open
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:310
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:488
 
 ___
 
@@ -78,4 +78,4 @@ Three Quarters Open
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:318
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:496

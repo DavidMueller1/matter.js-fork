@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 1.5.5.1
+MatterSpecification.v11.Cluster § 1.5.5.1
 
 ## Table of contents
 
@@ -26,7 +26,7 @@ Set the OnOff attribute to FALSE
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:18
+packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:20
 
 ___
 
@@ -38,7 +38,7 @@ Set the OnOff attribute to TRUE
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:22
+packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:24
 
 ___
 
@@ -51,4 +51,4 @@ previous value of the OnOff attribute is equal to TRUE, set the OnOff attribute 
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:27
+packages/matter.js/dist/esm/cluster/definitions/OnOffCluster.d.ts:29

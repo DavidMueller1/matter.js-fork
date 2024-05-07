@@ -9,14 +9,69 @@ The main work (all changes without a GitHub username in brackets in the below li
 	## __WORK IN PROGRESS__
 -->
 
-## __WORK IN PROGRESS__
+### __WORK IN PROGRESS__
+* Matter-Core functionality:
+  * Feature: cluster default implementations for the following clusters were added/updated:
+    * BooleanState: Automatically emit the StateChange event when enabled for the cluster and the stateValue changes
+    * LevelControl: Implemented all non-Frequency command handlers as defined by specification with an optional transition logic managed by matter.js
+    * LocalizationConfiguration: Implemented activeLocale validation
+    * LowPower: Implemented event `enterLowPowerMode` to be emitted when the sleep command gets called
+    * ModeSelect: Implemented all features and commands as defined by specification
+    * Switch: Implement all features and events including debouncing (optional), switch-release, long- and multi-press detections
+    * TimeFormatLocalization: Implemented activeTimeFormat validation
+    * WindowCovering: Implemented all features and commands as defined by specification
+  * Enhancement: Adjusted handling of TlvList order to match better with matter specification and ensure field orders are preserved
+  * Enhancement: Adds Certificate validation and cryptographic verification during commissioning and CASE session establishment
+  * Enhancement: Adds additional logging information for PASE and CASE to better understand errors without debug logging
+  * Enhancement: Adds several Optimizations and adjustments for Obervers (e.g. Observable.isObserved)
+  * Fix: Corrects returned errors for two commands on OperationalCredentials cluster 
+* matter.js New API code flows:
+  * Breaking: The name of the *$Change Events for attributes and such are changed to *$Changed . Please adjust your code!
+  * Breaking: Introduced ExtensionInterface to define extensible/custom methods for behavior/Cluster-Server implementation to be available when extending this class (needed because of a TS bug 27965)
+  * Enhancement: Optimized constraint validations and conformance error messages
+  * Enhancement: Conditionally enables the ReachableChanged event on the Root Endpoint BasicInformation cluster if the reachable attribute is defined in the defaults
+  * Enhancement: Allow to register events directly when initializing endpoints like in legacy API
+  * Enhancement: Allows for cluster implementations to dynamically add/enable state attributes and events
+  * Enhancement: Added "fieldName$Changing" event handlers that emit in transaction pre-commit and allow for state mutation and will cycle for a limited number of times until state is stable
+  * Enhancement: Allows "fieldName$Changed" and "fieldName$Changing" event handlers to be async
+  * Enhancement: Adds Conformance validation for enums
+  * Enhancement: Makes various config variables apply dynamically
+  * Fix: Fixes some issues around event handling in the new API and makes sure events are not de-registered on factory resets
+  * Fix: Corrects the returned status error code when an Enum value is set to an invalid value
+  * Fix: Fixes a floating promise in FailsafeTimer; it tended to kill a test run without an easy way to identify the cause
+  * Fix: Fixes bounds check with references to null fields
+* Chip testing:
+  * Enhancement: Adds automatic CI testing for all clusters listed in [matter.js Readme](./packages/matter.js/README.md)
+* matter.js tooling:
+  * Enhancement: Migrates cluster identification to the pattern used in the newer device code. It now scans the entire document rather than attempting to navigate via the index.  This is simpler and more resilient
+  * Enhancement: Various other small changes improve resiliency
+  * Enhancement: Removes the "main" closure from codegen scripts that added a bit of friction to debugging
+  * Enhancement: Adds proper CLI support to codegen scripts to override various behaviors and provide information on the script
+  * Enhancement: We now version the intermediate models.  In the future we can use this to add informational revision information to model elements and make the API adaptive based on the targeted Matter version
+  * Fix: Fixes a bug that was causing field-level prose to be incorrectly associated with the containing element in malformed portions of the core spec
+
+### 0.8.1 (2024-04-15)
+* Matter-Core functionality:
+  * Cluster default implementations for the following clusters were added/updated:
+    * (GreydonDesu) Feature: DoorLock: Implemented bare minimal commands to lock/unlock the door
+    * Enhancement: Enhanced Identify cluster default implementation by additional state `isIdentifying` and events `startIdentifying` and `stopIdentifying`
+  * Enhancement: Diagnostic and logging information, also on SIGUSR2 signal for node.js
+  * Fix: Updates subscribed events on structure updates to make sure also new events are reported correctly
+  * Fix: Removed invalid length assumption in Sigma2
+* matter.js New API code flows: 
+  * Enhancement: Optimizes Node activity tracking and shutdown/startup handling
+
+## 0.8.0 (2024-03-29)
 * Packages
   * IMPORTANT: We switch away from re-exporting all matter.js functionality in matter-node.js, so please adjust your imports and make sure that you include matter.js together with matter-node.js in your dependencies in the exact same version!
   * Changed BLE library (Bleno/Noble) to another fork with better support for Windows and UART devices
 * Matter-Core functionality:
+  * Breaking: Storage implementations got added new methods "contexts", "values" and a multi-set valiant that need to be implemented if you have own Storage implementations. Also, storages now derive from a SyncStorage or MaybeAsyncStorage class weather they are sync or async
   * Adjustment: Cluster versions do not need to be persisted, so remove in legacy and new API
   * Fix: Decode Empty nullable data types as null when they have constrains that would require a minimum length
   * Fix: Convert Error type of Network errors and handle in case of subscription failures
+  * Fix: Fixes a cryptographic issue that failed PASE establishment in 1/255 times, Replace BN/elliptic by @noble/curves library
+  * Fix: Fixed ClusterClient methods set and subscribe to really return the Promise of the action 
 * matter.js API:
   * IMPORTANT: Introduction of new High level API with complete Device type support for Matter 1.1 types, see [migration guide](./docs/MIGRATION_GUIDE_08.md). For now the known API that we had up top 0.7 is still included and fully working and compatible when old imports are used, but called "Legacy" for now. It will be removed in a later version not yet decided.
   * Feature: Introduced Environment concept to centralize MDNS, storage and configuration and platform specific central functionalities (Replaces MatterServer from Legacy API).

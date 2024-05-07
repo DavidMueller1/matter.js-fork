@@ -5,10 +5,12 @@
  */
 
 import { InternalError, MatterError, MatterFlowError } from "../common/MatterError.js";
+import { Key } from "../crypto/Key.js";
 import { FabricIndex } from "../datatype/FabricIndex.js";
 import { StorageContext } from "../storage/StorageContext.js";
 import { ByteArray } from "../util/ByteArray.js";
 import { Observable } from "../util/Observable.js";
+import { MaybePromise } from "../util/Promises.js";
 import { Fabric, FabricJsonObject } from "./Fabric.js";
 
 /** Specific Error for when a fabric is not found. */
@@ -34,9 +36,12 @@ export class FabricManager {
 
     constructor(fabricStorage: StorageContext) {
         this.#fabricStorage = fabricStorage;
-        const fabrics = this.#fabricStorage.get<FabricJsonObject[]>("fabrics", []);
+    }
+
+    async initFromStorage() {
+        const fabrics = await this.#fabricStorage.get<FabricJsonObject[]>("fabrics", []);
         fabrics.forEach(fabric => this.addFabric(Fabric.createFromStorageObject(fabric)));
-        this.#nextFabricIndex = this.#fabricStorage.get("nextFabricIndex", this.#nextFabricIndex);
+        this.#nextFabricIndex = await this.#fabricStorage.get("nextFabricIndex", this.#nextFabricIndex);
         this.#initializationDone = true;
     }
 
@@ -55,12 +60,15 @@ export class FabricManager {
         throw new FabricTableFullError("No free fabric index available.");
     }
 
-    persistFabrics() {
-        this.#fabricStorage.set(
+    persistFabrics(): MaybePromise<void> {
+        const storeResult = this.#fabricStorage.set(
             "fabrics",
             Array.from(this.#fabrics.values()).map(fabric => fabric.toStorageObject()),
         );
-        this.#fabricStorage.set("nextFabricIndex", this.#nextFabricIndex);
+        if (MaybePromise.is(storeResult)) {
+            return storeResult.then(() => this.#fabricStorage.set("nextFabricIndex", this.#nextFabricIndex));
+        }
+        return this.#fabricStorage.set("nextFabricIndex", this.#nextFabricIndex);
     }
 
     addFabric(fabric: Fabric) {
@@ -69,26 +77,28 @@ export class FabricManager {
             throw new MatterFlowError(`Fabric with index ${fabricIndex} already exists.`);
         }
         this.#fabrics.set(fabricIndex, fabric);
-        fabric.addRemoveCallback(() => this.removeFabric(fabricIndex));
-        fabric.setPersistCallback((isUpdate = true) => {
-            this.persistFabrics();
-            if (isUpdate) {
-                this.#events.updated.emit(fabric); // Assume Fabric got updated when persist callback is called
-            }
-        });
+        fabric.addRemoveCallback(async () => this.removeFabric(fabricIndex));
+        fabric.persistCallback = (isUpdate = true) => {
+            const persistResult = this.persistFabrics();
+            return MaybePromise.then(persistResult, () => {
+                if (isUpdate) {
+                    this.#events.updated.emit(fabric); // Assume Fabric got updated when persist callback is called
+                }
+            });
+        };
         if (this.#initializationDone) {
             this.#events.added.emit(fabric);
         }
     }
 
-    removeFabric(fabricIndex: FabricIndex) {
+    async removeFabric(fabricIndex: FabricIndex) {
         const fabric = this.#fabrics.get(fabricIndex);
         if (fabric === undefined)
             throw new FabricNotFoundError(
                 `Fabric with index ${fabricIndex} cannot be removed because it does not exist.`,
             );
         this.#fabrics.delete(fabricIndex);
-        this.persistFabrics();
+        await this.persistFabrics();
         this.#events.deleted.emit(fabric);
     }
 
@@ -106,7 +116,16 @@ export class FabricManager {
         throw new InternalError("Fabric cannot be found from destinationId");
     }
 
-    updateFabric(fabric: Fabric) {
+    findByKeypair(keypair: Key) {
+        for (const fabric of this.#fabrics.values()) {
+            if (fabric.matchesKeyPair(keypair)) {
+                return fabric;
+            }
+        }
+        return undefined;
+    }
+
+    async updateFabric(fabric: Fabric) {
         const { fabricIndex } = fabric;
         if (!this.#fabrics.has(fabricIndex)) {
             throw new FabricNotFoundError(
@@ -114,7 +133,7 @@ export class FabricManager {
             );
         }
         this.#fabrics.set(fabricIndex, fabric);
-        this.persistFabrics();
+        await this.persistFabrics();
         this.#events.updated.emit(fabric);
     }
 

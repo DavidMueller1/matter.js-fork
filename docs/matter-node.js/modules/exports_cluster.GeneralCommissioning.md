@@ -11,9 +11,21 @@
 - [CommissioningError](../enums/exports_cluster.GeneralCommissioning.CommissioningError.md)
 - [RegulatoryLocationType](../enums/exports_cluster.GeneralCommissioning.RegulatoryLocationType.md)
 
+### Interfaces
+
+- [ArmFailSafeRequest](../interfaces/exports_cluster.GeneralCommissioning.ArmFailSafeRequest.md)
+- [ArmFailSafeResponse](../interfaces/exports_cluster.GeneralCommissioning.ArmFailSafeResponse.md)
+- [BasicCommissioningInfo](../interfaces/exports_cluster.GeneralCommissioning.BasicCommissioningInfo.md)
+- [Cluster](../interfaces/exports_cluster.GeneralCommissioning.Cluster.md)
+- [CommissioningCompleteResponse](../interfaces/exports_cluster.GeneralCommissioning.CommissioningCompleteResponse.md)
+- [SetRegulatoryConfigRequest](../interfaces/exports_cluster.GeneralCommissioning.SetRegulatoryConfigRequest.md)
+- [SetRegulatoryConfigResponse](../interfaces/exports_cluster.GeneralCommissioning.SetRegulatoryConfigResponse.md)
+
 ### Variables
 
 - [Cluster](exports_cluster.GeneralCommissioning.md#cluster)
+- [ClusterInstance](exports_cluster.GeneralCommissioning.md#clusterinstance)
+- [Complete](exports_cluster.GeneralCommissioning.md#complete)
 - [TlvArmFailSafeRequest](exports_cluster.GeneralCommissioning.md#tlvarmfailsaferequest)
 - [TlvArmFailSafeResponse](exports_cluster.GeneralCommissioning.md#tlvarmfailsaferesponse)
 - [TlvBasicCommissioningInfo](exports_cluster.GeneralCommissioning.md#tlvbasiccommissioninginfo)
@@ -25,24 +37,37 @@
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](exports_cluster.ClusterFactory.md#definition)\<\{ `attributes`: \{ `basicCommissioningInfo`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `breadcrumb`: [`WritableAttribute`](../interfaces/exports_cluster.WritableAttribute.md)\<`number` \| `bigint`, `any`\> ; `locationCapability`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<[`RegulatoryLocationType`](../enums/exports_cluster.GeneralCommissioning.RegulatoryLocationType.md), `any`\> ; `regulatoryConfig`: [`Attribute`](../interfaces/exports_cluster.Attribute.md)\<[`RegulatoryLocationType`](../enums/exports_cluster.GeneralCommissioning.RegulatoryLocationType.md), `any`\> ; `supportsConcurrentConnection`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<`boolean`, `any`\>  } ; `commands`: \{ `armFailSafe`: [`Command`](../interfaces/exports_cluster.Command.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `commissioningComplete`: [`Command`](../interfaces/exports_cluster.Command.md)\<`void`, [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `setRegulatoryConfig`: [`Command`](../interfaces/exports_cluster.Command.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\>  } ; `id`: ``48`` ; `name`: ``"GeneralCommissioning"`` ; `revision`: ``1``  }\>
-
-General Commissioning
-
-This cluster is used to manage basic commissioning lifecycle.
-
-This cluster also represents responsibilities related to commissioning that don’t well fit other commissioning
-clusters, like Section 11.8, “Network Commissioning Cluster”. It also hosts functionalities
-
-those other clusters may depend on.
-
-**`See`**
-
-MatterCoreSpecificationV1_1 § 11.9
+• **Cluster**: [`Cluster`](../interfaces/exports_cluster.GeneralCommissioning.Cluster.md)
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:159
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:542
+
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:544
+
+___
+
+### ClusterInstance
+
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/exports_cluster.MutableCluster-1.md)\<\{ `attributes`: \{ `basicCommissioningInfo`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `breadcrumb`: [`WritableAttribute`](../interfaces/exports_cluster.WritableAttribute.md)\<`number` \| `bigint`, `any`\> ; `locationCapability`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<[`RegulatoryLocationType`](../enums/exports_cluster.GeneralCommissioning.RegulatoryLocationType.md), `any`\> ; `regulatoryConfig`: [`Attribute`](../interfaces/exports_cluster.Attribute.md)\<[`RegulatoryLocationType`](../enums/exports_cluster.GeneralCommissioning.RegulatoryLocationType.md), `any`\> ; `supportsConcurrentConnection`: [`FixedAttribute`](../interfaces/exports_cluster.FixedAttribute.md)\<`boolean`, `any`\>  } ; `commands`: \{ `armFailSafe`: [`Command`](../interfaces/exports_cluster.Command.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `commissioningComplete`: [`Command`](../interfaces/exports_cluster.Command.md)\<`void`, [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\> ; `setRegulatoryConfig`: [`Command`](../interfaces/exports_cluster.Command.md)\<[`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), [`"/home/runner/work/matter.js/matter.js/packages/matter.js/dist/esm/tlv/TlvObject"`](exports_session._internal_.__home_runner_work_matter_js_matter_js_packages_matter_js_dist_esm_tlv_TlvObject_.md), `any`\>  } ; `id`: ``48`` ; `name`: ``"GeneralCommissioning"`` ; `revision`: ``1``  }\>
+
+**`See`**
+
+[Cluster](exports_cluster.GeneralCommissioning.md#cluster)
+
+#### Defined in
+
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:198
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/exports_cluster.GeneralCommissioning.Cluster.md)
+
+#### Defined in
+
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:545
 
 ___
 
@@ -54,11 +79,11 @@ Input to the GeneralCommissioning armFailSafe command
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.6.2
+MatterSpecification.v11.Core § 11.9.6.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:62
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:71
 
 ___
 
@@ -68,11 +93,11 @@ ___
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.6.3
+MatterSpecification.v11.Core § 11.9.6.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:98
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:114
 
 ___
 
@@ -84,11 +109,11 @@ This structure provides some constant values that may be of use to all commissio
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.4.3
+MatterSpecification.v11.Core § 11.9.4.3
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:15
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:17
 
 ___
 
@@ -103,11 +128,11 @@ See Section 11.9.6.1, “Common fields in General Commissioning cluster response
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.6.7
+MatterSpecification.v11.Core § 11.9.6.7
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:143
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:181
 
 ___
 
@@ -119,11 +144,11 @@ Input to the GeneralCommissioning setRegulatoryConfig command
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.6.4
+MatterSpecification.v11.Core § 11.9.6.4
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:118
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:139
 
 ___
 
@@ -138,8 +163,8 @@ See Section 11.9.6.1, “Common fields in General Commissioning cluster response
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.9.6.5
+MatterSpecification.v11.Core § 11.9.6.5
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:131
+packages/matter.js/dist/esm/cluster/definitions/GeneralCommissioningCluster.d.ts:159

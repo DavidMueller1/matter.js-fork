@@ -6,24 +6,48 @@
 
 ## Table of contents
 
+### Interfaces
+
+- [Cluster](../interfaces/cluster_export.SoilMoistureMeasurement.Cluster.md)
+
 ### Variables
 
 - [Cluster](cluster_export.SoilMoistureMeasurement.md#cluster)
+- [ClusterInstance](cluster_export.SoilMoistureMeasurement.md#clusterinstance)
+- [Complete](cluster_export.SoilMoistureMeasurement.md#complete)
 
 ## Variables
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](cluster_export.ClusterFactory.md#definition)\<\{ `attributes`: \{ `maxMeasuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `measuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `minMeasuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `tolerance`: [`OptionalAttribute`](../interfaces/cluster_export.OptionalAttribute.md)\<`number`, `any`\>  } ; `id`: ``1032`` = 0x408; `name`: ``"SoilMoistureMeasurement"`` = "SoilMoistureMeasurement"; `revision`: ``3`` = 3 }\>
-
-This is a base cluster. The server cluster provides an interface to water content measurement functionality. The
-measurement is reportable and may be configured for reporting. Water content measurements include, but are not
-limited to, leaf wetness, relative humidity, and soil moisture.
-
-**`See`**
-
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 2.6
+• **Cluster**: [`Cluster`](../interfaces/cluster_export.SoilMoistureMeasurement.Cluster.md)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts:23](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts#L23)
+[packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts:77](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts#L77)
+
+[packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts:79](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts#L79)
+
+___
+
+### ClusterInstance
+
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/cluster_export.MutableCluster-1.md)\<\{ `attributes`: \{ `maxMeasuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `measuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `minMeasuredValue`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<``null`` \| `number`, `any`\> ; `tolerance`: [`OptionalAttribute`](../interfaces/cluster_export.OptionalAttribute.md)\<`number`, `any`\>  } ; `id`: ``1032`` = 0x408; `name`: ``"SoilMoistureMeasurement"`` = "SoilMoistureMeasurement"; `revision`: ``3`` = 3 }\>
+
+**`See`**
+
+[Cluster](cluster_export.SoilMoistureMeasurement.md#cluster)
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts:20](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts#L20)
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/cluster_export.SoilMoistureMeasurement.Cluster.md) = `Cluster`
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts:81](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/SoilMoistureMeasurementCluster.ts#L81)

@@ -6,16 +6,16 @@ import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
 import { BleNode } from "@project-chip/matter-node-ble.js/ble";
 import { Ble } from "@project-chip/matter-node.js/ble";
 import { requireMinNodeVersion, singleton } from "@project-chip/matter-node.js/util";
-import {
-    BasicInformationCluster,
-    DescriptorCluster,
-    GeneralCommissioning,
-    OnOffCluster,
-} from "@project-chip/matter-node.js/cluster";
+// import {
+//     BasicInformationCluster,
+//     DescriptorCluster,
+//     GeneralCommissioning,
+//     OnOffCluster,
+// } from "@project-chip/matter-node.js/cluster";
 
 import PrivacyhubNode from "./matter/PrivacyhubNode.js";
-import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
-import { stringifyWithBigint } from "./util/Util.js";
+// import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
+// import { stringifyWithBigint } from "./util/Util.js";
 import DbController from "./db/DbController.js";
 
 

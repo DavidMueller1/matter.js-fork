@@ -1,5 +1,10 @@
 {
-    "compilerOptions": { "composite": true },
+    "compilerOptions": {
+        "composite": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "strictPropertyInitialization": false
+    },
     "files": [],
     "references": [{ "path": "src" }],
     "types": ["node"]

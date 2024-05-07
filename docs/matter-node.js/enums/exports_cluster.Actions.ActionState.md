@@ -8,7 +8,7 @@ Note that some of these states are applicable only for certain actions, as deter
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.14.4.3
+MatterSpecification.v11.Core § 9.14.4.3
 
 ## Table of contents
 
@@ -29,7 +29,7 @@ The action is active
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:156
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:158
 
 ___
 
@@ -41,7 +41,7 @@ The action has been disabled
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:164
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:166
 
 ___
 
@@ -53,7 +53,7 @@ The action is not active
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:152
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:154
 
 ___
 
@@ -65,4 +65,4 @@ The action has been paused
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:160
+packages/matter.js/dist/esm/cluster/definitions/ActionsCluster.d.ts:162

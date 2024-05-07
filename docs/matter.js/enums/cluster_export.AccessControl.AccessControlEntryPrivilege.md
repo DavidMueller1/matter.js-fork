@@ -10,7 +10,7 @@ This value implicitly grants View privileges
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.10.4.2
+MatterSpecification.v11.Core § 9.10.4.2
 
 ## Table of contents
 
@@ -34,11 +34,11 @@ This value implicitly grants Manage, Operate, Proxy View & View privileges
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.10.4.2.3
+MatterSpecification.v11.Core § 9.10.4.2.3
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:75](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L75)
+[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:77](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L77)
 
 ___
 
@@ -52,11 +52,11 @@ This value implicitly grants Operate & View privileges
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.10.4.2.2
+MatterSpecification.v11.Core § 9.10.4.2.2
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:66](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L66)
+[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:68](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L68)
 
 ___
 
@@ -70,11 +70,11 @@ This value implicitly grants View privileges
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 9.10.4.2.1
+MatterSpecification.v11.Core § 9.10.4.2.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:57](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L57)
+[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:59](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L59)
 
 ___
 
@@ -86,7 +86,7 @@ Can read and observe all (as seen by a Proxy)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:48](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L48)
+[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:50](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L50)
 
 ___
 
@@ -98,4 +98,4 @@ Can read and observe all (except Access Control Cluster and as seen by a non-Pro
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:43](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L43)
+[packages/matter.js/src/cluster/definitions/AccessControlCluster.ts:45](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/AccessControlCluster.ts#L45)

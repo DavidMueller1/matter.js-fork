@@ -8,7 +8,7 @@ The value of the Thermostat setpointChangeSource attribute
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 4.3.7.34
+MatterSpecification.v11.Cluster § 4.3.7.34
 
 ## Table of contents
 
@@ -28,7 +28,7 @@ Externally-initiated setpoint change (e.g., DRLC cluster command, attribute writ
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:191
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:369
 
 ___
 
@@ -40,7 +40,7 @@ Manual, user-initiated setpoint change via the thermostat
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:183
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:361
 
 ___
 
@@ -52,4 +52,4 @@ Schedule/internal programming-initiated setpoint change
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:187
+packages/matter.js/dist/esm/cluster/definitions/ThermostatCluster.d.ts:365

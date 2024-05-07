@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.4.5.1
+MatterSpecification.v11.Core § 11.4.5.1
 
 ## Table of contents
 
@@ -25,7 +25,7 @@ Time conveyed with a 12-hour clock
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:18
+packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:72
 
 ___
 
@@ -37,4 +37,4 @@ Time conveyed with a 24-hour clock
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:22
+packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:76

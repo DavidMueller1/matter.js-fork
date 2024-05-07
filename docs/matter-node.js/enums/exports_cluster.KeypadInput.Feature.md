@@ -8,7 +8,7 @@ These are optional features supported by KeypadInputCluster.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.8.2
+MatterSpecification.v11.Cluster § 6.8.2
 
 ## Table of contents
 
@@ -30,7 +30,7 @@ Supports CEC keys 0x0A (Settings) and 0x09 (Home)
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:159
+packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:175
 
 ___
 
@@ -44,7 +44,7 @@ Supports UP, DOWN, LEFT, RIGHT, SELECT, BACK, EXIT, MENU
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:153
+packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:169
 
 ___
 
@@ -58,4 +58,4 @@ Supports numeric input 0..9
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:165
+packages/matter.js/dist/esm/cluster/definitions/KeypadInputCluster.d.ts:181

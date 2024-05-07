@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 9.10.4.3
+MatterSpecification.v11.Core § 9.10.4.3
 
 ## Table of contents
 
@@ -26,7 +26,7 @@ Certificate authenticated session
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:62
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:64
 
 ___
 
@@ -38,7 +38,7 @@ Group authenticated session
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:66
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:68
 
 ___
 
@@ -50,4 +50,4 @@ Passcode authenticated session
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:58
+packages/matter.js/dist/esm/cluster/definitions/AccessControlCluster.d.ts:60

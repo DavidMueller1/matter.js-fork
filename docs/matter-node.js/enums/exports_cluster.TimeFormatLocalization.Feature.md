@@ -8,7 +8,7 @@ These are optional features supported by TimeFormatLocalizationCluster.
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.4.4
+MatterSpecification.v11.Core § 11.4.4
 
 ## Table of contents
 
@@ -28,4 +28,4 @@ The Node can be configured to use different calendar formats when conveying valu
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:88
+packages/matter.js/dist/esm/cluster/definitions/TimeFormatLocalizationCluster.d.ts:113

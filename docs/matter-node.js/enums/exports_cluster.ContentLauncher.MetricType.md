@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.7.5.9
+MatterSpecification.v11.Cluster § 6.7.5.9
 
 ## Table of contents
 
@@ -29,11 +29,11 @@ integer final value.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.7.5.9.2
+MatterSpecification.v11.Cluster § 6.7.5.9.2
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:45
+packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:47
 
 ___
 
@@ -45,8 +45,8 @@ This value is used for dimensions defined in a number of Pixels.
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.7.5.9.1
+MatterSpecification.v11.Cluster § 6.7.5.9.1
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:35
+packages/matter.js/dist/esm/cluster/definitions/ContentLauncherCluster.d.ts:37

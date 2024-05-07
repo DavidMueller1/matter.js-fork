@@ -8,7 +8,7 @@ The LockOperationType enumeration shall indicate the type of Lock operation perf
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 5.2.6.10
+MatterSpecification.v11.Cluster § 5.2.6.10
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ MatterApplicationClusterSpecificationV1_1 § 5.2.6.10
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:266
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:1203
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:263
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:1200
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:265
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:1202
 
 ___
 
@@ -57,4 +57,4 @@ ___
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:264
+packages/matter.js/dist/esm/cluster/definitions/DoorLockCluster.d.ts:1201

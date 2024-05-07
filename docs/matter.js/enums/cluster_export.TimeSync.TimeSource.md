@@ -6,7 +6,7 @@
 
 **`See`**
 
-[MatterCoreSpecificationV1_1](../interfaces/spec_export.MatterCoreSpecificationV1_1.md) § 11.16.6.2
+MatterSpecification.v11.Core § 11.16.6.2
 
 ## Table of contents
 
@@ -40,7 +40,7 @@ Server received time from the Section 11.16.9.1, “SetUtcTime Command”.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:86](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L86)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:172](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L172)
 
 ___
 
@@ -53,7 +53,7 @@ connection).
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:147](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L147)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:233](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L233)
 
 ___
 
@@ -65,7 +65,7 @@ NTP from a servers within the Fabric. None of the servers used NTS.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:111](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L111)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:197](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L197)
 
 ___
 
@@ -77,7 +77,7 @@ NTP from a server within the Fabric. NTS is used on at least one server.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:136](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L136)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:222](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L222)
 
 ___
 
@@ -89,7 +89,7 @@ SNTP from a server within the Fabric. NTS is not used.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:106](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L106)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:192](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L192)
 
 ___
 
@@ -101,7 +101,7 @@ SNTP from a server within the Fabric. NTS is used.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:131](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L131)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:217](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L217)
 
 ___
 
@@ -113,7 +113,7 @@ Time synchronization comes from a GNSS source.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:157](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L157)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:243](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L243)
 
 ___
 
@@ -125,7 +125,7 @@ NTP from multiple servers on Fabric and external. None of the servers used NTS.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:116](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L116)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:202](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L202)
 
 ___
 
@@ -137,7 +137,7 @@ NTP from multiple servers on the Fabric and external. NTS is used on at least on
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:141](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L141)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:227](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L227)
 
 ___
 
@@ -149,7 +149,7 @@ Synchronized time by querying the Time Cluster of another Node.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:91](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L91)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:177](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L177)
 
 ___
 
@@ -161,7 +161,7 @@ NTP from servers not in the Fabric. None of the servers used NTS.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:101](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L101)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:187](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L187)
 
 ___
 
@@ -173,7 +173,7 @@ NTP from servers not in the Fabric. NTS is used on at least one server.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:126](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L126)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:212](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L212)
 
 ___
 
@@ -185,7 +185,7 @@ SNTP from a server not in the Fabric. NTS is not used.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:96](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L96)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:182](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L182)
 
 ___
 
@@ -197,7 +197,7 @@ SNTP from a server not in the Fabric. NTS is used.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:121](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L121)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:207](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L207)
 
 ___
 
@@ -209,7 +209,7 @@ Server is not currently synchronized with a UTC Time source.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:76](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L76)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:162](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L162)
 
 ___
 
@@ -221,7 +221,7 @@ Time synchronization comes from PTP.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:152](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L152)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:238](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L238)
 
 ___
 
@@ -233,4 +233,4 @@ Server uses an unlisted time source.
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:81](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L81)
+[packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts:167](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/TimeSyncCluster.ts#L167)

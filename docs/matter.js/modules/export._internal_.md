@@ -4,10 +4,14 @@
 
 ## Table of contents
 
+### Namespaces
+
+- [DeviceCertification](export._internal_.DeviceCertification.md)
+
 ### Classes
 
+- [DeviceCertification](../classes/export._internal_.DeviceCertification-1.md)
 - [MatterController](../classes/export._internal_.MatterController.md)
-- [MdnsInstanceBroadcaster](../classes/export._internal_.MdnsInstanceBroadcaster.md)
 
 ### Type Aliases
 
@@ -30,7 +34,7 @@
 
 #### Defined in
 
-[packages/matter.js/src/MatterController.ts:66](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/MatterController.ts#L66)
+[packages/matter.js/src/MatterController.ts:66](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/MatterController.ts#L66)
 
 ___
 
@@ -48,4 +52,4 @@ Commands exposed by the CommissioningServer
 
 #### Defined in
 
-[packages/matter.js/src/CommissioningServer.ts:197](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/CommissioningServer.ts#L197)
+[packages/matter.js/src/CommissioningServer.ts:206](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/CommissioningServer.ts#L206)

@@ -9,7 +9,6 @@
 import { MaybePromise } from "../../../util/Promises.js";
 import { TypeFromSchema } from "../../../tlv/TlvSchema.js";
 import { OperationalCredentials } from "../../../cluster/definitions/OperationalCredentialsCluster.js";
-import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
 
 /**
  * This command shall be generated to request the Attestation Information, in the form of an AttestationResponse
@@ -18,7 +17,7 @@ import { MatterCoreSpecificationV1_1 } from "../../../spec/Specifications.js";
  * recipient shall fail the command with a Status Code of INVALID_COMMAND. The AttestationNonce field shall be used in
  * the computation of the Attestation Information.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.1
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.1
  */
 export type AttestationRequest = TypeFromSchema<typeof OperationalCredentials.TlvAttestationRequest>;
 
@@ -30,7 +29,7 @@ export type AttestationRequest = TypeFromSchema<typeof OperationalCredentials.Tl
  *
  * See Section F.2, “Device Attestation Response test vector” for an example computation of an AttestationResponse.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.2
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.2
  */
 export type AttestationResponse = TypeFromSchema<typeof OperationalCredentials.TlvAttestationResponse>;
 
@@ -38,14 +37,14 @@ export type AttestationResponse = TypeFromSchema<typeof OperationalCredentials.T
  * If the CertificateType is not a valid value per CertificateChainTypeEnum then the command shall fail with a Status
  * Code of INVALID_COMMAND.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.3
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.3
  */
 export type CertificateChainRequest = TypeFromSchema<typeof OperationalCredentials.TlvCertificateChainRequest>;
 
 /**
  * This command shall be generated in response to a CertificateChainRequest command.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.4
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.4
  */
 export type CertificateChainResponse = TypeFromSchema<typeof OperationalCredentials.TlvCertificateChainResponse>;
 
@@ -75,7 +74,7 @@ export type CertificateChainResponse = TypeFromSchema<typeof OperationalCredenti
  * collide with an existing key pair already previously generated and installed, and that check had been executed, then
  * this command shall fail with a FAILURE status code sent back to the initiator.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.5
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.5
  */
 export type CsrRequest = TypeFromSchema<typeof OperationalCredentials.TlvCsrRequest>;
 
@@ -87,7 +86,7 @@ export type CsrRequest = TypeFromSchema<typeof OperationalCredentials.TlvCsrRequ
  *
  * See Section F.3, “Node Operational CSR Response test vector” for an example computation of a CSRResponse.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.6
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.6
  */
 export type CsrResponse = TypeFromSchema<typeof OperationalCredentials.TlvCsrResponse>;
 
@@ -102,7 +101,7 @@ export type CsrResponse = TypeFromSchema<typeof OperationalCredentials.TlvCsrRes
  *
  * A Commissioner or Administrator SHOULD issue this command after performing the Attestation Procedure.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.8
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.8
  */
 export type AddNocRequest = TypeFromSchema<typeof OperationalCredentials.TlvAddNocRequest>;
 
@@ -119,7 +118,7 @@ export type AddNocRequest = TypeFromSchema<typeof OperationalCredentials.TlvAddN
  *
  * It provides status information about the success or failure of those commands.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.10
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.10
  */
 export type NocResponse = TypeFromSchema<typeof OperationalCredentials.TlvNocResponse>;
 
@@ -178,7 +177,7 @@ export type NocResponse = TypeFromSchema<typeof OperationalCredentials.TlvNocRes
  * Thereafter, the Node shall respond with an NOCResponse with a StatusCode of OK and a FabricIndex field matching the
  * FabricIndex under which the updated NOC is scoped.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.9
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.9
  */
 export type UpdateNocRequest = TypeFromSchema<typeof OperationalCredentials.TlvUpdateNocRequest>;
 
@@ -189,24 +188,7 @@ export type UpdateNocRequest = TypeFromSchema<typeof OperationalCredentials.TlvU
  * The Label SHOULD be used by Administrators to provide additional per-fabric context when operations such as
  * RemoveFabric are used.
  *
- * This field shall contain the label to set for the fabric associated with the current secure session.
- *
- * Effect on Receipt
- *
- * If the Label field is identical to a Label already in use by a Fabric within the Fabrics list that is not the
- * accessing fabric, then an NOCResponse with a StatusCode of LabelConflict shall be returned for the command and there
- * shall NOT be any permanent changes to any Fabric data.
- *
- * Otherwise, the Label field for the accesing fabric shall immediately be updated to reflect the
- *
- * Label argument provided. Following the update, an NOCResponse with a StatusCode of OK shall be returned.
- *
- * If the command was invoked within a fail-safe context after a successful UpdateNOC command, then the label update
- * shall apply to the pending update state that will be reverted if fail-safe expires prior to a CommissioningComplete
- * command. In other words, label updates apply to the state of the Fabrics Attribute as currently visible, even for an
- * existing fabric currently in process of being updated.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.11
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.11
  */
 export type UpdateFabricLabelRequest = TypeFromSchema<typeof OperationalCredentials.TlvUpdateFabricLabelRequest>;
 
@@ -227,42 +209,7 @@ export type UpdateFabricLabelRequest = TypeFromSchema<typeof OperationalCredenti
  * Domain’s party of the removal. Otherwise, users may only observe the removal of a Fabric association as persistently
  * failing attempts to reach a Node operationally.
  *
- * This field shall contain the Fabric Index reference (see fabric-index) associated with the Fabric which is to be
- * removed from the device.
- *
- * Effect on Receipt
- *
- * If the FabricIndex field does not match the FabricIndex of any entry within the Fabrics list, then an NOCResponse
- * with a StatusCode of InvalidFabricIndex shall be returned for the command and there shall NOT be any permanent
- * changes to any device data.
- *
- * Otherwise, one of the following outcomes shall occur:
- *
- *   1. If the FabricIndex matches the last remaining entry in the Fabrics list, then the device shall delete all
- *      Matter related data on the node which was created since it was commissioned. This includes all Fabric-Scoped
- *      data, including Access Control List, bindings, scenes, group keys,
- *
- * operational certificates, etc. All Trusted Roots shall also be removed. Any Matter related data including logs,
- * secure sessions, exchanges and interaction model constructs shall also be removed. Since this operation involves the
- * removal of the secure session data that may underpin the current set of exchanges, the Node invoking the command
- * SHOULD NOT expect a response before terminating its secure session with the target.
- *
- * 2. If the FabricIndex does not equal the accessing fabric index, then the device shall begin the process of
- * irrevocably deleting all associated Fabric-Scoped data, including Access Control List, bindings, group keys,
- * operational certificates, etc. Any remaining Trusted Roots no longer referenced by any operational certificate shall
- * also be removed. All secure sessions, exchanges and interaction model constructs related to the Operational Identity
- * under the given Fabric shall also be removed. Following the removal, an NOCResponse with a StatusCode of OK shall be
- * returned.
- *
- * 3. If the FabricIndex equals the accessing fabric index, then the device shall begin the process of irrevocably
- * deleting all associated Fabric-Scoped data, including Access Control Entries, bindings, group keys, operational
- * certificates, etc. Any remaining Trusted Roots no longer referenced by any operational certificate shall also be
- * removed. All secure sessions, exchanges and interaction model constructs related to the Operational Identity under
- * the given Fabric shall also be removed. Since this operation involves the removal of the secure session data that
- * may underpin the current set of exchanges, the Node invoking the command SHOULD NOT expect a response before
- * terminating its secure session with the target.
- *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.12
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.12
  */
 export type RemoveFabricRequest = TypeFromSchema<typeof OperationalCredentials.TlvRemoveFabricRequest>;
 
@@ -291,7 +238,7 @@ export type RemoveFabricRequest = TypeFromSchema<typeof OperationalCredentials.T
  * Note that the only method of removing a trusted root is by removing the Fabric that uses it as its root of trust
  * using the RemoveFabric command.
  *
- * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.13
+ * @see {@link MatterSpecification.v11.Core} § 11.17.6.13
  */
 export type AddTrustedRootCertificateRequest = TypeFromSchema<typeof OperationalCredentials.TlvAddTrustedRootCertificateRequest>;
 
@@ -304,7 +251,7 @@ export namespace OperationalCredentialsInterface {
          * recipient shall fail the command with a Status Code of INVALID_COMMAND. The AttestationNonce field shall be
          * used in the computation of the Attestation Information.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.1
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.1
          */
         attestationRequest(request: AttestationRequest): MaybePromise<AttestationResponse>;
 
@@ -312,7 +259,7 @@ export namespace OperationalCredentialsInterface {
          * If the CertificateType is not a valid value per CertificateChainTypeEnum then the command shall fail with a
          * Status Code of INVALID_COMMAND.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.3
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.3
          */
         certificateChainRequest(request: CertificateChainRequest): MaybePromise<CertificateChainResponse>;
 
@@ -342,7 +289,7 @@ export namespace OperationalCredentialsInterface {
          * to collide with an existing key pair already previously generated and installed, and that check had been
          * executed, then this command shall fail with a FAILURE status code sent back to the initiator.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.5
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.5
          */
         csrRequest(request: CsrRequest): MaybePromise<CsrResponse>;
 
@@ -357,7 +304,7 @@ export namespace OperationalCredentialsInterface {
          *
          * A Commissioner or Administrator SHOULD issue this command after performing the Attestation Procedure.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.8
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.8
          */
         addNoc(request: AddNocRequest): MaybePromise<NocResponse>;
 
@@ -416,7 +363,7 @@ export namespace OperationalCredentialsInterface {
          * Thereafter, the Node shall respond with an NOCResponse with a StatusCode of OK and a FabricIndex field
          * matching the FabricIndex under which the updated NOC is scoped.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.9
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.9
          */
         updateNoc(request: UpdateNocRequest): MaybePromise<NocResponse>;
 
@@ -427,24 +374,7 @@ export namespace OperationalCredentialsInterface {
          * The Label SHOULD be used by Administrators to provide additional per-fabric context when operations such as
          * RemoveFabric are used.
          *
-         * This field shall contain the label to set for the fabric associated with the current secure session.
-         *
-         * Effect on Receipt
-         *
-         * If the Label field is identical to a Label already in use by a Fabric within the Fabrics list that is not
-         * the accessing fabric, then an NOCResponse with a StatusCode of LabelConflict shall be returned for the
-         * command and there shall NOT be any permanent changes to any Fabric data.
-         *
-         * Otherwise, the Label field for the accesing fabric shall immediately be updated to reflect the
-         *
-         * Label argument provided. Following the update, an NOCResponse with a StatusCode of OK shall be returned.
-         *
-         * If the command was invoked within a fail-safe context after a successful UpdateNOC command, then the label
-         * update shall apply to the pending update state that will be reverted if fail-safe expires prior to a
-         * CommissioningComplete command. In other words, label updates apply to the state of the Fabrics Attribute as
-         * currently visible, even for an existing fabric currently in process of being updated.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.11
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.11
          */
         updateFabricLabel(request: UpdateFabricLabelRequest): MaybePromise<NocResponse>;
 
@@ -466,43 +396,7 @@ export namespace OperationalCredentialsInterface {
          * only observe the removal of a Fabric association as persistently failing attempts to reach a Node
          * operationally.
          *
-         * This field shall contain the Fabric Index reference (see fabric-index) associated with the Fabric which is
-         * to be removed from the device.
-         *
-         * Effect on Receipt
-         *
-         * If the FabricIndex field does not match the FabricIndex of any entry within the Fabrics list, then an
-         * NOCResponse with a StatusCode of InvalidFabricIndex shall be returned for the command and there shall NOT be
-         * any permanent changes to any device data.
-         *
-         * Otherwise, one of the following outcomes shall occur:
-         *
-         *   1. If the FabricIndex matches the last remaining entry in the Fabrics list, then the device shall delete
-         *      all Matter related data on the node which was created since it was commissioned. This includes all
-         *      Fabric-Scoped data, including Access Control List, bindings, scenes, group keys,
-         *
-         * operational certificates, etc. All Trusted Roots shall also be removed. Any Matter related data including
-         * logs, secure sessions, exchanges and interaction model constructs shall also be removed. Since this
-         * operation involves the removal of the secure session data that may underpin the current set of exchanges,
-         * the Node invoking the command SHOULD NOT expect a response before terminating its secure session with the
-         * target.
-         *
-         * 2. If the FabricIndex does not equal the accessing fabric index, then the device shall begin the process of
-         * irrevocably deleting all associated Fabric-Scoped data, including Access Control List, bindings, group keys,
-         * operational certificates, etc. Any remaining Trusted Roots no longer referenced by any operational
-         * certificate shall also be removed. All secure sessions, exchanges and interaction model constructs related
-         * to the Operational Identity under the given Fabric shall also be removed. Following the removal, an
-         * NOCResponse with a StatusCode of OK shall be returned.
-         *
-         * 3. If the FabricIndex equals the accessing fabric index, then the device shall begin the process of
-         * irrevocably deleting all associated Fabric-Scoped data, including Access Control Entries, bindings, group
-         * keys, operational certificates, etc. Any remaining Trusted Roots no longer referenced by any operational
-         * certificate shall also be removed. All secure sessions, exchanges and interaction model constructs related
-         * to the Operational Identity under the given Fabric shall also be removed. Since this operation involves the
-         * removal of the secure session data that may underpin the current set of exchanges, the Node invoking the
-         * command SHOULD NOT expect a response before terminating its secure session with the target.
-         *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.12
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.12
          */
         removeFabric(request: RemoveFabricRequest): MaybePromise<NocResponse>;
 
@@ -531,7 +425,7 @@ export namespace OperationalCredentialsInterface {
          * Note that the only method of removing a trusted root is by removing the Fabric that uses it as its root of
          * trust using the RemoveFabric command.
          *
-         * @see {@link MatterCoreSpecificationV1_1} § 11.17.6.13
+         * @see {@link MatterSpecification.v11.Core} § 11.17.6.13
          */
         addTrustedRootCertificate(request: AddTrustedRootCertificateRequest): MaybePromise;
     }

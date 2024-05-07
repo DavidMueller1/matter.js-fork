@@ -97,19 +97,15 @@ for (let idx = 0; idx < isSocket.length; idx++) {
      * If the code in these change handlers fail then the change is also rolled back and not executed and an error is
      * reported back to the controller.
      */
-    let isIdentifying = false;
-    endpoint.events.identify.identifyTime$Change.on(value => {
-        // identifyTime is set when an identify command is called and then decreased every second while indentify logic runs.
-        if (value > 0 && !isIdentifying) {
-            isIdentifying = true;
-            console.log(`OnOff ${i}: Run identify logic, ideally blink a light every 0.5s ...`);
-        } else if (value === 0) {
-            isIdentifying = false;
-            console.log(`OnOff ${i}: Stop identify logic ...`);
-        }
+    endpoint.events.identify.startIdentifying.on(() => {
+        console.log(`Run identify logic for sub device ${i}, ideally blink a light every 0.5s ...`);
     });
 
-    endpoint.events.onOff.onOff$Change.on(value => {
+    endpoint.events.identify.stopIdentifying.on(() => {
+        console.log(`Stop identify logic for sub device ${i}...`);
+    });
+
+    endpoint.events.onOff.onOff$Changed.on(value => {
         executeCommand(value ? `on${i}` : `off${i}`);
         console.log(`OnOff ${i} is now ${value ? "ON" : "OFF"}`);
     });
@@ -152,9 +148,9 @@ async function getConfiguration() {
 
     const isSocket = Array<boolean>();
     const numDevices = environment.vars.number("num") || 2;
-    if (deviceStorage.has("isSocket")) {
+    if (await deviceStorage.has("isSocket")) {
         console.log(`Device types found in storage. --type parameter is ignored.`);
-        deviceStorage.get<Array<boolean>>("isSocket").forEach(type => isSocket.push(type));
+        (await deviceStorage.get<Array<boolean>>("isSocket")).forEach(type => isSocket.push(type));
     }
     for (let i = 1; i < numDevices; i++) {
         if (isSocket[i - 1] !== undefined) continue;
@@ -163,24 +159,27 @@ async function getConfiguration() {
 
     const deviceName = "Matter test device";
     const vendorName = "matter-node.js";
-    const passcode = environment.vars.number("passcode") ?? deviceStorage.get("passcode", 20202021);
-    const discriminator = environment.vars.number("discriminator") ?? deviceStorage.get("discriminator", 3840);
+    const passcode = environment.vars.number("passcode") ?? (await deviceStorage.get("passcode", 20202021));
+    const discriminator = environment.vars.number("discriminator") ?? (await deviceStorage.get("discriminator", 3840));
     // product name / id and vendor id should match what is in the device certificate
-    const vendorId = environment.vars.number("vendorid") ?? deviceStorage.get("vendorid", 0xfff1);
+    const vendorId = environment.vars.number("vendorid") ?? (await deviceStorage.get("vendorid", 0xfff1));
     const productName = `node-matter OnOff ${isSocket ? "Socket" : "Light"}`;
-    const productId = environment.vars.number("productid") ?? deviceStorage.get("productid", 0x8000);
+    const productId = environment.vars.number("productid") ?? (await deviceStorage.get("productid", 0x8000));
 
     const port = environment.vars.number("port") ?? 5540;
 
-    const uniqueId = environment.vars.string("uniqueid") ?? deviceStorage.get("uniqueid", Time.nowMs().toString());
+    const uniqueId =
+        environment.vars.string("uniqueid") ?? (await deviceStorage.get("uniqueid", Time.nowMs().toString()));
 
     // Persist basic data to keep them also on restart
-    deviceStorage.set("passcode", passcode);
-    deviceStorage.set("discriminator", discriminator);
-    deviceStorage.set("vendorid", vendorId);
-    deviceStorage.set("productid", productId);
-    deviceStorage.set("isSocket", isSocket);
-    deviceStorage.set("uniqueid", uniqueId);
+    await deviceStorage.set({
+        passcode,
+        discriminator,
+        vendorid: vendorId,
+        productid: productId,
+        isSocket,
+        uniqueid: uniqueId,
+    });
 
     return {
         isSocket,

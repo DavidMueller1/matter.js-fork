@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterCoreSpecificationV1_1 § 11.18.5.1
+MatterSpecification.v11.Core § 11.18.5.1
 
 ## Table of contents
 
@@ -26,7 +26,7 @@ A Basic Commissioning Method window is open
 
 #### Defined in
 
-matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:26
+matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:43
 
 ___
 
@@ -38,7 +38,7 @@ An Enhanced Commissioning Method window is open
 
 #### Defined in
 
-matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:22
+matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:39
 
 ___
 
@@ -50,4 +50,4 @@ Commissioning window not open
 
 #### Defined in
 
-matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:18
+matter.js/dist/esm/cluster/definitions/AdministratorCommissioningCluster.d.ts:35

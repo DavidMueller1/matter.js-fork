@@ -6,7 +6,7 @@
 
 **`See`**
 
-MatterApplicationClusterSpecificationV1_1 § 6.6.5.3
+MatterSpecification.v11.Cluster § 6.6.5.3
 
 ## Table of contents
 
@@ -24,4 +24,4 @@ MultiSystemOperator
 
 #### Defined in
 
-packages/matter.js/dist/esm/cluster/definitions/ChannelCluster.d.ts:96
+packages/matter.js/dist/esm/cluster/definitions/ChannelCluster.d.ts:75

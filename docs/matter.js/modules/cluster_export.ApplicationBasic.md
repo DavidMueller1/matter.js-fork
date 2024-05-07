@@ -10,29 +10,53 @@
 
 - [ApplicationStatus](../enums/cluster_export.ApplicationBasic.ApplicationStatus.md)
 
+### Interfaces
+
+- [ApplicationStruct](../interfaces/cluster_export.ApplicationBasic.ApplicationStruct.md)
+- [Cluster](../interfaces/cluster_export.ApplicationBasic.Cluster.md)
+
 ### Variables
 
 - [Cluster](cluster_export.ApplicationBasic.md#cluster)
+- [ClusterInstance](cluster_export.ApplicationBasic.md#clusterinstance)
+- [Complete](cluster_export.ApplicationBasic.md#complete)
 - [TlvApplicationStruct](cluster_export.ApplicationBasic.md#tlvapplicationstruct)
 
 ## Variables
 
 ### Cluster
 
-• `Const` **Cluster**: [`Definition`](cluster_export.ClusterFactory.md#definition)\<\{ `attributes`: \{ `allowedVendorList`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<[`VendorId`](datatype_export.md#vendorid)[], `any`\> ; `application`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `applicationId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `catalogVendorId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\>  }\>, `any`\> ; `applicationName`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<`string`, `any`\> ; `applicationVersion`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<`string`, `any`\> ; `productId`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<`number`, `any`\> ; `status`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`ApplicationStatus`](../enums/cluster_export.ApplicationBasic.ApplicationStatus.md), `any`\> ; `vendorId`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<[`VendorId`](datatype_export.md#vendorid), `any`\> ; `vendorName`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<`string`, `any`\>  } ; `id`: ``1293`` = 0x50d; `name`: ``"ApplicationBasic"`` = "ApplicationBasic"; `revision`: ``1`` = 1 }\>
-
-Application Basic
-
-This cluster provides information about a Content App running on a Video Player device which is represented as
-an endpoint (see Device Type Library document).
-
-**`See`**
-
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 6.3
+• **Cluster**: [`Cluster`](../interfaces/cluster_export.ApplicationBasic.Cluster.md)
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:81](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L81)
+[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:167](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L167)
+
+[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:169](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L169)
+
+___
+
+### ClusterInstance
+
+• `Const` **ClusterInstance**: [`MutableCluster`](../interfaces/cluster_export.MutableCluster-1.md)\<\{ `attributes`: \{ `allowedVendorList`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<[`VendorId`](datatype_export.md#vendorid)[], `any`\> ; `application`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<[`TypeFromFields`](tlv_export.md#typefromfields)\<\{ `applicationId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`string`\> ; `catalogVendorId`: [`FieldType`](../interfaces/tlv_export.FieldType.md)\<`number`\>  }\>, `any`\> ; `applicationName`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<`string`, `any`\> ; `applicationVersion`: [`FixedAttribute`](../interfaces/cluster_export.FixedAttribute.md)\<`string`, `any`\> ; `productId`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<`number`, `any`\> ; `status`: [`Attribute`](../interfaces/cluster_export.Attribute.md)\<[`ApplicationStatus`](../enums/cluster_export.ApplicationBasic.ApplicationStatus.md), `any`\> ; `vendorId`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<[`VendorId`](datatype_export.md#vendorid), `any`\> ; `vendorName`: [`OptionalFixedAttribute`](../interfaces/cluster_export.OptionalFixedAttribute.md)\<`string`, `any`\>  } ; `id`: ``1293`` = 0x50d; `name`: ``"ApplicationBasic"`` = "ApplicationBasic"; `revision`: ``1`` = 1 }\>
+
+**`See`**
+
+[Cluster](cluster_export.ApplicationBasic.md#cluster)
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:85](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L85)
+
+___
+
+### Complete
+
+• `Const` **Complete**: [`Cluster`](../interfaces/cluster_export.ApplicationBasic.Cluster.md) = `Cluster`
+
+#### Defined in
+
+[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:170](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L170)
 
 ___
 
@@ -44,8 +68,8 @@ This indicates a global identifier for an Application given a catalog.
 
 **`See`**
 
-[MatterApplicationClusterSpecificationV1_1](../interfaces/spec_export.MatterApplicationClusterSpecificationV1_1.md) § 6.3.4.1
+MatterSpecification.v11.Cluster § 6.3.4.1
 
 #### Defined in
 
-[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:24](https://github.com/project-chip/matter.js/blob/c15b1068/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L24)
+[packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts:26](https://github.com/project-chip/matter.js/blob/c0d55745d5279e16fdfaa7d2c564daa31e19c627/packages/matter.js/src/cluster/definitions/ApplicationBasicCluster.ts#L26)
