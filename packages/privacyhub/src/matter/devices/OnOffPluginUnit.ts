@@ -120,6 +120,7 @@ export default class OnOffPluginUnit extends BaseDevice {
             if (onOffCluster !== undefined) {
                 if (toggle) {
                     onOffCluster.toggle().then(() => {
+                        this.virtualDevice.setOnOffState(state);
                         resolve();
                     }).catch((error) => {
                         this.logger.error(`Failed to toggle OnOff: ${error}`);

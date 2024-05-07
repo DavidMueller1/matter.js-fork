@@ -84,6 +84,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
     }
 
     setOnOffState(state: boolean) {
+        this.logger.info(`==============Setting OnOff of virtual device to ${state}`);
         this.endpoint?.set({
             onOff: {
                 onOff: state,
