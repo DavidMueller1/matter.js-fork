@@ -67,7 +67,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                         id: this.uniqueId,
                     }
                 )
-                return this.serverNode.add(endpoint);
+                return this.serverNode.add(this.endpoint);
             }).then((endpoint) => {
                 this.logger.info("Endpoint added");
                 endpoint.events.onOff.onOff$Changed.on(value => {
