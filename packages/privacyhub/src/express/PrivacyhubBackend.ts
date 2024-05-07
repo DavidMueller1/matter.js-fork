@@ -2,19 +2,18 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode, { knownTypes } from "../matter/PrivacyhubNode.js";
-import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
+import { stringifyIgnoreCircular } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
 import cors from 'cors';
-import { NodeId, ClusterId, EndpointNumber } from "@project-chip/matter.js/datatype";
-import { OnOffCluster } from "@project-chip/matter.js/cluster";
+import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
-import SocketServer from "../websocket/SocketServer.js";
+// import SocketServer from "../websocket/SocketServer.js";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
 
 import dotenv from "dotenv";
-import BaseDevice from "../matter/devices/BaseDevice.js";
+// import BaseDevice from "../matter/devices/BaseDevice.js";
 import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
@@ -344,8 +343,8 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
-            const from = req.query.from ? parseInt(req.query.from as string) : 0;
-            const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
+            // const from = req.query.from ? parseInt(req.query.from as string) : 0;
+            // const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
 
             const device = this.deviceManager.getDevice(nodeId, endpointId);
             if (!device) {

@@ -1,12 +1,8 @@
-import { PairedNode, Endpoint } from "@project-chip/matter-node.js/device";
+import { PairedNode, NodeStateInformation, Endpoint } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
-import { CommissioningController, MatterServer, NodeCommissioningOptions } from "@project-chip/matter-node.js";
+import { CommissioningController } from "@project-chip/matter-node.js";
 import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
 import { Server } from "socket.io";
-import { type } from "typedoc/dist/lib/output/themes/default/partials/type.js";
-import { resolve } from "eslint-import-resolver-typescript";
-import * as console from "console";
-import { NodeStateInformation } from "@project-chip/matter.js/src/device/PairedNode.js";
 import { Schema, model } from "mongoose";
 
 export enum ConnectionStatus {

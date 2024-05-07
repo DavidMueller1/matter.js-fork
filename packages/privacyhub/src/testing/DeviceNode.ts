@@ -18,10 +18,10 @@ import "@project-chip/matter-node.js";
 
 import { requireMinNodeVersion } from "@project-chip/matter-node.js/util";
 import { DeviceTypeId, VendorId } from "@project-chip/matter.js/datatype";
-import { logEndpoint } from "@project-chip/matter.js/device";
+// import { logEndpoint } from "@project-chip/matter.js/device";
 import { OnOffLightDevice } from "@project-chip/matter.js/devices/OnOffLightDevice";
 import { OnOffPlugInUnitDevice } from "@project-chip/matter.js/devices/OnOffPlugInUnitDevice";
-import { Endpoint, EndpointServer } from "@project-chip/matter.js/endpoint";
+import { Endpoint } from "@project-chip/matter.js/endpoint";
 import { Environment, StorageService } from "@project-chip/matter.js/environment";
 import { ServerNode } from "@project-chip/matter.js/node";
 import { Time } from "@project-chip/matter.js/time";
@@ -116,7 +116,7 @@ async function main() {
     /**
      * Log the endpoint structure for debugging reasons and to allow to verify anything is correct
      */
-    logEndpoint(EndpointServer.forEndpoint(server));
+    // logEndpoint(EndpointServer.forEndpoint(server));
 
     /**
      * In order to start the node and announce it into the network we use the run method which resolves when the node goes

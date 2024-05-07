@@ -1,28 +1,20 @@
 import { CommissioningController, MatterServer, NodeCommissioningOptions } from "@project-chip/matter-node.js";
 
-import { BleNode } from "@project-chip/matter-node-ble.js/ble";
-import { Ble } from "@project-chip/matter-node.js/ble";
+// import { BleNode } from "@project-chip/matter-node-ble.js/ble";
+// import { Ble } from "@project-chip/matter-node.js/ble";
 import {
-    BasicInformationCluster,
-    DescriptorCluster,
+    // BasicInformationCluster,
+    // DescriptorCluster,
     GeneralCommissioning,
-    OnOffCluster,
+    // OnOffCluster,
 } from "@project-chip/matter-node.js/cluster";
 import { NodeId, EndpointNumber } from "@project-chip/matter-node.js/datatype";
 import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
-import { Format, Level, Logger } from "@project-chip/matter-node.js/log";
+import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningOptions } from "@project-chip/matter-node.js/protocol";
 import { ManualPairingCodeCodec } from "@project-chip/matter-node.js/schema";
 import { StorageBackendDisk, StorageManager } from "@project-chip/matter-node.js/storage";
-import {
-    getIntParameter,
-    getParameter,
-    hasParameter,
-    requireMinNodeVersion,
-    singleton,
-} from "@project-chip/matter-node.js/util";
 import { stringifyWithBigint } from "../util/Util.js";
-import BaseDevice from "./devices/BaseDevice.js";
 
 export const knownTypes: Record<number, string> = {
     266: "OnOffPluginUnit",
@@ -48,10 +40,11 @@ export default class PrivacyhubNode {
     private readonly logger: Logger;
     private readonly storage;
 
+    private storageManager: StorageManager;
     private matterServer: MatterServer;
     private commissioningController: CommissioningController;
 
-    private connectedDevices: Record<string, BaseDevice> = {};
+    // private connectedDevices: Record<string, BaseDevice> = {};
 
     constructor() {
         this.logger = Logger.get("PrivacyhubNode");
@@ -60,22 +53,23 @@ export default class PrivacyhubNode {
         const storageLocation = process.env.STORAGE_LOCATION || ".privacyhub-storage-dafault";
         this.storage = new StorageBackendDisk(storageLocation, false);
         this.logger.info(`Storage location: ${storageLocation} (Directory)`);
+
+        this.storageManager = new StorageManager(this.storage);
+
+        this.matterServer = new MatterServer(this.storageManager);
+        this.commissioningController = new CommissioningController({
+            autoConnect: false,
+        });
     }
 
     async start(): Promise<CommissioningController> {
         this.logger.info("Starting PrivacyhubNode...");
 
-        const storageManager = new StorageManager(this.storage);
-        await storageManager.initialize();
+        await this.storageManager.initialize();
 
-        const controllerStorage = storageManager.createContext("Controller");
-        const ip = controllerStorage.has("ip") ? controllerStorage.get<string>("ip") : undefined;
-        const port = controllerStorage.has("port") ? controllerStorage.get<number>("port") : undefined;
-
-        this.matterServer = new MatterServer(storageManager);
-        this.commissioningController = new CommissioningController({
-            autoConnect: false,
-        });
+        // const controllerStorage = storageManager.createContext("Controller");
+        // const ip = controllerStorage.has("ip") ? controllerStorage.get<string>("ip") : undefined;
+        // const port = controllerStorage.has("port") ? controllerStorage.get<number>("port") : undefined;
 
         return new Promise<CommissioningController>((resolve, reject) => {
             this.matterServer.addCommissioningController(this.commissioningController).then(() => {
@@ -154,9 +148,7 @@ export default class PrivacyhubNode {
     }
 
     async commissionNodeBLEWiFi(
-        pairingCode: string,
-        threadNetworkName: string,
-        threadNetworkOperationalDataset: string
+        pairingCode: string
     ) {
         return new Promise<PairedNode>((resolve, reject) => {
             // Extract data from pairing code
@@ -297,10 +289,5 @@ export default class PrivacyhubNode {
                 reject(error);
             });
         });
-
-    }
-
-    getDeviceObject<T extends BaseDevice>(nodeId: string, ): T {
-
     }
 }
