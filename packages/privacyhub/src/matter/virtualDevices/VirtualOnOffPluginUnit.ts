@@ -38,8 +38,8 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                 // Provide Commissioning relevant settings
                 // Optional for development/testing purposes
                 commissioning: {
-                    passcode: 123456,
-                    discriminator: 19,
+                    passcode: this.passcode,
+                    discriminator: this.discriminator,
                 },
 
                 // Provide Node announcement settings
