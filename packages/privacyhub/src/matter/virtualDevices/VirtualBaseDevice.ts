@@ -3,20 +3,29 @@ import { ServerNode } from "@project-chip/matter.js/node";
 import { PairedNode } from "@project-chip/matter-node.js/device";
 import { BasicInformationCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
+import {
+    CommissioningFlowType,
+    DiscoveryCapabilitiesSchema,
+    ManualPairingCodeCodec,
+    QrPairingCodeCodec,
+} from "@project-chip/matter-node.js/schema";
 // import { EventEmitter } from "events";
 
 export default abstract class VirtualBaseDevice {
     protected _nodeId: NodeId;
     protected _type: DeviceTypeId;
 
-    vendorName: string | undefined;
-    vendorId: number | undefined;
-    nodeLabel: string | undefined;
-    productName: string | undefined;
-    productLabel: string | undefined;
-    productId: number | undefined;
-    serialNumber: string | undefined;
-    uniqueId: string | undefined;
+    protected vendorName: string | undefined;
+    protected vendorId: number | undefined;
+    protected nodeLabel: string | undefined;
+    protected productName: string | undefined;
+    protected productLabel: string | undefined;
+    protected productId: number | undefined;
+    protected serialNumber: string | undefined;
+    protected uniqueId: string | undefined;
+
+    protected discriminator: number;
+    protected passcode: number;
 
     protected existingNode: PairedNode
     protected serverNode: ServerNode | undefined;
@@ -33,6 +42,9 @@ export default abstract class VirtualBaseDevice {
         this._nodeId = nodeId;
         this._type = type;
         this.existingNode = existingNode;
+
+        this.discriminator = this.getTypeCode() * 10 + Math.floor(Math.random() * 10);
+        this.passcode = this.generatePasscode();
 
         this.logger = Logger.get("VirtualDevice");
 
@@ -88,6 +100,33 @@ export default abstract class VirtualBaseDevice {
                 });
         });
     }
+
+    protected generatePasscode(): number {
+        return Math.floor(Math.random() * 90000000) + 10000000;
+    }
+
+    getManualPairingCode(): string {
+        return ManualPairingCodeCodec.encode({
+            discriminator: this.discriminator,
+            passcode: this.passcode,
+        });
+    }
+
+    getQRCode(): string {
+        return QrPairingCodeCodec.encode({
+            version: 0,
+            vendorId: this.vendorId || 0,
+            productId: this.productId || 0,
+            flowType: CommissioningFlowType.Standard,
+            discriminator: this.discriminator,
+            passcode: this.passcode,
+            discoveryCapabilities: DiscoveryCapabilitiesSchema.encode({
+                onIpNetwork: true,
+            }),
+        });
+    }
+
+    abstract getTypeCode(): number
 
     abstract initializeVirtualDevice(): Promise<void>
 }

@@ -37,7 +37,7 @@ const OnOffPluginUnitState = model<IOnOffPluginUnitState>('OnOffPluginUnitState'
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
-    private virtualDevice: VirtualOnOffPluginUnit;
+    override virtualDevice: VirtualOnOffPluginUnit;
 
     constructor(
         uniqueId: string,

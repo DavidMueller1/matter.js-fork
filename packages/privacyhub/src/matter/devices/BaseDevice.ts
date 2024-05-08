@@ -5,6 +5,7 @@ import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter-node.
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import { Server } from "socket.io";
 import { Schema, model } from "mongoose";
+import VirtualBaseDevice from "../virtualDevices/VirtualBaseDevice.js";
 
 export enum ConnectionStatus {
     CONNECTED,
@@ -70,6 +71,8 @@ export default class BaseDevice {
     protected pairedNode: PairedNode;
     protected endpoint: EndpointInterface;
     protected logger: Logger;
+
+    protected virtualDevice: VirtualBaseDevice | undefined;
 
     protected connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
     protected privacyState: PrivacyState = PrivacyState.LOCAL_ONLY;
@@ -234,6 +237,13 @@ export default class BaseDevice {
         });
     }
 
+    getManualPairingCode(): string {
+        return this.virtualDevice?.getManualPairingCode() || "0";
+    }
+
+    getQRCode(): string {
+        return this.virtualDevice?.getQRCode() || "0";
+    }
 
     getDeviceObject<T extends BaseDevice>(type: new () => T): T | undefined {
         if (this instanceof type) {
