@@ -15,7 +15,7 @@ client.on("connect", () => {
     });
 });
 
-client.on("message", (topic, message) => {
+client.on("message", (_, message: any) => {
     // message is Buffer
     console.log(message.toString());
     client.end();
