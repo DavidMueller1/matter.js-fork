@@ -72,6 +72,10 @@ export default class PrivacyhubBackend {
         this.app.use(express.json());
         this.app.use(cors());
 
+        this.io.on('connection', (_) => {
+            console.log('a user connected');
+        });
+
 
         this.setupRoutes();
         // this.setupSwagger();
