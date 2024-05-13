@@ -5,8 +5,10 @@ const client = mqtt.connect("philipinator.dns.army", {
     username: 'mqtt_user',
     password: 'mqtt-docker'
 });
+console.log("Connecting to MQTT broker");
 
 client.on("connect", () => {
+    console.log("Connected to MQTT broker");
     client.subscribe("bier", (err: any) => {
         if (!err) {
             client.publish("schnapps", "Cheers");
