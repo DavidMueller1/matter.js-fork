@@ -40,7 +40,7 @@ export class NobleBleClient {
     private nobleState = "unknown";
     private deviceDiscoveredCallback: ((peripheral: Peripheral, manufacturerData: ByteArray) => void) | undefined;
 
-    constructor(options?: BleOptions) {
+    constructor(_?: BleOptions) {
         // loadNoble(options?.hciId);
         try {
             noble.reset();
@@ -51,7 +51,7 @@ export class NobleBleClient {
                 }`,
             );
         }
-        noble.on("stateChange", state => {
+        noble.on("stateChange", (state: string) => {
             this.nobleState = state;
             logger.debug(`Noble state changed to ${state}`);
             if (state === "poweredOn") {
@@ -62,7 +62,7 @@ export class NobleBleClient {
                 void this.stopScanning();
             }
         });
-        noble.on("discover", peripheral => this.handleDiscoveredDevice(peripheral));
+        noble.on("discover", (peripheral: Peripheral) => this.handleDiscoveredDevice(peripheral));
         noble.on("scanStart", () => (this.isScanning = true));
         noble.on("scanStop", () => (this.isScanning = false));
     }
