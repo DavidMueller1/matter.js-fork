@@ -112,10 +112,10 @@ export default class PrivacyhubNode {
                 operationalDataset: threadNetworkOperationalDataset,
             }
 
-            commissioningOptions.wifiNetwork = {
-                wifiSsid: wifiSsid,
-                wifiCredentials: wifiCredentials,
-            };
+            // commissioningOptions.wifiNetwork = {
+            //     wifiSsid: wifiSsid,
+            //     wifiCredentials: wifiCredentials,
+            // };
 
             const ble = true
             const options = {
