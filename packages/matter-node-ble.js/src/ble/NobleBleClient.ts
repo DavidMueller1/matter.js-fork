@@ -15,6 +15,7 @@ const logger = Logger.get("NobleBleClient");
 let noble: typeof import("@stoprocent/noble");
 
 function loadNoble(hciId?: number) {
+    logger.info(`Loading Noble with hciId ${hciId} ...`);
     // load noble driver with the correct device selected
     if (hciId !== undefined) {
         process.env.NOBLE_HCI_DEVICE_ID = hciId.toString();
