@@ -30,7 +30,7 @@
     "privacyhub-backend": "matter-run src/express/PrivacyhubBackend.ts",
     "privacyhub-app": "matter-run src/app.ts",
     "privacyhub-mqtt": "matter-run src/testing/MqttTest.ts",
-    "privacyhub-noble": "matter-run src/testing/MqttTest.ts",
+    "privacyhub-noble": "matter-run src/testing/NobleTest.ts",
     "test-device": "matter-run src/testing/DeviceNode.ts",
     "test-device-full": "matter-run src/testing/DeviceNodeFull.ts",
     "noble-test": "matter-run src/NobleTest.ts",
