@@ -4,6 +4,7 @@ import noble, { Peripheral } from "@stoprocent/noble";
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 noble.on('stateChange', async (state: string) => {
+    console.log('State changed to', state);
     if (state === 'poweredOn') {
         await noble.startScanningAsync(['180f'], false);
     }
