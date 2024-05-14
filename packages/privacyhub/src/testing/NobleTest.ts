@@ -6,7 +6,7 @@ import noble, { Peripheral } from "@stoprocent/noble";
 noble.on('stateChange', async (state: string) => {
     console.log('State changed to', state);
     if (state === 'poweredOn') {
-        await noble.startScanningAsync(['180f'], false);
+        await noble.startScanningAsync([], false);
     }
 });
 
