@@ -17,6 +17,7 @@ import PrivacyhubNode from "./matter/PrivacyhubNode.js";
 // import NeoPixelController, { LedState } from "./util/NeoPixelController.js";
 // import { stringifyWithBigint } from "./util/Util.js";
 import DbController from "./db/DbController.js";
+import MqttManager from "./mqtt/MqttManager.js";
 
 
 requireMinNodeVersion(16);
@@ -123,5 +124,7 @@ const commissioningController = await privacyhubNode.start();
 // } catch (error) {
 //     logger.error(`Failed to reconnect to nodes: ${error}`);
 // }
+
+MqttManager.getInstance();
 
 new PrivacyhubBackend(privacyhubNode, commissioningController);

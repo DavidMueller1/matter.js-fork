@@ -1,6 +1,6 @@
 import mqtt from "mqtt";
 
-const client = mqtt.connect("mqtt://philipinator.dns.army", {
+const client = mqtt.connect("mqtt://phlipinator.dns.army:1883", {
     username: 'mqtt_user',
     password: 'mqtt-docker'
 });
