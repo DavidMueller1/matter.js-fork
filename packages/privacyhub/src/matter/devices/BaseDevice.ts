@@ -22,12 +22,14 @@ interface IDevice {
     uniqueId: string;
     endpointId: string;
     type: number;
+    assignedProxy?: number;
 }
 
 const deviceSchema = new Schema<IDevice>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
     type: { type: Number, required: true },
+    assignedProxy: { type: Number },
 });
 
 const Device = model<IDevice>('Device', deviceSchema);
@@ -37,11 +39,13 @@ export interface IBaseDeviceState {
     uniqueId: string;
     endpointId: string;
     connectionStatus: ConnectionStatus;
+    privacyState: PrivacyState;
     timestamp: number;
 }
 
 export interface IReturnBaseDeviceState {
     connectionStatus: ConnectionStatus;
+    privacyState: PrivacyState;
     timestamp: number;
 }
 
@@ -49,6 +53,7 @@ const baseDeviceStateSchema = new Schema<IBaseDeviceState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
     connectionStatus: { type: Number, required: true },
+    privacyState: { type: Number, required: true },
     timestamp: { type: Number, required: true },
 });
 
@@ -185,12 +190,27 @@ export default class BaseDevice {
     setConnectionStatus(status: ConnectionStatus) {
         this.logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
         this.connectionStatus = status;
+        this.updateSocketAndDB();
+    }
 
+    setPrivacyState(state: PrivacyState) {
+        this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
+        this.privacyState = state;
+        this.updateSocketAndDB();
+    }
+
+    protected updateSocketAndDB() {
         // Notify the client
         this.io.emit('connectionStatus', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
             status: this.connectionStatus,
+        });
+
+        this.io.emit('privacyState', {
+            nodeId: this.nodeId.toString(),
+            endpointId: this.endpointId.toString(),
+            state: this.privacyState,
         });
 
         // Add state change to DB
@@ -202,6 +222,7 @@ export default class BaseDevice {
                             uniqueId: this._uniqueId,
                             endpointId: this._endpointId.toString(),
                             connectionStatus: this.connectionStatus,
+                            privacyState: this.privacyState,
                             timestamp: Date.now(),
                         });
                         newState.save().then(() => {
@@ -229,17 +250,13 @@ export default class BaseDevice {
         }
     }
 
-    setPrivacyState(state: PrivacyState) {
-        this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
-        this.privacyState = state;
-    }
-
     getHistory(from: number, to: number): Promise<IReturnBaseDeviceState[]> {
         return new Promise<IReturnBaseDeviceState[]>((resolve, reject) => {
             BaseDeviceState.find<IBaseDeviceState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).then((docs) => {
                 resolve(docs.map((doc) => {
                     return {
                         connectionStatus: doc.connectionStatus,
+                        privacyState: doc.privacyState,
                         timestamp: doc.timestamp
                     };
                 }));

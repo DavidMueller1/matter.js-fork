@@ -1,5 +1,5 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
-import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
+import BaseDevice, { ConnectionStatus, PrivacyState } from "./BaseDevice.js";
 import { BooleanStateCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
@@ -14,12 +14,14 @@ export interface IContactSensorState {
     endpointId: string;
     connectionStatus: ConnectionStatus;
     booleanState: boolean;
+    privacyState: PrivacyState;
     timestamp: number;
 }
 
 export interface IReturnContactSensorState {
     connectionStatus: ConnectionStatus;
     booleanState: boolean;
+    privacyState: PrivacyState;
     timestamp: number;
 }
 
@@ -28,6 +30,7 @@ const contactSensorStateSchema = new Schema<IContactSensorState>({
     endpointId: { type: String, required: true },
     connectionStatus: { type: Number, required: true },
     booleanState: { type: Boolean },
+    privacyState: { type: Number, required: true },
     timestamp: { type: Number, required: true },
 });
 
@@ -66,32 +69,7 @@ export default class ContactSensor extends BaseDevice {
 
                         this._booleanState = state;
                         this.logger.info(`Boolean state changed to ${this._booleanState}`);
-
-                        this.io.emit('booleanState', {
-                            nodeId: this.nodeId.toString(),
-                            endpointId: this.endpointId.toString(),
-                            state: this._booleanState
-                        });
-
-                        // Check if the state is different from the last db entry
-                        ContactSensorState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
-                            if (doc === null || doc.booleanState !== state || doc.connectionStatus !== this.connectionStatus) {
-                                const newDoc = new ContactSensorState({
-                                    uniqueId: this._uniqueId.toString(),
-                                    endpointId: this._endpointId.toString(),
-                                    connectionStatus: this.connectionStatus,
-                                    booleanState: state,
-                                    timestamp: Date.now()
-                                });
-                                newDoc.save().then(() => {
-                                    this.logger.info(`Saved Boolean state to DB`);
-                                }).catch((error) => {
-                                    this.logger.error(`Failed to save Boolean state to DB: ${error}`);
-                                });
-                            }
-                        }).catch((error) => {
-                            this.logger.error(`Failed to query DB: ${error}`);
-                        });
+                        this.updateSocketAndDB();
                     }, 1, 10).then(() => {
                         this.logger.debug(`Subscribed to Boolean attribute`);
                         resolve();
@@ -109,6 +87,52 @@ export default class ContactSensor extends BaseDevice {
         });
     }
 
+    override updateSocketAndDB() {
+        this.io.emit('booleanState', {
+            nodeId: this.nodeId.toString(),
+            endpointId: this.endpointId.toString(),
+            state: this._booleanState
+        });
+
+        this.io.emit('connectionStatus', {
+            nodeId: this.nodeId.toString(),
+            endpointId: this.endpointId.toString(),
+            status: this.connectionStatus
+        });
+
+        this.io.emit('privacyState', {
+            nodeId: this.nodeId.toString(),
+            endpointId: this.endpointId.toString(),
+            state: this.privacyState
+        });
+
+        // Check if the state is different from the last db entry
+        ContactSensorState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
+            if (
+                doc === null ||
+                doc.booleanState !== this._booleanState ||
+                doc.connectionStatus !== this.connectionStatus ||
+                doc.privacyState !== this.privacyState
+            ) {
+                const newDoc = new ContactSensorState({
+                    uniqueId: this._uniqueId.toString(),
+                    endpointId: this._endpointId.toString(),
+                    connectionStatus: this.connectionStatus,
+                    booleanState: this._booleanState,
+                    privacyState: this.privacyState,
+                    timestamp: Date.now()
+                });
+                newDoc.save().then(() => {
+                    this.logger.info(`Saved Boolean state to DB`);
+                }).catch((error) => {
+                    this.logger.error(`Failed to save Boolean state to DB: ${error}`);
+                });
+            }
+        }).catch((error) => {
+            this.logger.error(`Failed to query DB: ${error}`);
+        });
+    }
+
     override getHistory(from: number, to: number): Promise<IReturnContactSensorState[]> {
         return new Promise<IReturnContactSensorState[]>((resolve, reject) => {
             ContactSensorState.find<IContactSensorState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
@@ -116,6 +140,7 @@ export default class ContactSensor extends BaseDevice {
                     return {
                         connectionStatus: doc.connectionStatus,
                         booleanState: doc.booleanState,
+                        privacyState: doc.privacyState,
                         timestamp: doc.timestamp
                     };
                 }));
