@@ -24,7 +24,7 @@ import { Logger } from "@project-chip/matter.js/log";
 import { NetInterface } from "@project-chip/matter.js/net";
 import { Time } from "@project-chip/matter.js/time";
 import { ByteArray, createPromise } from "@project-chip/matter.js/util";
-import type { Characteristic, Peripheral } from "@stoprocent/noble";
+import type { Characteristic, Peripheral } from "@abandonware/noble";
 import { BleScanner } from "./BleScanner.js";
 
 const logger = Logger.get("BleChannel");

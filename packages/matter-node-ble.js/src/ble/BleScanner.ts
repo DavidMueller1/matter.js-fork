@@ -11,7 +11,7 @@ import { VendorId } from "@project-chip/matter.js/datatype";
 import { Logger } from "@project-chip/matter.js/log";
 import { Time, Timer } from "@project-chip/matter.js/time";
 import { ByteArray, createPromise } from "@project-chip/matter.js/util";
-import type { Peripheral } from "@stoprocent/noble";
+import type { Peripheral } from "@abandonware/noble";
 import { NobleBleClient } from "./NobleBleClient.js";
 
 const logger = Logger.get("BleScanner");

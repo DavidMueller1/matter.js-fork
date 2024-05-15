@@ -40,8 +40,8 @@ export class NobleBleClient {
     private nobleState = "unknown";
     private deviceDiscoveredCallback: ((peripheral: Peripheral, manufacturerData: ByteArray) => void) | undefined;
 
-    constructor(_?: BleOptions) {
-        // loadNoble(options?.hciId);
+    constructor(options?: BleOptions) {
+        loadNoble(options?.hciId);
         try {
             noble.reset();
         } catch (error: any) {
