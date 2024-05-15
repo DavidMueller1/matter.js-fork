@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import { NodeId } from "@project-chip/matter-node.js/datatype";
 import OnOffPluginUnit from "./OnOffPluginUnit.js";
-import BaseDevice, { ConnectionStatus } from "./BaseDevice.js";
+import BaseDevice, { ConnectionStatus, PrivacyState } from "./BaseDevice.js";
 import { EndpointNumber } from "@project-chip/matter.js/datatype";
 import { BasicInformationCluster, DescriptorCluster } from "@project-chip/matter-node.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
@@ -13,19 +13,10 @@ import { stringifyWithBigint } from "../../util/Util.js";
 
 export default class DeviceManager {
 
-    private static _instance: DeviceManager;
-
     private logger: Logger = Logger.get("DeviceManager");
     private devices: BaseDevice[] = [];
 
-    private constructor() {}
-
-    public static getInstance = (): DeviceManager => {
-        if (!DeviceManager._instance) {
-            DeviceManager._instance = new DeviceManager();
-        }
-        return DeviceManager._instance;
-    }
+    constructor() {}
 
     public generateDevices(nodeId: NodeId, commissioningController: CommissioningController, io: Server): Promise<BaseDevice[]>  {
         return new Promise<BaseDevice[]>((resolve, reject) => {
@@ -143,6 +134,14 @@ export default class DeviceManager {
                 device.setConnectionStatus(ConnectionStatus.CONNECTED)
             } else {
                 device.setConnectionStatus(ConnectionStatus.DISCONNECTED)
+            }
+        });
+    }
+
+    public setPrivacyState(proxyId: number, state: PrivacyState) {
+        this.devices.forEach((device) => {
+            if (device.assignedProxy === proxyId) {
+                device.setPrivacyState(state);
             }
         });
     }

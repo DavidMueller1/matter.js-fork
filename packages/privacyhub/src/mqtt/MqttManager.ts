@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import mqtt, { MqttClient } from "mqtt";
 import { Logger } from "@project-chip/matter-node.js/log";
+import { PrivacyState } from "../matter/devices/BaseDevice.js";
 
 const logger = Logger.get("MqttManager");
 
@@ -41,24 +42,26 @@ export interface DataUpdate {
     to: number;
 }
 
-export enum PrivacyState {
-    LOCAL,
-    THIRD_PARTY,
-}
+
 
 
 export default class MqttManager {
     private client: MqttClient;
-    private numProxies: number;
-    private setStateCallback: (proxy: number, state: PrivacyState) => void;
+    private readonly numProxies: number;
+    private readonly setStateCallback: (proxyId: number, state: PrivacyState) => void;
 
-    constructor() {
+    constructor(
+        setStateCallback?: (proxyId: number, state: PrivacyState) => void
+    ){
         logger.info("Starting MQTT manager");
 
         this.numProxies = parseInt(NUM_PROXIES);
-        this.setStateCallback = (proxy: number, state: PrivacyState) => {
-            logger.debug(`Received state update for proxy ${proxy}: ${state}`);
-        }
+        this.setStateCallback = ((proxyId: number, state: PrivacyState) => {
+            logger.debug(`Received state update for proxy ${proxyId}: ${state}`);
+            if (setStateCallback) {
+                setStateCallback(proxyId, state);
+            }
+        });
 
         this.client = mqtt.connect({
             host: MQTT_HOST,
@@ -78,6 +81,8 @@ export default class MqttManager {
 
         this.client.on("message", (topic, message) => {
             logger.debug(`Received message on topic ${topic}: ${message}`);
+
+            // Check if the topic is a set state topic
             if (topic.startsWith(SET_STATE_TOPIC)) {
                 const proxy = parseInt(topic.substring(SET_STATE_TOPIC.length));
                 if (isNaN(proxy) || proxy < 1 || proxy > this.numProxies) {

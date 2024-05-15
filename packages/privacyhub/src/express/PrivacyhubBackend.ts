@@ -17,6 +17,7 @@ import dotenv from "dotenv";
 import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
+import MqttManager from "../mqtt/MqttManager.js";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -41,6 +42,8 @@ export default class PrivacyhubBackend {
     private readonly neoPixelController: NeoPixelController;
 
     private readonly deviceManager: DeviceManager;
+    // @ts-expect-error - This is not used yet
+    private readonly mqttManager: MqttManager;
 
     constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
         this.logger = Logger.get("PrivacyhubBackend");
@@ -91,7 +94,7 @@ export default class PrivacyhubBackend {
         });
 
         // Setup devices
-        this.deviceManager = DeviceManager.getInstance();
+        this.deviceManager = new DeviceManager();
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
             this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
@@ -99,13 +102,10 @@ export default class PrivacyhubBackend {
                 this.logger.error(`Error generating devices: ${error}`);
             });
         });
-        // this.app.listen(this.port, () => {
-        //     this.logger.info(`Server is Fire at http://localhost:${this.port}`);
-        //     this.neoPixelController.switchToState({
-        //         state: LedState.BLINKING,
-        //         color: NeoPixelController.hsvToHex(120, 1, 1)
-        //     });
-        // });
+
+        this.mqttManager = new MqttManager((proxyId, state) => {
+            this.deviceManager.setPrivacyState(proxyId, state);
+        });
     }
 
     // private setupEventCallbacks(): Promise<void> {

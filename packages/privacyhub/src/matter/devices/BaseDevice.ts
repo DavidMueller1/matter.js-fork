@@ -13,9 +13,8 @@ export enum ConnectionStatus {
 }
 
 export enum PrivacyState {
-    LOCAL_ONLY,
-    REMOTE_ACCESS,
-    ALL_ACCESS,
+    LOCAL,
+    THIRD_PARTY,
 }
 
 // DB schema
@@ -67,6 +66,7 @@ export default class BaseDevice {
     protected _vendor: string | undefined;
     protected _product: string | undefined;
     protected _type: DeviceTypeId;
+    protected _assignedProxy: number | undefined;
 
     protected pairedNode: PairedNode;
     protected endpoint: EndpointInterface;
@@ -75,7 +75,7 @@ export default class BaseDevice {
     protected virtualDevice: VirtualBaseDevice | undefined;
 
     protected connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
-    protected privacyState: PrivacyState = PrivacyState.LOCAL_ONLY;
+    protected privacyState: PrivacyState = PrivacyState.LOCAL;
 
     protected stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void;
 
@@ -94,11 +94,14 @@ export default class BaseDevice {
         this._type = type;
         this._nodeId = nodeId;
         this._endpointId = endpointId;
+        this._assignedProxy = 1;
+
         this.pairedNode = pairedNode;
         this.endpoint = endpoint;
         this.commissioningController = commissioningController;
         this.io = io;
         this.stateInformationCallback = stateInformationCallback;
+
         this.logger = Logger.get("BaseDevice");
 
         this.setBaseDevice();
@@ -137,6 +140,10 @@ export default class BaseDevice {
 
     get type(): number {
         return this._type;
+    }
+
+    get assignedProxy(): number | undefined {
+        return this._assignedProxy;
     }
 
     protected initialize(): Promise<void> {
@@ -220,6 +227,11 @@ export default class BaseDevice {
                 this.logger.error(`Failed to get state: ${error}`);
             });
         }
+    }
+
+    setPrivacyState(state: PrivacyState) {
+        this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
+        this.privacyState = state;
     }
 
     getHistory(from: number, to: number): Promise<IReturnBaseDeviceState[]> {
