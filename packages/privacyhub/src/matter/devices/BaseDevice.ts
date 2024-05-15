@@ -115,8 +115,11 @@ export default class BaseDevice {
 
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
-            this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
-            this.setLastKnownPrivacyState();
+            this.setLastKnownPrivacyState().then(() => {
+                this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
+            }).catch((error) => {
+                this.logger.error(`Failed to set last known privacy state: ${error}`);
+            });
         }).catch((error) => {
             this.logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
@@ -251,13 +254,16 @@ export default class BaseDevice {
         }
     }
 
-    public setLastKnownPrivacyState(): void {
-        BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
-            if (state) {
-                this.setPrivacyState(state.privacyState);
-            }
-        }).catch((error) => {
-            this.logger.error(`Failed to get last known privacy state: ${error}`);
+    public setLastKnownPrivacyState(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
+                if (state) {
+                    this.setPrivacyState(state.privacyState);
+                }
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
         });
     }
 

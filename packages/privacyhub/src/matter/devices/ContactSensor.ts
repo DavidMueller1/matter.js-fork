@@ -133,13 +133,16 @@ export default class ContactSensor extends BaseDevice {
         });
     }
 
-    public override setLastKnownPrivacyState(): void {
-        ContactSensorState.findOne<IContactSensorState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
-            if (state) {
-                this.setPrivacyState(state.privacyState);
-            }
-        }).catch((error) => {
-            this.logger.error(`Failed to get last known privacy state: ${error}`);
+    public override setLastKnownPrivacyState(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            ContactSensorState.findOne<IContactSensorState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
+                if (state) {
+                    this.setPrivacyState(state.privacyState);
+                }
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
         });
     }
 
