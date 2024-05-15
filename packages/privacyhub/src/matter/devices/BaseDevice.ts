@@ -115,11 +115,6 @@ export default class BaseDevice {
 
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
-            this.setLastKnownPrivacyState().then(() => {
-                this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
-            }).catch((error) => {
-                this.logger.error(`Failed to set last known privacy state: ${error}`);
-            });
         }).catch((error) => {
             this.logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
@@ -157,26 +152,31 @@ export default class BaseDevice {
 
     protected initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED)
+            this.setLastKnownPrivacyState().then(() => {
+                this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED)
 
-            // Generate DB document if it does not exist
-            Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {
-                if (device) {
-                    // Device exists
-                    resolve();
-                } else {
-                    // Device does not exist, create it
-                    const newDevice = new Device({
-                        uniqueId: this._uniqueId,
-                        endpointId: this._endpointId.toString(),
-                        type: this._type,
-                    });
-                    newDevice.save().then(() => {
+                // Generate DB document if it does not exist
+                Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {
+                    if (device) {
+                        // Device exists
                         resolve();
-                    }).catch((error) => {
-                        reject(error);
-                    });
-                }
+                    } else {
+                        // Device does not exist, create it
+                        const newDevice = new Device({
+                            uniqueId: this._uniqueId,
+                            endpointId: this._endpointId.toString(),
+                            type: this._type,
+                        });
+                        newDevice.save().then(() => {
+                            resolve();
+                        }).catch((error) => {
+                            reject(error);
+                        });
+                    }
+                }).catch((error) => {
+                    reject(error);
+                });
+
             }).catch((error) => {
                 reject(error);
             });
