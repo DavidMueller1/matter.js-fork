@@ -272,7 +272,7 @@ export class MatterController {
         } = options;
         let identifierData = "identifierData" in options.discovery ? options.discovery.identifierData : {};
 
-        discoveryCapabilities.onIpNetwork = true; // We always discover on network as defined by specs
+        // discoveryCapabilities.onIpNetwork = true; // We always discover on network as defined by specs
         if (commissionableDevice !== undefined) {
             let { addresses } = commissionableDevice;
             if (discoveryCapabilities.ble === true) {
@@ -290,6 +290,8 @@ export class MatterController {
                 identifierData = { longDiscriminator: commissionableDevice.D };
             }
         }
+
+        logger.debug(`Discovery capabilities: ${Logger.toJSON(discoveryCapabilities)}`);
 
         const scannersToUse = this.collectScanners(discoveryCapabilities);
 

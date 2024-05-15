@@ -1,19 +1,21 @@
 // Read the battery level of the first found peripheral exposing the Battery Level characteristic
 
-import noble, { Peripheral } from "@stoprocent/noble";
+import noble, { Peripheral } from "@abandonware/noble";
+
+console.log('Starting BLE scan');
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 noble.on('stateChange', async (state: string) => {
     console.log('State changed to', state);
     if (state === 'poweredOn') {
-        await noble.startScanningAsync([], false);
+        await noble.startScanningAsync(["fff6"], false);
     }
 });
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 noble.on('discover', async (peripheral: Peripheral) => {
     console.log("FOUND SOMETING");
-    console.log(JSON.stringify(peripheral));
+    console.log(peripheral);
     // await noble.stopScanningAsync();
     // await peripheral.connectAsync();
     // const {characteristics} = await peripheral.discoverSomeServicesAndCharacteristicsAsync(['180f'], ['2a19']);
