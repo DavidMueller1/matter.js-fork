@@ -51,6 +51,8 @@ export class NobleBleClient {
                 }`,
             );
         }
+
+        void this.stopScanning();
         noble.on("stateChange", (state: string) => {
             this.nobleState = state;
             logger.debug(`Noble state changed to ${state}`);
