@@ -29,17 +29,9 @@ const MQTT_PASSWORD = process.env.MQTT_PASSWORD;
 
 
 export default class MqttManager {
-    private static _instance: MqttManager;
     private client: MqttClient;
 
-    public static getInstance = (): MqttManager => {
-        if (!MqttManager._instance) {
-            MqttManager._instance = new MqttManager();
-        }
-        return MqttManager._instance;
-    }
-
-    private constructor() {
+    constructor() {
         this.client = mqtt.connect({
             host: MQTT_HOST,
             port: MQTT_PORT,

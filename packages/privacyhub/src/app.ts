@@ -125,6 +125,6 @@ const commissioningController = await privacyhubNode.start();
 //     logger.error(`Failed to reconnect to nodes: ${error}`);
 // }
 
-MqttManager.getInstance();
+new MqttManager();
 
 new PrivacyhubBackend(privacyhubNode, commissioningController);
