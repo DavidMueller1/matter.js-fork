@@ -173,6 +173,16 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
+    public override setLastKnownPrivacyState(): void {
+        OnOffPluginUnitState.findOne<IOnOffPluginUnitState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
+            if (state) {
+                this.setPrivacyState(state.privacyState);
+            }
+        }).catch((error) => {
+            this.logger.error(`Failed to get last known privacy state: ${error}`);
+        });
+    }
+
     override getHistory(from: number, to: number): Promise<IReturnOnOffPluginUnitState[]> {
         return new Promise<IReturnOnOffPluginUnitState[]>((resolve, reject) => {
             OnOffPluginUnitState.find<IOnOffPluginUnitState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {

@@ -116,6 +116,7 @@ export default class BaseDevice {
         this.initialize().then(() => {
             this.logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
             this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED);
+            this.setLastKnownPrivacyState();
         }).catch((error) => {
             this.logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
@@ -248,6 +249,16 @@ export default class BaseDevice {
                 this.logger.error(`Failed to get state: ${error}`);
             });
         }
+    }
+
+    public setLastKnownPrivacyState(): void {
+        BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
+            if (state) {
+                this.setPrivacyState(state.privacyState);
+            }
+        }).catch((error) => {
+            this.logger.error(`Failed to get last known privacy state: ${error}`);
+        });
     }
 
     getHistory(from: number, to: number): Promise<IReturnBaseDeviceState[]> {

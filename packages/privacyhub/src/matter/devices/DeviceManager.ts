@@ -51,6 +51,7 @@ export default class DeviceManager {
                                         this.logger.debug(`Ignoring device type ${type}`);
                                         return;
                                     }
+
                                     switch (type) {
                                         case 266:
                                             const onOffPluginUnit = new OnOffPluginUnit(
