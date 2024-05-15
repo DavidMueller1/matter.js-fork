@@ -32,6 +32,7 @@ export default class MqttManager {
     private client: MqttClient;
 
     constructor() {
+        logger.info("Connecting to MQTT broker");
         this.client = mqtt.connect({
             host: MQTT_HOST,
             port: MQTT_PORT,
