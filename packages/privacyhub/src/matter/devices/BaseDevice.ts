@@ -197,10 +197,18 @@ export default class BaseDevice {
         this.updateSocketAndDB();
     }
 
+    getConnectionStatus(): ConnectionStatus {
+        return this.connectionStatus;
+    }
+
     setPrivacyState(state: PrivacyState) {
         this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
         this.privacyState = state;
         this.updateSocketAndDB();
+    }
+
+    getPrivacyState(): PrivacyState {
+        return this.privacyState;
     }
 
     protected updateSocketAndDB() {

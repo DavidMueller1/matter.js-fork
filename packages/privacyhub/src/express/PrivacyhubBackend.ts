@@ -272,7 +272,9 @@ export default class PrivacyhubBackend {
                     product: device.product,
                     type: knownTypes[device.type] ?? "Unknown",
                     manualPairingCode: device.getManualPairingCode(),
-                    qrCode: device.getQRCode()
+                    qrCode: device.getQRCode(),
+                    connectionStatus: device.getConnectionStatus(),
+                    privacyState: device.getPrivacyState()
                 }
             });
             res.send(stringifyIgnoreCircular(nodes));
