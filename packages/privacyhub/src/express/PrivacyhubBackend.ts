@@ -274,7 +274,8 @@ export default class PrivacyhubBackend {
                     manualPairingCode: device.getManualPairingCode(),
                     qrCode: device.getQRCode(),
                     connectionStatus: device.getConnectionStatus(),
-                    privacyState: device.getPrivacyState()
+                    privacyState: device.getPrivacyState(),
+                    connectedProxy: device.getAssignedProxy()
                 }
             });
             res.send(stringifyIgnoreCircular(nodes));
