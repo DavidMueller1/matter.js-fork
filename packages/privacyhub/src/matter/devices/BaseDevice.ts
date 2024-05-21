@@ -226,7 +226,7 @@ export default class BaseDevice {
         });
     }
 
-    getAssignedProxy(): number | undefined {
+    getAssignedProxy(): number {
         return this._assignedProxy;
     }
 

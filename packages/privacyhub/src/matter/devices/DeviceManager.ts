@@ -139,7 +139,14 @@ export default class DeviceManager {
         });
     }
 
-    public setPrivacyState(proxyId: number, state: PrivacyState) {
+    public setPrivacyState(nodeId: NodeId, endpointId: EndpointNumber, state: PrivacyState) {
+        const device = this.getDevice(nodeId, endpointId);
+        if (device) {
+            device.setPrivacyState(state);
+        }
+    }
+
+    public setPrivacyStateProxy(proxyId: number, state: PrivacyState) {
         this.devices.forEach((device) => {
             if (device.assignedProxy === proxyId) {
                 device.setPrivacyState(state);
@@ -170,6 +177,12 @@ export default class DeviceManager {
                     reject(error)
                 });
             }
+        });
+    }
+
+    public getDeviceWithAssignedProxy(proxyId: number): BaseDevice | undefined {
+        return this.devices.find((device) => {
+            return device.assignedProxy === proxyId;
         });
     }
 }

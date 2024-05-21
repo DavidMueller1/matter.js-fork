@@ -34,7 +34,7 @@ if (!process.env.NUM_PROXIES) {
 const NUM_PROXIES = process.env.NUM_PROXIES;
 
 const SET_STATE_TOPIC = "set_state_proxy_";
-// const IS_STATE_TOPIC = "is_state_proxy_";
+const IS_STATE_TOPIC = "is_state_proxy_";
 // const DATA_TOPIC = "data_proxy_";
 
 export interface DataUpdate {
@@ -114,5 +114,10 @@ export default class MqttManager {
             const setStateTopic = SET_STATE_TOPIC + i;
             this.subscribe(setStateTopic);
         }
+    }
+
+    public publishPrivacyStateUpdate = (proxyId: number, newPrivacyState: PrivacyState): void => {
+        const message = `${newPrivacyState}`;
+        this.publish(IS_STATE_TOPIC + proxyId, message);
     }
 }

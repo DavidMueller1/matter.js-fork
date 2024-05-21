@@ -104,7 +104,7 @@ export default class PrivacyhubBackend {
         });
 
         this.mqttManager = new MqttManager((proxyId, state) => {
-            this.deviceManager.setPrivacyState(proxyId, state);
+            this.deviceManager.setPrivacyStateProxy(proxyId, state);
         });
     }
 
@@ -357,17 +357,22 @@ export default class PrivacyhubBackend {
             }).catch((error) => {
                 res.status(500).send(`Error setting connected proxy: ${error}`);
             });
-            // const device = this.deviceManager.getDevice(nodeId, endpointId);
-            // if (!device) {
-            //     res.status(500).send(`Device not found`);
-            //     return;
-            // }
-            //
-            // device.setAssignedProxy(connectedProxy).then(() => {
-            //     res.send("Set connected proxy successfully");
-            // }).catch((error) => {
-            //     res.status(500).send(`Error setting connected proxy: ${error}`);
-            // });
+        });
+
+        this.app.post('/nodes/:nodeId/:endpointId/privacyState', (req: Request, res: Response) => {
+            this.logger.info("Received privacy state change request:");
+            console.log(req.params)
+            const privacyState = req.body.privacyState;
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            this.deviceManager.setPrivacyState(nodeId, endpointId, privacyState); // TODO: Check if this succeeds
+            const assignedProxy = this.deviceManager.getDevice(nodeId, endpointId)?.getAssignedProxy();
+            if (assignedProxy !== undefined && assignedProxy !== 0) {
+                this.mqttManager.publishPrivacyStateUpdate(assignedProxy, privacyState);
+            }
+            res.send("Set privacy state successfully");
         });
 
         this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
