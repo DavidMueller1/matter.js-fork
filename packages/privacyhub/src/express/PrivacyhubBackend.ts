@@ -353,6 +353,10 @@ export default class PrivacyhubBackend {
 
             this.deviceManager.setConnectedProxy(nodeId, endpointId, connectedProxy).then(() => {
                 res.send("Set connected proxy successfully");
+                const devicePrivacyState = this.deviceManager.getDevice(nodeId, endpointId)?.getPrivacyState();
+                if (devicePrivacyState !== undefined) {
+                    this.mqttManager.publishPrivacyStateUpdate(connectedProxy, devicePrivacyState);
+                }
             }).catch((error) => {
                 res.status(500).send(`Error setting connected proxy: ${error}`);
             });

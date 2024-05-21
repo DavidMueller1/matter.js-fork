@@ -118,6 +118,7 @@ export default class MqttManager {
     }
 
     public publishPrivacyStateUpdate = (proxyId: number, newPrivacyState: PrivacyState): void => {
+        logger.debug(`Publishing privacy state update for proxy ${proxyId}: ${newPrivacyState}`);
         const message = `${newPrivacyState}`;
         this.client.publish(IS_STATE_TOPIC + proxyId, message, { retain: true });
     }
