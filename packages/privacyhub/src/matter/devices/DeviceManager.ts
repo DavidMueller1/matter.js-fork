@@ -146,4 +146,30 @@ export default class DeviceManager {
             }
         });
     }
+
+    public setConnectedProxy(nodeId: NodeId, endpointId: EndpointNumber, proxyId: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            // Get all devices with assigned proxyId
+            const proxyDevices = this.devices.filter((device) => {
+                return device.assignedProxy === proxyId;
+            });
+            // Unassign the proxy from all devices
+            proxyDevices.forEach((proxyDevice) => {
+                proxyDevice.setAssignedProxy(0).then(() => {
+                    this.logger.debug(`Unassigned proxy ${proxyId} from device ${proxyDevice.nodeId}:${proxyDevice.endpointId}`);
+                }).catch((error) => {
+                    this.logger.error(`Failed to unassign proxy ${proxyId} from device ${proxyDevice.nodeId}:${proxyDevice.endpointId}: ${error}`);
+                });
+            });
+            const device = this.getDevice(nodeId, endpointId);
+            if (device) {
+                device.setAssignedProxy(proxyId).then(() => {
+                    this.logger.debug(`Assigned proxy ${proxyId} to device ${nodeId}:${endpointId}`);
+                    resolve();
+                }).catch((error) => {
+                    reject(error)
+                });
+            }
+        });
+    }
 }

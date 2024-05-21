@@ -352,17 +352,22 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
-            const device = this.deviceManager.getDevice(nodeId, endpointId);
-            if (!device) {
-                res.status(500).send(`Device not found`);
-                return;
-            }
-
-            device.setAssignedProxy(connectedProxy).then(() => {
+            this.deviceManager.setConnectedProxy(nodeId, endpointId, connectedProxy).then(() => {
                 res.send("Set connected proxy successfully");
             }).catch((error) => {
                 res.status(500).send(`Error setting connected proxy: ${error}`);
             });
+            // const device = this.deviceManager.getDevice(nodeId, endpointId);
+            // if (!device) {
+            //     res.status(500).send(`Device not found`);
+            //     return;
+            // }
+            //
+            // device.setAssignedProxy(connectedProxy).then(() => {
+            //     res.send("Set connected proxy successfully");
+            // }).catch((error) => {
+            //     res.status(500).send(`Error setting connected proxy: ${error}`);
+            // });
         });
 
         this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
