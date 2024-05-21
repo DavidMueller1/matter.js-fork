@@ -42,7 +42,6 @@ export default class PrivacyhubBackend {
     private readonly neoPixelController: NeoPixelController;
 
     private readonly deviceManager: DeviceManager;
-    // @ts-expect-error - This is not used yet
     private readonly mqttManager: MqttManager;
 
     constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
