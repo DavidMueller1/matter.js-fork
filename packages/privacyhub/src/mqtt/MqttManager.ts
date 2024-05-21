@@ -18,15 +18,15 @@ if (!process.env.MQTT_PORT) {
 }
 const MQTT_PORT = parseInt(process.env.MQTT_PORT);
 
-if (!process.env.MQTT_USERNAME) {
-    throw new Error("MQTT_USERNAME environment variable is not set");
-}
-const MQTT_USERNAME = process.env.MQTT_USERNAME;
+// if (!process.env.MQTT_USERNAME) {
+//     throw new Error("MQTT_USERNAME environment variable is not set");
+// }
+const MQTT_USERNAME = process.env.MQTT_USERNAME || "";
 
-if (!process.env.MQTT_PASSWORD) {
-    throw new Error("MQTT_PASSWORD environment variable is not set");
-}
-const MQTT_PASSWORD = process.env.MQTT_PASSWORD;
+// if (!process.env.MQTT_PASSWORD) {
+//     throw new Error("MQTT_PASSWORD environment variable is not set");
+// }
+const MQTT_PASSWORD = process.env.MQTT_PASSWORD || "";
 
 if (!process.env.NUM_PROXIES) {
     throw new Error("NUM_PROXIES environment variable is not set");
