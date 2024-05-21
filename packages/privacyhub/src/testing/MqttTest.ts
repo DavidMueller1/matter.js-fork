@@ -1,8 +1,8 @@
 import mqtt from "mqtt";
 
-const client = mqtt.connect("mqtt://phlipinator.dns.army:1883", {
-    username: 'mqtt_user',
-    password: 'mqtt-docker'
+const client = mqtt.connect("mqtt://test.mosquitto.org:1883", {
+    username: '',
+    password: ''
 });
 console.log("Connecting to MQTT broker");
 

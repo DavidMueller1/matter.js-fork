@@ -89,7 +89,9 @@ export default class MqttManager {
                     logger.error(`Invalid proxy number: ${proxy}`);
                     return;
                 }
-                const state = parseInt(message.toString());
+
+                const messageArray = message.toString().split(",");
+                const state = parseInt(messageArray[3]);
                 if (isNaN(state) || state < 0 || state > PrivacyState.THIRD_PARTY) {
                     logger.error(`Invalid state: ${state}`);
                     return;
