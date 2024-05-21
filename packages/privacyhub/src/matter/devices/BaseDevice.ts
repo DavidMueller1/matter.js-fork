@@ -99,7 +99,7 @@ export default class BaseDevice {
         this._type = type;
         this._nodeId = nodeId;
         this._endpointId = endpointId;
-        this._assignedProxy = 1;
+        this._assignedProxy = undefined;
 
         this.pairedNode = pairedNode;
         this.endpoint = endpoint;
@@ -159,6 +159,7 @@ export default class BaseDevice {
                 Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {
                     if (device) {
                         // Device exists
+                        this._assignedProxy = device.assignedProxy;
                         resolve();
                     } else {
                         // Device does not exist, create it
@@ -166,6 +167,7 @@ export default class BaseDevice {
                             uniqueId: this._uniqueId,
                             endpointId: this._endpointId.toString(),
                             type: this._type,
+                            assignedProxy: this._assignedProxy,
                         });
                         newDevice.save().then(() => {
                             resolve();
@@ -209,6 +211,21 @@ export default class BaseDevice {
 
     getPrivacyState(): PrivacyState {
         return this.privacyState;
+    }
+
+    setAssignedProxy(proxyId: number | undefined): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            Device.updateOne({uniqueId: this._uniqueId}, {assignedProxy: proxyId}).then(() => {
+                this._assignedProxy = proxyId;
+                resolve();
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+    getAssignedProxy(): number | undefined {
+        return this._assignedProxy;
     }
 
     protected updateSocketAndDB() {

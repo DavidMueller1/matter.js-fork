@@ -343,6 +343,27 @@ export default class PrivacyhubBackend {
             }
         });
 
+        this.app.post('/nodes/:nodeId/:endpointId/connectedProxy', (req: Request, res: Response) => {
+            this.logger.info("Received connected proxy change request:");
+            console.log(req.params)
+            const connectedProxy = req.body.connectedProxy;
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            device.setAssignedProxy(connectedProxy).then(() => {
+                res.send("Set connected proxy successfully");
+            }).catch((error) => {
+                res.status(500).send(`Error setting connected proxy: ${error}`);
+            });
+        });
+
         this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
