@@ -60,6 +60,7 @@ export default class MqttManager {
             logger.debug(`Received state update for proxy ${proxyId}: ${state}`);
             if (setStateCallback) {
                 setStateCallback(proxyId, state);
+                this.publishPrivacyStateUpdate(proxyId, state);
             }
         });
 
