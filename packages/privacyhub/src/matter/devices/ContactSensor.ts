@@ -97,13 +97,13 @@ export default class ContactSensor extends BaseDevice {
         this.io.emit('connectionStatus', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
-            status: this.connectionStatus
+            connectionStatus: this.connectionStatus
         });
 
         this.io.emit('privacyState', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
-            state: this.privacyState
+            privacyState: this.privacyState
         });
 
         // Check if the state is different from the last db entry
