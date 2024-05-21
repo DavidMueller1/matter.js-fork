@@ -92,6 +92,9 @@ export default class MqttManager {
                 }
 
                 const messageArray = message.toString().split(",");
+                if (messageArray[3] === undefined || messageArray[3] === "x") {
+                    return;
+                }
                 const state = parseInt(messageArray[3]);
                 if (isNaN(state) || state < 0 || state > PrivacyState.THIRD_PARTY) {
                     logger.error(`Invalid state: ${state}`);
