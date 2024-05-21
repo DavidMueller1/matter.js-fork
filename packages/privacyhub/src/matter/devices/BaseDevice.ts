@@ -216,13 +216,13 @@ export default class BaseDevice {
         this.io.emit('connectionStatus', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
-            status: this.connectionStatus,
+            connectionStatus: this.connectionStatus,
         });
 
         this.io.emit('privacyState', {
             nodeId: this.nodeId.toString(),
             endpointId: this.endpointId.toString(),
-            state: this.privacyState,
+            privacyState: this.privacyState,
         });
 
         // Add state change to DB
