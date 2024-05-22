@@ -9,7 +9,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
     private endpoint: Endpoint<OnOffPlugInUnitDevice> | undefined;
     private onOffEventCallback: (state: boolean) => void;
 
-    constructor(
+    private constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
         existingNode: PairedNode,
@@ -21,6 +21,22 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
             existingNode
         );
         this.onOffEventCallback = onOffEventCallback;
+    }
+
+    static async create(
+        nodeId: NodeId,
+        type: DeviceTypeId,
+        existingNode: PairedNode,
+        onOffEventCallback: (state: boolean) => void
+    ): Promise<VirtualOnOffPluginUnit> {
+        const virtualDevice = new VirtualOnOffPluginUnit(
+            nodeId,
+            type,
+            existingNode,
+            onOffEventCallback
+        );
+        await virtualDevice.setup();
+        return virtualDevice;
     }
 
     override initializeVirtualDevice(): Promise<void> {
@@ -77,7 +93,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                     this.logger.info(`OnOff is now ${value ? "ON" : "OFF"}`);
                     this.onOffEventCallback(value);
                 });
-                return this.serverNode?.run();
+                // return this.serverNode?.run();
             }).then(() => {
                 this.logger.info("ServerNode running");
                 resolve();

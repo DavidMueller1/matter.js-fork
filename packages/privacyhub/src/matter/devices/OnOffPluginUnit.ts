@@ -40,7 +40,7 @@ const OnOffPluginUnitState = model<IOnOffPluginUnitState>('OnOffPluginUnitState'
 export default class OnOffPluginUnit extends BaseDevice {
     private _onOffState: boolean = false;
 
-    override virtualDevice: VirtualOnOffPluginUnit;
+    override virtualDevice: VirtualOnOffPluginUnit | undefined;
 
     constructor(
         uniqueId: string,
@@ -55,18 +55,6 @@ export default class OnOffPluginUnit extends BaseDevice {
     ) {
         super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
         this.logger = Logger.get("OnOffPluginUnit");
-        this.virtualDevice = new VirtualOnOffPluginUnit(
-            nodeId,
-            type,
-            pairedNode,
-            (state) => {
-                this.switchOnOff(state).then(() => {
-                    this.logger.info(`Successfully set OnOff state to ${state}`);
-                }).catch((error) => {
-                    this.logger.error(`Failed to set OnOff state to ${state}: ${error}`);
-                });
-            }
-        );
     }
 
     override setBaseDevice() {
@@ -75,28 +63,46 @@ export default class OnOffPluginUnit extends BaseDevice {
 
     override initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            super.initialize().then(() => {
-                // Subscribe to OnOff attribute
-                const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
-                if (onOffCluster !== undefined) {
-                    onOffCluster.subscribeOnOffAttribute((state) => {
-                        if (this._onOffState === state) return;
-
-                        this._onOffState = state;
-                        this.virtualDevice.setOnOffState(state);
-                        this.logger.info(`OnOff state changed to ${this._onOffState}`);
-                    }, 1, 10).then(() => {
-                        this.logger.debug(`Subscribed to OnOff attribute`);
-                        resolve();
+            VirtualOnOffPluginUnit.create(
+                this.nodeId,
+                DeviceTypeId(this.type),
+                this.pairedNode,
+                (state) => {
+                    this.switchOnOff(state).then(() => {
+                        this.logger.info(`Successfully set OnOff state to ${state}`);
                     }).catch((error) => {
-                        this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
-                        reject();
+                        this.logger.error(`Failed to set OnOff state to ${state}: ${error}`);
                     });
-                } else {
-                    this.logger.error(`Device does not have OnOff cluster`);
-                    reject();
                 }
+            ).then((virtualDevice) => {
+                this.virtualDevice = virtualDevice;
+
+                super.initialize().then(() => {
+                    // Subscribe to OnOff attribute
+                    const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
+                    if (onOffCluster !== undefined) {
+                        onOffCluster.subscribeOnOffAttribute((state) => {
+                            if (this._onOffState === state) return;
+
+                            this._onOffState = state;
+                            this.virtualDevice?.setOnOffState(state);
+                            this.logger.info(`OnOff state changed to ${this._onOffState}`);
+                        }, 1, 10).then(() => {
+                            this.logger.debug(`Subscribed to OnOff attribute`);
+                            resolve();
+                        }).catch((error) => {
+                            this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        this.logger.error(`Device does not have OnOff cluster`);
+                        reject();
+                    }
+                }).catch((error) => {
+                    reject(error);
+                });
             }).catch((error) => {
+                this.logger.error(`Failed to create virtual device: ${error}`)
                 reject(error);
             });
         });

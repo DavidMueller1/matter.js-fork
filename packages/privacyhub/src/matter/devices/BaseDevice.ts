@@ -15,6 +15,7 @@ export enum ConnectionStatus {
 export enum PrivacyState {
     LOCAL,
     THIRD_PARTY,
+    ONLINE,
 }
 
 // DB schema
@@ -207,6 +208,13 @@ export default class BaseDevice {
 
     setPrivacyState(state: PrivacyState) {
         this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
+
+        if (state === PrivacyState.LOCAL) {
+            this.stopVirtualDevice();
+        } else {
+            this.startVirtualDevice();
+        }
+
         this.privacyState = state;
         this.updateSocketAndDB();
     }
@@ -308,6 +316,16 @@ export default class BaseDevice {
                 reject(error);
             });
         });
+    }
+
+    startVirtualDevice() {
+        this.logger.info(`Starting virtual device for ${this.nodeId.toString()}`);
+        this.virtualDevice?.start();
+    }
+
+    stopVirtualDevice() {
+        this.logger.info(`Stopping virtual device for ${this.nodeId.toString()}`);
+        this.virtualDevice?.stop();
     }
 
     getManualPairingCode(): string {

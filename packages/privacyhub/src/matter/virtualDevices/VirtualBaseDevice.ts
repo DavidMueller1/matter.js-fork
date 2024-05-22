@@ -15,6 +15,8 @@ export default abstract class VirtualBaseDevice {
     protected _nodeId: NodeId;
     protected _type: DeviceTypeId;
 
+    protected isActive: boolean = false;
+
     protected vendorName: string | undefined;
     protected vendorId: number | undefined;
     protected nodeLabel: string | undefined;
@@ -47,16 +49,23 @@ export default abstract class VirtualBaseDevice {
         this.passcode = this.generatePasscode();
 
         this.logger = Logger.get("VirtualDevice");
+    }
 
-        this.getBasicInformation().then(() => {
-            this.logger.info("Successfully got basic information");
-            this.initializeVirtualDevice().then(() => {
-                this.logger.info("Successfully initialized virtual device");
+    protected setup(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.getBasicInformation().then(() => {
+                this.logger.info("Successfully got basic information");
+                this.initializeVirtualDevice().then(() => {
+                    this.logger.info("Successfully initialized virtual device");
+                    resolve();
+                }).catch((error) => {
+                    this.logger.error(`Failed to initialize virtual device: ${error}`);
+                    reject(error);
+                });
             }).catch((error) => {
-                this.logger.error(`Failed to initialize virtual device: ${error}`);
+                this.logger.error(`Failed to get basic information: ${error}`);
+                reject(error);
             });
-        }).catch((error) => {
-            this.logger.error(`Failed to get basic information: ${error}`);
         });
     }
 
@@ -64,7 +73,7 @@ export default abstract class VirtualBaseDevice {
         return this._nodeId;
     }
 
-    getBasicInformation(): Promise<void> {
+    protected getBasicInformation(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const basicInformationCluster = this.existingNode.getRootClusterClient(BasicInformationCluster);
             if (basicInformationCluster === undefined) {
@@ -126,7 +135,37 @@ export default abstract class VirtualBaseDevice {
         });
     }
 
+    public start(): void {
+        this.logger.debug(`Starting ServerNode for ${this.productName}`);
+
+        if (this.isActive) {
+            return;
+        }
+
+        if (this.serverNode !== undefined) {
+            this.serverNode.start();
+            this.isActive = true;
+        } else {
+            this.logger.error(`Server Node for ${this.productName} is not initialized`);
+        }
+    }
+
+    public stop(): void {
+        this.logger.debug(`Stopping ServerNode for ${this.productName}`);
+
+        if (!this.isActive) {
+            return;
+        }
+
+        if (this.serverNode !== undefined) {
+            this.serverNode.cancel();
+            this.isActive = false;
+        } else {
+            this.logger.error(`Server Node for ${this.productName} is not initialized`);
+        }
+    }
+
     abstract getTypeCode(): number
 
-    abstract initializeVirtualDevice(): Promise<void>
+    protected abstract initializeVirtualDevice(): Promise<void>
 }
