@@ -94,6 +94,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                     this.onOffEventCallback(value);
                 });
                 // return this.serverNode?.factoryReset();
+                this.logger.info(`Running Server Node ${this.serverNode?.id}`);
                 return this.serverNode?.run();
             }).then(() => {
                 this.logger.info("ServerNode running");
