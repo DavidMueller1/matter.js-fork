@@ -7,6 +7,9 @@ import { Server } from "socket.io";
 import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
+import VirtualContactSensor from "../virtualDevices/VirtualContactSensor.js";
+
+const logger = Logger.get("ContactSensor");
 
 // DB Schemas
 export interface IContactSensorState {
@@ -39,6 +42,8 @@ const ContactSensorState = model<IContactSensorState>('ContactSensorState', cont
 export default class ContactSensor extends BaseDevice {
     private _booleanState: boolean = false;
 
+    override virtualDevice: VirtualContactSensor | undefined;
+
     constructor(
         uniqueId: string,
         type: DeviceTypeId,
@@ -51,7 +56,6 @@ export default class ContactSensor extends BaseDevice {
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
         super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
-        this.logger = Logger.get("ContactSensor");
     }
 
     override setBaseDevice() {
@@ -60,28 +64,46 @@ export default class ContactSensor extends BaseDevice {
 
     override initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            super.initialize().then(() => {
-                // Subscribe to OnOff attribute
-                const booleanStateCluster = this.endpoint.getClusterClient(BooleanStateCluster);
-                if (booleanStateCluster !== undefined) {
-                    booleanStateCluster.subscribeStateValueAttribute((state) => {
-                        if (this._booleanState === state) return;
-
-                        this._booleanState = state;
-                        this.logger.info(`Boolean state changed to ${this._booleanState}`);
-                        this.updateSocketAndDB();
-                    }, 1, 10).then(() => {
-                        this.logger.debug(`Subscribed to Boolean attribute`);
-                        resolve();
-                    }).catch((error) => {
-                        this.logger.error(`Failed to subscribe to Boolean attribute: ${error}`);
-                        reject();
-                    });
-                } else {
-                    this.logger.error(`Device does not have a Boolean cluster`);
-                    reject();
+            VirtualContactSensor.create(
+                this.nodeId,
+                DeviceTypeId(this.type),
+                this.pairedNode,
+(state) => {
+                    logger.info(`Dings ÄHH Boolean state changed to ${state}`);
+                    // this._booleanState = state;
+                    // this.updateSocketAndDB();
                 }
+            ).then((virtualDevice) => {
+                this.virtualDevice = virtualDevice;
+
+                super.initialize().then(() => {
+                    // Subscribe to OnOff attribute
+                    const booleanStateCluster = this.endpoint.getClusterClient(BooleanStateCluster);
+                    if (booleanStateCluster !== undefined) {
+                        booleanStateCluster.subscribeStateValueAttribute((state) => {
+                            if (this._booleanState === state) return;
+
+                            this._booleanState = state;
+                            this.updateSocketAndDB();
+                            this.virtualDevice?.setContactState(state);
+                            logger.info(`Boolean state changed to ${this._booleanState}`);
+                        }, 1, 10).then(() => {
+                            logger.debug(`Subscribed to Boolean attribute`);
+                            resolve();
+                        }).catch((error) => {
+                            logger.error(`Failed to subscribe to Boolean attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        logger.error(`Device does not have a Boolean cluster`);
+                        reject();
+                    }
+                }).catch((error) => {
+                    reject(error);
+                });
+
             }).catch((error) => {
+                logger.error(`Failed to create virtual device: ${error}`);
                 reject(error);
             });
         });
@@ -123,13 +145,13 @@ export default class ContactSensor extends BaseDevice {
                     timestamp: Date.now()
                 });
                 newDoc.save().then(() => {
-                    this.logger.info(`Saved Boolean state to DB`);
+                    logger.info(`Saved Boolean state to DB`);
                 }).catch((error) => {
-                    this.logger.error(`Failed to save Boolean state to DB: ${error}`);
+                    logger.error(`Failed to save Boolean state to DB: ${error}`);
                 });
             }
         }).catch((error) => {
-            this.logger.error(`Failed to query DB: ${error}`);
+            logger.error(`Failed to query DB: ${error}`);
         });
     }
 

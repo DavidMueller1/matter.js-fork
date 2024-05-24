@@ -9,6 +9,8 @@ import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 
+const logger = Logger.get("OnOffPluginUnit");
+
 // DB Schemas
 export interface IOnOffPluginUnitState {
     uniqueId: string;
@@ -54,7 +56,6 @@ export default class OnOffPluginUnit extends BaseDevice {
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
         super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
-        this.logger = Logger.get("OnOffPluginUnit");
     }
 
     override setBaseDevice() {
@@ -69,9 +70,9 @@ export default class OnOffPluginUnit extends BaseDevice {
                 this.pairedNode,
                 (state) => {
                     this.switchOnOff(state).then(() => {
-                        this.logger.info(`Successfully set OnOff state to ${state}`);
+                        logger.info(`Successfully set OnOff state to ${state}`);
                     }).catch((error) => {
-                        this.logger.error(`Failed to set OnOff state to ${state}: ${error}`);
+                        logger.error(`Failed to set OnOff state to ${state}: ${error}`);
                     });
                 }
             ).then((virtualDevice) => {
@@ -87,23 +88,23 @@ export default class OnOffPluginUnit extends BaseDevice {
                             this._onOffState = state;
                             this.updateSocketAndDB();
                             this.virtualDevice?.setOnOffState(state);
-                            this.logger.info(`OnOff state changed to ${this._onOffState}`);
+                            logger.info(`OnOff state changed to ${this._onOffState}`);
                         }, 1, 10).then(() => {
-                            this.logger.debug(`Subscribed to OnOff attribute`);
+                            logger.debug(`Subscribed to OnOff attribute`);
                             resolve();
                         }).catch((error) => {
-                            this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
+                            logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
                             reject();
                         });
                     } else {
-                        this.logger.error(`Device does not have OnOff cluster`);
+                        logger.error(`Device does not have OnOff cluster`);
                         reject();
                     }
                 }).catch((error) => {
                     reject(error);
                 });
             }).catch((error) => {
-                this.logger.error(`Failed to create virtual device: ${error}`)
+                logger.error(`Failed to create virtual device: ${error}`)
                 reject(error);
             });
         });
@@ -119,7 +120,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                         // this.updateSocketAndDB();
                         resolve();
                     }).catch((error) => {
-                        this.logger.error(`Failed to toggle OnOff: ${error}`);
+                        logger.error(`Failed to toggle OnOff: ${error}`);
                         reject(error);
                     });
                 } else {
@@ -128,7 +129,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                         // this.updateSocketAndDB();
                         resolve();
                     }).catch((error) => {
-                        this.logger.error(`Failed to set OnOff: ${error}`);
+                        logger.error(`Failed to set OnOff: ${error}`);
                         reject(error);
                     });
                 }
@@ -172,20 +173,20 @@ export default class OnOffPluginUnit extends BaseDevice {
                     timestamp: Date.now()
                 });
                 newDoc.save().then(() => {
-                    this.logger.info(`Saved OnOff state to DB`);
+                    logger.info(`Saved OnOff state to DB`);
                 }).catch((error) => {
-                    this.logger.error(`Failed to save OnOff state to DB: ${error}`);
+                    logger.error(`Failed to save OnOff state to DB: ${error}`);
                 });
             }
         }).catch((error) => {
-            this.logger.error(`Failed to query DB: ${error}`);
+            logger.error(`Failed to query DB: ${error}`);
         });
     }
 
     public override setLastKnownPrivacyState(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             OnOffPluginUnitState.findOne<IOnOffPluginUnitState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
-                this.logger.info(`Setting last known privacy state to ${JSON.stringify(state)}`);
+                logger.info(`Setting last known privacy state to ${JSON.stringify(state)}`);
                 if (state) {
                     this.setPrivacyState(state.privacyState);
                 }

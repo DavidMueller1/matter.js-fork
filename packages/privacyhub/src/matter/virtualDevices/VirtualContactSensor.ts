@@ -2,48 +2,48 @@ import { NodeId, DeviceTypeId } from "@project-chip/matter-node.js/datatype";
 import { ServerNode } from "@project-chip/matter.js/node";
 import { Endpoint } from "@project-chip/matter.js/endpoint";
 import { PairedNode } from "@project-chip/matter-node.js/device";
-import { OnOffPlugInUnitDevice } from "@project-chip/matter.js/devices/OnOffPlugInUnitDevice";
+import { ContactSensorDevice } from "@project-chip/matter.js/devices/ContactSensorDevice";
 import VirtualBaseDevice from "./VirtualBaseDevice.js";
 import { Logger } from "@project-chip/matter-node.js/log";
 
-const logger = Logger.get("VirtualOnOffPluginUnit");
+const logger = Logger.get("VirtualContactSensor");
 
-export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
-    private endpoint: Endpoint<OnOffPlugInUnitDevice> | undefined;
-    private onOffEventCallback: (state: boolean) => void;
+export default class VirtualContactSensor extends VirtualBaseDevice {
+    private endpoint: Endpoint<ContactSensorDevice> | undefined;
+    private contactEventCallback: (state: boolean) => void;
 
     private constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
         existingNode: PairedNode,
-        onOffEventCallback: (state: boolean) => void
+        contactEventCallback: (state: boolean) => void
     ) {
         super(
             nodeId,
             type,
             existingNode
         );
-        this.onOffEventCallback = onOffEventCallback;
+        this.contactEventCallback = contactEventCallback;
     }
 
     static async create(
         nodeId: NodeId,
         type: DeviceTypeId,
         existingNode: PairedNode,
-        onOffEventCallback: (state: boolean) => void
-    ): Promise<VirtualOnOffPluginUnit> {
-        const virtualDevice = new VirtualOnOffPluginUnit(
+        contactEventCallback: (state: boolean) => void
+    ): Promise<VirtualContactSensor> {
+        const virtualDevice = new VirtualContactSensor(
             nodeId,
             type,
             existingNode,
-            onOffEventCallback
+            contactEventCallback
         );
         await virtualDevice.setup();
         return virtualDevice;
     }
 
     override initializeVirtualDevice(): Promise<void> {
-        logger.info("Initializing Virtual OnOffPluginUnit");
+        logger.info("Initializing Virtual ContactSensor");
         return new Promise<void>((resolve, reject) => {
             ServerNode.create({
                 id: this.uniqueId,
@@ -65,7 +65,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                 // Optional: If Ommitted some development defaults are used
                 productDescription: {
                     name: this.productName,
-                    deviceType: DeviceTypeId(OnOffPlugInUnitDevice.deviceType),
+                    deviceType: DeviceTypeId(ContactSensorDevice.deviceType),
                 },
 
                 // Provide defaults for the BasicInformation cluster on the Root endpoint
@@ -84,7 +84,7 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                 logger.info("ServerNode created");
                 this.serverNode = serverNode;
                 this.endpoint = new Endpoint(
-                    OnOffPlugInUnitDevice,
+                    ContactSensorDevice,
                     {
                         id: this.uniqueId,
                     }
@@ -92,9 +92,9 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
                 return this.serverNode.add(this.endpoint);
             }).then((endpoint) => {
                 logger.info("Endpoint added");
-                endpoint.events.onOff.onOff$Changed.on(value => {
-                    logger.info(`OnOff is now ${value ? "ON" : "OFF"}`);
-                    this.onOffEventCallback(value);
+                endpoint.events.booleanState.stateValue$Changed.on(value => {
+                    logger.info(`Boolean State is now ${value}`);
+                    this.contactEventCallback(value);
                 });
                 // return this.serverNode?.factoryReset();
                 logger.info(`Running Server Node ${this.serverNode?.id}`);
@@ -108,19 +108,19 @@ export default class VirtualOnOffPluginUnit extends VirtualBaseDevice {
         });
     }
 
-    override getTypeCode(): number {
-        return 266;
-    }
-
-    setOnOffState(state: boolean) {
+    setContactState(state: boolean) {
         this.endpoint?.set({
-            onOff: {
-                onOff: state,
+            booleanState: {
+                stateValue: state,
             }
         }).then(() => {
-            logger.info(`Set OnOff of virtual device to ${state}`);
+            logger.info(`Set Boolean State to ${state}`);
         }).catch((error) => {
-            logger.error(`Failed to set OnOff of virtual device: ${error}`);
+            logger.error(`Failed to set Boolean State to ${state}: ${error}`);
         });
+    }
+
+    override getTypeCode(): number {
+        return 21;
     }
 }

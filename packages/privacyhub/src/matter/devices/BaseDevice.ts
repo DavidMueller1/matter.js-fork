@@ -7,6 +7,8 @@ import { Server } from "socket.io";
 import { Schema, model } from "mongoose";
 import VirtualBaseDevice from "../virtualDevices/VirtualBaseDevice.js";
 
+const logger = Logger.get("BaseDevice");
+
 export enum ConnectionStatus {
     CONNECTED,
     DISCONNECTED,
@@ -76,7 +78,6 @@ export default class BaseDevice {
 
     protected pairedNode: PairedNode;
     protected endpoint: EndpointInterface;
-    protected logger: Logger;
 
     protected virtualDevice: VirtualBaseDevice | undefined;
 
@@ -108,16 +109,14 @@ export default class BaseDevice {
         this.io = io;
         this.stateInformationCallback = stateInformationCallback;
 
-        this.logger = Logger.get("BaseDevice");
-
         this.setBaseDevice();
 
         this.getVendorAndProduct();
 
         this.initialize().then(() => {
-            this.logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
+            logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
         }).catch((error) => {
-            this.logger.error(`Failed to connect to node: ${error}`);
+            logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         });
     }
@@ -197,8 +196,10 @@ export default class BaseDevice {
     }
 
     setConnectionStatus(status: ConnectionStatus) {
-        this.logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
+        logger.info(`Connection status of ${this.nodeId.toString()} changed to ${status}`);
         this.connectionStatus = status;
+
+        this.updateVirtualDeviceState();
         this.updateSocketAndDB();
     }
 
@@ -207,15 +208,10 @@ export default class BaseDevice {
     }
 
     setPrivacyState(state: PrivacyState) {
-        this.logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
-
-        if (state === PrivacyState.LOCAL) {
-            this.stopVirtualDevice();
-        } else {
-            this.startVirtualDevice();
-        }
-
+        logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
         this.privacyState = state;
+
+        this.updateVirtualDeviceState();
         this.updateSocketAndDB();
     }
 
@@ -236,6 +232,14 @@ export default class BaseDevice {
 
     getAssignedProxy(): number {
         return this._assignedProxy;
+    }
+
+    protected updateVirtualDeviceState() {
+        if (this.connectionStatus !== ConnectionStatus.CONNECTED || this.privacyState === PrivacyState.LOCAL) {
+            this.stopVirtualDevice();
+        } else {
+            this.startVirtualDevice();
+        }
     }
 
     protected updateSocketAndDB() {
@@ -265,9 +269,9 @@ export default class BaseDevice {
                             timestamp: Date.now(),
                         });
                         newState.save().then(() => {
-                            this.logger.info(`Saved new state ${this.connectionStatus}`);
+                            logger.info(`Saved new state ${this.connectionStatus}`);
                         }).catch((error) => {
-                            this.logger.error(`Failed to save new state: ${error}`);
+                            logger.error(`Failed to save new state: ${error}`);
                         });
                     }
                 } else {
@@ -278,13 +282,13 @@ export default class BaseDevice {
                         timestamp: Date.now(),
                     });
                     newState.save().then(() => {
-                        this.logger.info(`Saved new state ${this.connectionStatus}`);
+                        logger.info(`Saved new state ${this.connectionStatus}`);
                     }).catch((error) => {
-                        this.logger.error(`Failed to save new state: ${error}`);
+                        logger.error(`Failed to save new state: ${error}`);
                     });
                 }
             }).catch((error) => {
-                this.logger.error(`Failed to get state: ${error}`);
+                logger.error(`Failed to get state: ${error}`);
             });
         }
     }
@@ -319,12 +323,12 @@ export default class BaseDevice {
     }
 
     startVirtualDevice() {
-        this.logger.info(`Starting virtual device for ${this.nodeId.toString()}`);
+        logger.info(`Starting virtual device for ${this.nodeId.toString()}`);
         this.virtualDevice?.start();
     }
 
     stopVirtualDevice() {
-        this.logger.info(`Stopping virtual device for ${this.nodeId.toString()}`);
+        logger.info(`Stopping virtual device for ${this.nodeId.toString()}`);
         this.virtualDevice?.stop();
     }
 

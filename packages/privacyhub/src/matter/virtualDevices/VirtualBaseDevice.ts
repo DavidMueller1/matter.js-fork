@@ -9,6 +9,8 @@ import {
     ManualPairingCodeCodec,
     QrPairingCodeCodec,
 } from "@project-chip/matter-node.js/schema";
+
+const logger = Logger.get("VirtualBaseDevice");
 // import { EventEmitter } from "events";
 
 export default abstract class VirtualBaseDevice {
@@ -32,10 +34,6 @@ export default abstract class VirtualBaseDevice {
     protected existingNode: PairedNode
     protected serverNode: ServerNode | undefined;
 
-    // protected eventEmitter: EventEmitter = new EventEmitter();
-
-    protected logger: Logger;
-
     protected constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
@@ -47,23 +45,21 @@ export default abstract class VirtualBaseDevice {
 
         this.discriminator = this.getTypeCode() * 10 + Math.floor(Math.random() * 10);
         this.passcode = this.generatePasscode();
-
-        this.logger = Logger.get("VirtualDevice");
     }
 
     protected setup(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.getBasicInformation().then(() => {
-                this.logger.info("Successfully got basic information");
+                logger.info("Successfully got basic information");
                 this.initializeVirtualDevice().then(() => {
-                    this.logger.info("Successfully initialized virtual device");
+                    logger.info("Successfully initialized virtual device");
                     resolve();
                 }).catch((error) => {
-                    this.logger.error(`Failed to initialize virtual device: ${error}`);
+                    logger.error(`Failed to initialize virtual device: ${error}`);
                     reject(error);
                 });
             }).catch((error) => {
-                this.logger.error(`Failed to get basic information: ${error}`);
+                logger.error(`Failed to get basic information: ${error}`);
                 reject(error);
             });
         });
@@ -136,7 +132,7 @@ export default abstract class VirtualBaseDevice {
     }
 
     public start(): void {
-        this.logger.debug(`Starting ServerNode for ${this.productName}`);
+        logger.debug(`Starting ServerNode for ${this.productName}`);
 
         if (this.isActive) {
             return;
@@ -146,12 +142,12 @@ export default abstract class VirtualBaseDevice {
             this.serverNode.start();
             this.isActive = true;
         } else {
-            this.logger.error(`Server Node for ${this.productName} is not initialized`);
+            logger.error(`Server Node for ${this.productName} is not initialized`);
         }
     }
 
     public stop(): void {
-        this.logger.debug(`Stopping ServerNode for ${this.productName}`);
+        logger.debug(`Stopping ServerNode for ${this.productName}`);
 
         if (!this.isActive) {
             return;
@@ -161,7 +157,7 @@ export default abstract class VirtualBaseDevice {
             this.serverNode.cancel();
             this.isActive = false;
         } else {
-            this.logger.error(`Server Node for ${this.productName} is not initialized`);
+            logger.error(`Server Node for ${this.productName} is not initialized`);
         }
     }
 
