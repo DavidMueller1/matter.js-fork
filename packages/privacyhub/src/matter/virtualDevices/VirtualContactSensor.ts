@@ -87,6 +87,9 @@ export default class VirtualContactSensor extends VirtualBaseDevice {
                     ContactSensorDevice,
                     {
                         id: this.uniqueId,
+                        booleanState: {
+                            stateValue: false,
+                        }
                     }
                 )
                 return this.serverNode.add(this.endpoint);
