@@ -96,7 +96,7 @@ export default class MqttManager {
                     return;
                 }
                 const state = parseInt(messageArray[3]);
-                if (isNaN(state) || state < 0 || state > PrivacyState.THIRD_PARTY) {
+                if (isNaN(state) || state < 0 || state > PrivacyState.ONLINE) {
                     logger.error(`Invalid state: ${state}`);
                     return;
                 }
