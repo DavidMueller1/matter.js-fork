@@ -318,7 +318,6 @@ export default class PrivacyhubBackend {
                 return;
             } else {
                 newState = req.body.state;
-                console.log("New State: ", newState);
             }
 
             const device = this.deviceManager.getDevice(nodeId, endpointId);
