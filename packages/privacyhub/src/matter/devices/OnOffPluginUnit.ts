@@ -90,6 +90,7 @@ export default class OnOffPluginUnit extends BaseDevice {
 
                             // Publish data update to MQTT if assigned to a proxy
                             if (this._assignedProxy !== 0) {
+                                console.log("MQTT MANAGER", this.mqttManager);
                                 this.mqttManager?.publishDataUpdate(this._assignedProxy, false);
                             }
                             this.updateSocketAndDB();
