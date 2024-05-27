@@ -134,7 +134,7 @@ export default class MqttManager {
      * @param outgoingFromHub Whether the data is flowing out from the hub or into the hub
      */
     public publishDataUpdate = (proxyId: number, outgoingFromHub: boolean): void => {
-        logger.debug(`Publishing data update for proxy ${proxyId}: ${outgoingFromHub ? "outgoing" : "incoming"}`);
+        logger.info(`Publishing data update for proxy ${proxyId}: ${outgoingFromHub ? "outgoing" : "incoming"}`);
         const from = outgoingFromHub ? 0 : proxyId;
         const to = outgoingFromHub ? proxyId : 0;
         const message = `${from},${to}`;
