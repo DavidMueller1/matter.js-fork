@@ -11,6 +11,7 @@ import { ignoreTypes } from "../PrivacyhubNode.js";
 import ContactSensor from "./ContactSensor.js";
 import { stringifyWithBigint } from "../../util/Util.js";
 import { AccessLevel } from "../../express/PrivacyhubBackend.js";
+import MqttManager from "../../mqtt/MqttManager.js";
 
 export default class DeviceManager {
 
@@ -19,7 +20,12 @@ export default class DeviceManager {
 
     constructor() {}
 
-    public generateDevices(nodeId: NodeId, commissioningController: CommissioningController, io: Server): Promise<BaseDevice[]>  {
+    public generateDevices(
+        nodeId: NodeId,
+        commissioningController: CommissioningController,
+        io: Server,
+        mqttManager: MqttManager
+    ): Promise<BaseDevice[]>  {
         return new Promise<BaseDevice[]>((resolve, reject) => {
             commissioningController.connectNode(nodeId, {
                 stateInformationCallback: (peerNodeId, state) => {
@@ -63,7 +69,8 @@ export default class DeviceManager {
                                                 node,
                                                 device,
                                                 commissioningController,
-                                                io
+                                                io,
+                                                mqttManager
                                             );
                                             this.devices.push(onOffPluginUnit);
                                             devices.push(onOffPluginUnit);
@@ -77,7 +84,8 @@ export default class DeviceManager {
                                                 node,
                                                 device,
                                                 commissioningController,
-                                                io
+                                                io,
+                                                mqttManager
                                             );
                                             this.devices.push(contactSensor);
                                             devices.push(contactSensor);
@@ -92,7 +100,8 @@ export default class DeviceManager {
                                                 node,
                                                 device,
                                                 commissioningController,
-                                                io
+                                                io,
+                                                mqttManager
                                             );
                                             this.devices.push(unknownDevice);
                                             devices.push(unknownDevice);

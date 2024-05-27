@@ -33,16 +33,9 @@ if (!process.env.NUM_PROXIES) {
 }
 const NUM_PROXIES = process.env.NUM_PROXIES;
 
-const SET_STATE_TOPIC = "set_state_proxy_";
-const IS_STATE_TOPIC = "is_state_proxy_";
-// const DATA_TOPIC = "data_proxy_";
-
-export interface DataUpdate {
-    from: number;
-    to: number;
-}
-
-
+const SET_STATE_TOPIC = "proxy_state_update_proxy_";
+const IS_STATE_TOPIC = "hub_state_update_proxy_";
+const DATA_TOPIC = "dashboardAnimations";
 
 
 export default class MqttManager {
@@ -60,7 +53,7 @@ export default class MqttManager {
             logger.debug(`Received state update for proxy ${proxyId}: ${state}`);
             if (setStateCallback) {
                 setStateCallback(proxyId, state);
-                this.publishPrivacyStateUpdate(proxyId, state);
+                // this.publishPrivacyStateUpdate(proxyId, state);
             }
         });
 
@@ -113,6 +106,9 @@ export default class MqttManager {
         this.client.subscribe(topic);
     }
 
+    /**
+     * Subscribes to all proxy privacy state update topics
+     */
     private subscribeToProxies = (): void => {
         for (let i = 1; i <= this.numProxies; i++) {
             const setStateTopic = SET_STATE_TOPIC + i;
@@ -120,9 +116,29 @@ export default class MqttManager {
         }
     }
 
+    /**
+     * Publishes a privacy state update to the MQTT broker
+     * @param proxyId The ID of the affected proxy
+     * @param newPrivacyState The new privacy state
+     */
     public publishPrivacyStateUpdate = (proxyId: number, newPrivacyState: PrivacyState): void => {
         logger.debug(`Publishing privacy state update for proxy ${proxyId}: ${newPrivacyState}`);
         const message = `${newPrivacyState}`;
+
         this.client.publish(IS_STATE_TOPIC + proxyId, message, { retain: true });
+    }
+
+    /**
+     * Publishes a data update to the MQTT broker for data flow visualization
+     * @param proxyId The ID of the involved proxy
+     * @param outgoingFromHub Whether the data is flowing out from the hub or into the hub
+     */
+    public publishDataUpdate = (proxyId: number, outgoingFromHub: boolean): void => {
+        logger.debug(`Publishing data update for proxy ${proxyId}: ${outgoingFromHub ? "outgoing" : "incoming"}`);
+        const from = outgoingFromHub ? 0 : proxyId;
+        const to = outgoingFromHub ? proxyId : 0;
+        const message = `${from},${to}`;
+
+        this.client.publish(DATA_TOPIC, message);
     }
 }

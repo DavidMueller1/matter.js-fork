@@ -8,6 +8,7 @@ import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/da
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualContactSensor from "../virtualDevices/VirtualContactSensor.js";
+import MqttManager from "../../mqtt/MqttManager.js";
 
 const logger = Logger.get("ContactSensor");
 
@@ -53,9 +54,10 @@ export default class ContactSensor extends BaseDevice {
         endpoint: EndpointInterface,
         commissioningController: CommissioningController,
         io: Server,
+        mqttManager: MqttManager,
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
-        super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, stateInformationCallback);
+        super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, mqttManager, stateInformationCallback);
     }
 
     override setBaseDevice() {

@@ -6,6 +6,7 @@ import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import { Server } from "socket.io";
 import { Schema, model } from "mongoose";
 import VirtualBaseDevice from "../virtualDevices/VirtualBaseDevice.js";
+import MqttManager from "../../mqtt/MqttManager.js";
 
 const logger = Logger.get("BaseDevice");
 
@@ -67,6 +68,7 @@ export default class BaseDevice {
 
     protected commissioningController: CommissioningController;
     protected io: Server;
+    protected mqttManager: MqttManager;
 
     protected _uniqueId: string;
     protected _nodeId: NodeId;
@@ -95,6 +97,7 @@ export default class BaseDevice {
         endpoint: EndpointInterface,
         commissioningController: CommissioningController,
         io: Server,
+        mqttManager: MqttManager,
         stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void
     ){
         this._uniqueId = uniqueId;
@@ -107,6 +110,7 @@ export default class BaseDevice {
         this.endpoint = endpoint;
         this.commissioningController = commissioningController;
         this.io = io;
+        this.mqttManager = mqttManager;
         this.stateInformationCallback = stateInformationCallback;
 
         this.setBaseDevice();
