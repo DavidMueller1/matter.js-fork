@@ -308,14 +308,14 @@ export default class PrivacyhubBackend {
 
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
 
-            let toggle = false;
             let newState = false;
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
             if (!req.body.state) {
-                toggle = true;
+                res.status(400).send(`Missing required field 'state'`);
+                return;
             } else {
                 newState = req.body.state;
             }
@@ -331,7 +331,7 @@ export default class PrivacyhubBackend {
                     res.status(401).send(`Unauthorized`);
                     return;
                 }
-                device.switchOnOff(newState, toggle).then(() => {
+                device.switchOnOff(newState).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
                     this.logger.error(`Error setting state: ${error}`);
