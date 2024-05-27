@@ -4,14 +4,13 @@ import express, { Application, Request, Response } from "express";
 import PrivacyhubNode, { knownTypes } from "../matter/PrivacyhubNode.js";
 import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
-import cors from 'cors';
-import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import cors from "cors";
+import { EndpointNumber, NodeId } from "@project-chip/matter.js/datatype";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 // import SocketServer from "../websocket/SocketServer.js";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
-
 import dotenv from "dotenv";
 // import BaseDevice from "../matter/devices/BaseDevice.js";
 import { CommissioningController } from "@project-chip/matter.js";
@@ -19,6 +18,8 @@ import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
 import MqttManager from "../mqtt/MqttManager.js";
 import os from "os";
+import { PrivacyState } from "../matter/devices/BaseDevice.js";
+
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -271,9 +272,6 @@ export default class PrivacyhubBackend {
         this.app.get('/nodes', (req, res: Response) => {
             // get accessLevel query param
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
-            // Get url of request
-            const url = req.get('host');
-            this.logger.info(`================ Received request to list nodes with access level ${accessLevel} from ${url}`);
 
             const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
                 return {
@@ -306,6 +304,9 @@ export default class PrivacyhubBackend {
         this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             this.logger.info("Received OnOff state change request:");
             console.log(req.params)
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
             let toggle = false;
             let newState = false;
 
@@ -325,6 +326,10 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
                 device.switchOnOff(newState, toggle).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
@@ -337,6 +342,8 @@ export default class PrivacyhubBackend {
 
 
         this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
@@ -347,6 +354,10 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
                 res.send(JSON.stringify({
                     state: device.onOffState
                 }));
@@ -359,6 +370,8 @@ export default class PrivacyhubBackend {
             this.logger.info("Received connected proxy change request:");
             console.log(req.params)
             const connectedProxy = req.body.connectedProxy;
+
+            // TODO: Maybe restrict to local access?
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
@@ -377,14 +390,27 @@ export default class PrivacyhubBackend {
         this.app.post('/nodes/:nodeId/:endpointId/privacyState', (req: Request, res: Response) => {
             this.logger.info("Received privacy state change request:");
             console.log(req.params)
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
             const privacyState = req.body.privacyState;
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+            if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                res.status(401).send(`Unauthorized`);
+                return;
+            }
+
             this.deviceManager.setPrivacyState(nodeId, endpointId, privacyState); // TODO: Check if this succeeds
-            const assignedProxy = this.deviceManager.getDevice(nodeId, endpointId)?.getAssignedProxy();
-            if (assignedProxy !== undefined && assignedProxy !== 0) {
+            const assignedProxy = device.getAssignedProxy();
+            if (assignedProxy !== 0) {
                 this.mqttManager.publishPrivacyStateUpdate(assignedProxy, privacyState);
             }
             res.send("Set privacy state successfully");
@@ -393,6 +419,12 @@ export default class PrivacyhubBackend {
         this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+            if (accessLevel !== AccessLevel.PRIVATE) {
+                res.status(401).send(`Unauthorized`);
+                return;
+            }
 
             // const from = req.query.from ? parseInt(req.query.from as string) : 0;
             // const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
