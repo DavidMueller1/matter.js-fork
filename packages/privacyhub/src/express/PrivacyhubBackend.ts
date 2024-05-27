@@ -18,7 +18,7 @@ import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
 import MqttManager from "../mqtt/MqttManager.js";
-// import os from "os";
+import os from "os";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -270,7 +270,7 @@ export default class PrivacyhubBackend {
          */
         this.app.get('/nodes', (req, res: Response) => {
             // get accessLevel query param
-            const accessLevel: AccessLevel = req.query.accessLevel ? parseInt(req.query.accessLevel as string) : AccessLevel.PUBLIC;
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
             // Get url of request
             const url = req.get('host');
             this.logger.info(`================ Received request to list nodes with access level ${accessLevel} from ${url}`);
@@ -491,26 +491,41 @@ export default class PrivacyhubBackend {
         });
     }
 
-    // /**
-    //  * Get local IP addresses of the machine
-    //  * @private
-    //  */
-    // private getLocalIpAddresses(): string[] {
-    //     const networkInterfaces = os.networkInterfaces();
-    //
-    //     const addresses: string[] = [];
-    //
-    //     for (const [_, interfaces] of Object.entries(networkInterfaces)) {
-    //         if (interfaces === undefined) {
-    //             continue;
-    //         }
-    //         for (const iface of interfaces) {
-    //             if (iface.family === 'IPv4' && !iface.internal) {
-    //                 addresses.push(iface.address);
-    //             }
-    //         }
-    //     }
-    //
-    //     return addresses;
-    // }
+    private checkAccessLevel(req: Request): AccessLevel {
+        const host = req.get('host');
+        if (host === undefined) {
+            return AccessLevel.PUBLIC;
+        }
+        const substrings = host.split(':');
+        const ip = substrings[0];
+        const addresses = this.getLocalIpAddresses();
+        if (addresses.includes(ip)) {
+            return AccessLevel.PRIVATE;
+        } else {
+            return AccessLevel.PUBLIC;
+        }
+    }
+
+    /**
+     * Get local IP addresses of the machine
+     * @private
+     */
+    private getLocalIpAddresses(): string[] {
+        const networkInterfaces = os.networkInterfaces();
+
+        const addresses: string[] = [];
+
+        for (const [_, interfaces] of Object.entries(networkInterfaces)) {
+            if (interfaces === undefined) {
+                continue;
+            }
+            for (const iface of interfaces) {
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    addresses.push(iface.address);
+                }
+            }
+        }
+
+        return addresses;
+    }
 }
