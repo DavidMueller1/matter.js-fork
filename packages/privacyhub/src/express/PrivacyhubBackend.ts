@@ -18,6 +18,7 @@ import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
 import MqttManager from "../mqtt/MqttManager.js";
+import os from "os";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
@@ -271,7 +272,7 @@ export default class PrivacyhubBackend {
             // get accessLevel query param
             const accessLevel: AccessLevel = req.query.accessLevel ? parseInt(req.query.accessLevel as string) : AccessLevel.PUBLIC;
             // Get url of request
-            const url = req.protocol + '://' + req.get('host');
+            const url = req.get('host');
             this.logger.info(`================ Received request to list nodes with access level ${accessLevel} from ${url}`);
 
             const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
@@ -488,5 +489,28 @@ export default class PrivacyhubBackend {
                 this.logger.info('user disconnected');
             });
         });
+    }
+
+    /**
+     * Get local IP addresses of the machine
+     * @private
+     */
+    private getLocalIpAddresses(): string[] {
+        const networkInterfaces = os.networkInterfaces();
+
+        const addresses: string[] = [];
+
+        for (const [_, interfaces] of Object.entries(networkInterfaces)) {
+            if (interfaces === undefined) {
+                continue;
+            }
+            for (const iface of interfaces) {
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    addresses.push(iface.address);
+                }
+            }
+        }
+
+        return addresses;
     }
 }

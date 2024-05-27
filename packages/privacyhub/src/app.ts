@@ -74,29 +74,6 @@ Ble.get = singleton(
 
 const logger = Logger.get("app");
 
-import os from 'os';
-
-function getLocalIpAddresses(): string[] {
-    const networkInterfaces = os.networkInterfaces();
-
-    const addresses: string[] = [];
-
-    for (const [_, interfaces] of Object.entries(networkInterfaces)) {
-        if (interfaces === undefined) {
-            continue;
-        }
-        for (const iface of interfaces) {
-            if (iface.family === 'IPv4' && !iface.internal) {
-                addresses.push(iface.address);
-            }
-        }
-    }
-
-    return addresses;
-}
-console.log('Local IP Addresses:', getLocalIpAddresses());
-
-
 logger.info(`HCI ID: ${parseInt(process.env.HCI_ID || "0")}`);
 
 const dbController = new DbController();
