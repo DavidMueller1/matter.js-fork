@@ -94,7 +94,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                             }
                             this.updateSocketAndDB();
                             this.virtualDevice?.setOnOffState(state);
-                            logger.info(`OnOff state changed to ${this._onOffState}`);
+                            logger.info(`OnOff state from device changed to ${this._onOffState}`);
                         }, 1, 10).then(() => {
                             logger.debug(`Subscribed to OnOff attribute`);
                             resolve();
@@ -116,33 +116,28 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
-    switchOnOff(state: boolean, toggle = false): Promise<void> {
+    switchOnOff(state: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
             if (onOffCluster !== undefined) {
+                if (this._onOffState === state) return;
+                this._onOffState = state;
+
                 // Publish data update to MQTT if assigned to a proxy
                 if (this._assignedProxy !== 0) {
                     this.mqttManager.publishDataUpdate(this._assignedProxy, true);
                 }
-                if (toggle) {
-                    onOffCluster.toggle().then(() => {
-                        // this.virtualDevice.setOnOffState(state);
-                        // this.updateSocketAndDB();
-                        resolve();
-                    }).catch((error) => {
-                        logger.error(`Failed to toggle OnOff: ${error}`);
-                        reject(error);
-                    });
-                } else {
-                    (state ? onOffCluster.on() : onOffCluster.off()).then(() => {
-                        // this.virtualDevice.setOnOffState(state);
-                        // this.updateSocketAndDB();
-                        resolve();
-                    }).catch((error) => {
-                        logger.error(`Failed to set OnOff: ${error}`);
-                        reject(error);
-                    });
-                }
+                this.updateSocketAndDB();
+                this.virtualDevice?.setOnOffState(state);
+                logger.info(`OnOff state externally switched to ${this._onOffState}`);
+                (state ? onOffCluster.on() : onOffCluster.off()).then(() => {
+                    // this.virtualDevice.setOnOffState(state);
+                    // this.updateSocketAndDB();
+                    resolve();
+                }).catch((error) => {
+                    logger.error(`Failed to set OnOff: ${error}`);
+                    reject(error);
+                });
             }
         });
     }
