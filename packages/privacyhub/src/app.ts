@@ -76,32 +76,25 @@ const logger = Logger.get("app");
 
 import os from 'os';
 
-// function getLocalIpAddress(): string | undefined {
-//     const networkInterfaces = os.networkInterfaces();
-//     let localIpAddress: string | undefined;
-//
-//     for (const interfaceName of Object.keys(networkInterfaces)) {
-//         const addresses = networkInterfaces[interfaceName];
-//
-//         if (addresses) {
-//             for (const addressInfo of addresses) {
-//                 if (addressInfo.family === 'IPv4' && !addressInfo.internal) {
-//                     localIpAddress = addressInfo.address;
-//                     break;
-//                 }
-//             }
-//         }
-//
-//         if (localIpAddress) {
-//             break;
-//         }
-//     }
-//
-//     return localIpAddress;
-// }
-//
-// const localIpAddress = getLocalIpAddress();
-console.log('Local IP Addresses:', os.networkInterfaces());
+function getLocalIpAddresses(): string[] {
+    const networkInterfaces = os.networkInterfaces();
+
+    const addresses: string[] = [];
+
+    for (const [_, interfaces] of Object.entries(networkInterfaces)) {
+        if (interfaces === undefined) {
+            continue;
+        }
+        for (const iface of interfaces) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                addresses.push(iface.address);
+            }
+        }
+    }
+
+    return addresses;
+}
+console.log('Local IP Addresses:', getLocalIpAddresses());
 
 
 logger.info(`HCI ID: ${parseInt(process.env.HCI_ID || "0")}`);
