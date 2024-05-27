@@ -491,26 +491,26 @@ export default class PrivacyhubBackend {
         });
     }
 
-    /**
-     * Get local IP addresses of the machine
-     * @private
-     */
-    private getLocalIpAddresses(): string[] {
-        const networkInterfaces = os.networkInterfaces();
-
-        const addresses: string[] = [];
-
-        for (const [_, interfaces] of Object.entries(networkInterfaces)) {
-            if (interfaces === undefined) {
-                continue;
-            }
-            for (const iface of interfaces) {
-                if (iface.family === 'IPv4' && !iface.internal) {
-                    addresses.push(iface.address);
-                }
-            }
-        }
-
-        return addresses;
-    }
+    // /**
+    //  * Get local IP addresses of the machine
+    //  * @private
+    //  */
+    // private getLocalIpAddresses(): string[] {
+    //     const networkInterfaces = os.networkInterfaces();
+    //
+    //     const addresses: string[] = [];
+    //
+    //     for (const [_, interfaces] of Object.entries(networkInterfaces)) {
+    //         if (interfaces === undefined) {
+    //             continue;
+    //         }
+    //         for (const iface of interfaces) {
+    //             if (iface.family === 'IPv4' && !iface.internal) {
+    //                 addresses.push(iface.address);
+    //             }
+    //         }
+    //     }
+    //
+    //     return addresses;
+    // }
 }
