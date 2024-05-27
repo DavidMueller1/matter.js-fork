@@ -18,7 +18,7 @@ import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
 import MqttManager from "../mqtt/MqttManager.js";
-import os from "os";
+// import os from "os";
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
