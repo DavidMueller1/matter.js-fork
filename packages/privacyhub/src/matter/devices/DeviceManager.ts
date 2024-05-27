@@ -10,6 +10,7 @@ import { Logger } from "@project-chip/matter-node.js/log";
 import { ignoreTypes } from "../PrivacyhubNode.js";
 import ContactSensor from "./ContactSensor.js";
 import { stringifyWithBigint } from "../../util/Util.js";
+import { AccessLevel } from "../../express/PrivacyhubBackend.js";
 
 export default class DeviceManager {
 
@@ -118,6 +119,16 @@ export default class DeviceManager {
 
     public getDevices = (): BaseDevice[] => {
         return this.devices;
+    }
+
+    public getDevicesWithAccessLevel = (accessLevel: AccessLevel): BaseDevice[] => {
+        if (accessLevel === AccessLevel.PRIVATE) {
+            return this.devices;
+        } else {
+            return this.devices.filter((device) => {
+                return device.getPrivacyState() === PrivacyState.ONLINE;
+            });
+        }
     }
 
     public getDevice(nodeId: NodeId, endpointId: EndpointNumber): BaseDevice | undefined {

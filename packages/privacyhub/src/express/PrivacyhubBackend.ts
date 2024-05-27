@@ -23,6 +23,11 @@ dotenv.config();
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
 const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
 
+export enum AccessLevel {
+    PRIVATE,
+    PUBLIC,
+}
+
 const WEBSOCKET_CORS = {
     origin: "*",
     methods: ["GET", "POST"]
@@ -262,8 +267,11 @@ export default class PrivacyhubBackend {
          *
          * @apiSuccess {Object[]} nodes List of nodes
          */
-        this.app.get('/nodes', (_, res: Response) => {
-            const nodes = this.deviceManager.getDevices().map((device) => {
+        this.app.get('/nodes', (req, res: Response) => {
+            // get accessLevel query param
+            const accessLevel: AccessLevel = req.query.accessLevel ? parseInt(req.query.accessLevel as string) : AccessLevel.PUBLIC;
+
+            const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
                 return {
                     nodeId: device.nodeId,
                     endpointId: device.endpointId,
