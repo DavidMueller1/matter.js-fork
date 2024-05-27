@@ -333,9 +333,11 @@ export default class PrivacyhubBackend {
                 device.switchOnOff(newState, toggle).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
+                    this.logger.error(`Error setting state: ${error}`);
                     res.status(500).send(`Error setting state: ${error}`);
                 });
             } else {
+                this.logger.error(`Device is not an OnOffPluginUnit`);
                 res.status(500).send(`Device is not an OnOffPluginUnit`);
             }
         });
