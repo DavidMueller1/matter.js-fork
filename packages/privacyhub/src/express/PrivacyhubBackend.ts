@@ -102,7 +102,7 @@ export default class PrivacyhubBackend {
         // Setup devices
         this.deviceManager = new DeviceManager();
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
-            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
+            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
             }).catch((error) => {
                 this.logger.error(`Error generating devices: ${error}`);
@@ -237,7 +237,7 @@ export default class PrivacyhubBackend {
                 threadNetworkName,
                 threadNetworkOperationalDataset
             ).then((node) => {
-                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io).then((devices) => {
+                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                     this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
                     this.neoPixelController.switchToState({
                         state: LedState.BLINKING,
