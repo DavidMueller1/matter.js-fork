@@ -516,6 +516,11 @@ export default class PrivacyhubBackend {
 
     private setupWebSocket(): void {
         this.io.on('connection', (socket) => {
+
+            // get host
+            const host = socket.handshake.headers.host;
+            this.logger.info(`========== New socket connection from ${host}`);
+
             this.logger.info('a user connected');
             socket.on('disconnect', () => {
                 this.logger.info('user disconnected');
