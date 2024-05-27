@@ -313,7 +313,7 @@ export default class PrivacyhubBackend {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
-            if (!req.body.state) {
+            if (req.body.state === undefined) {
                 res.status(400).send(`Missing required field 'state'`);
                 return;
             } else {
