@@ -270,6 +270,9 @@ export default class PrivacyhubBackend {
         this.app.get('/nodes', (req, res: Response) => {
             // get accessLevel query param
             const accessLevel: AccessLevel = req.query.accessLevel ? parseInt(req.query.accessLevel as string) : AccessLevel.PUBLIC;
+            // Get url of request
+            const url = req.protocol + '://' + req.get('host');
+            this.logger.info(`================ Received request to list nodes with access level ${accessLevel} from ${url}`);
 
             const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
                 return {
