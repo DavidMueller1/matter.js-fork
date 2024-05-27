@@ -86,8 +86,12 @@ export default class OnOffPluginUnit extends BaseDevice {
                     if (onOffCluster !== undefined) {
                         onOffCluster.subscribeOnOffAttribute((state) => {
                             if (this._onOffState === state) return;
-
                             this._onOffState = state;
+
+                            // Publish data update to MQTT if assigned to a proxy
+                            if (this._assignedProxy !== 0) {
+                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            }
                             this.updateSocketAndDB();
                             this.virtualDevice?.setOnOffState(state);
                             logger.info(`OnOff state changed to ${this._onOffState}`);
@@ -116,6 +120,10 @@ export default class OnOffPluginUnit extends BaseDevice {
         return new Promise<void>((resolve, reject) => {
             const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
             if (onOffCluster !== undefined) {
+                // Publish data update to MQTT if assigned to a proxy
+                if (this._assignedProxy !== 0) {
+                    this.mqttManager.publishDataUpdate(this._assignedProxy, true);
+                }
                 if (toggle) {
                     onOffCluster.toggle().then(() => {
                         // this.virtualDevice.setOnOffState(state);

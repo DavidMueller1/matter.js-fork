@@ -84,8 +84,12 @@ export default class ContactSensor extends BaseDevice {
                     if (booleanStateCluster !== undefined) {
                         booleanStateCluster.subscribeStateValueAttribute((state) => {
                             if (this._booleanState === state) return;
-
                             this._booleanState = state;
+
+                            // Publish data update to MQTT if assigned to a proxy
+                            if (this._assignedProxy !== 0) {
+                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            }
                             this.updateSocketAndDB();
                             this.virtualDevice?.setContactState(state);
                             logger.info(`Boolean state changed to ${this._booleanState}`);
