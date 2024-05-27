@@ -334,6 +334,7 @@ export default class PrivacyhubBackend {
                     res.send("Set state successfully");
                 }).catch((error) => {
                     this.logger.error(`Error setting state: ${error}`);
+                    this.logger.error(error.stack);
                     res.status(500).send(`Error setting state: ${error}`);
                 });
             } else {
