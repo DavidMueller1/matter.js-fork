@@ -101,16 +101,17 @@ export default class PrivacyhubBackend {
 
         // Setup devices
         this.deviceManager = new DeviceManager();
+
+        this.mqttManager = new MqttManager((proxyId, state) => {
+            this.deviceManager.setPrivacyStateProxy(proxyId, state);
+        });
+
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
             this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
             }).catch((error) => {
                 this.logger.error(`Error generating devices: ${error}`);
             });
-        });
-
-        this.mqttManager = new MqttManager((proxyId, state) => {
-            this.deviceManager.setPrivacyStateProxy(proxyId, state);
         });
     }
 
