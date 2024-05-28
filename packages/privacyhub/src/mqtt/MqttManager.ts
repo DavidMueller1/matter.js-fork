@@ -36,7 +36,7 @@ const NUM_PROXIES = process.env.NUM_PROXIES;
 const SET_STATE_TOPIC = "proxy_state_update_proxy_";
 const IS_STATE_TOPIC = "hub_state_update_proxy_";
 const DATA_TOPIC = "dashboardAnimations";
-const PROXY_LOCATION_UPDATE_TOPIC = ""
+const PROXY_LOCATION_UPDATE_TOPIC = "dashboardOverride"
 
 
 export default class MqttManager {
