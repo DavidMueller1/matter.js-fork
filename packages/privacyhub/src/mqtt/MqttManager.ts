@@ -36,6 +36,7 @@ const NUM_PROXIES = process.env.NUM_PROXIES;
 const SET_STATE_TOPIC = "proxy_state_update_proxy_";
 const IS_STATE_TOPIC = "hub_state_update_proxy_";
 const DATA_TOPIC = "dashboardAnimations";
+const PROXY_LOCATION_UPDATE_TOPIC = ""
 
 
 export default class MqttManager {
@@ -114,6 +115,13 @@ export default class MqttManager {
             const setStateTopic = SET_STATE_TOPIC + i;
             this.subscribe(setStateTopic);
         }
+    }
+
+    public publishProxyLocationUpdate = (proxyId: number, row: number, col: number): void => {
+        logger.debug(`Publishing proxy location update for proxy ${proxyId}: ${col},${row}`);
+        const message = `${proxyId},${row},${col}`;
+
+        this.client.publish(PROXY_LOCATION_UPDATE_TOPIC + proxyId, message, { retain: true });
     }
 
     /**

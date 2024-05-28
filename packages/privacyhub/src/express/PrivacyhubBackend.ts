@@ -447,6 +447,39 @@ export default class PrivacyhubBackend {
         });
 
 
+        this.app.post('/proxy/:proxyId/updatepos', (req: Request, res: Response) => {
+            const proxyId = parseInt(req.params.proxyId);
+
+            const row = req.body.row;
+            const col = req.body.col;
+
+            this.logger.info(`Received proxy location update for proxy ${proxyId}: ${row},${col}`);
+
+            if (proxyId > parseInt(process.env.NUM_PROXIES ?? "999")) {
+                res.status(400).send(`Invalid proxy id`);
+                return;
+            }
+
+            if (row === undefined || col === undefined) {
+                res.status(400).send(`Missing required fields 'row' or 'col'`);
+                return;
+            }
+
+            if (row < 1 || row > 16) {
+                res.status(400).send(`Invalid row. Must be between 1 and 16`);
+                return;
+            }
+
+            if (col < 1 || col > 16) {
+                res.status(400).send(`Invalid col. Must be between 1 and 16`);
+                return;
+            }
+
+            this.mqttManager.publishProxyLocationUpdate(proxyId, row, col);
+            res.send("Published proxy location update successfully");
+        });
+
+
         // this.app.get('/nodes/:nodeId/debug', (req: Request, res: Response) => {
         //     const nodeId = NodeId(BigInt(req.params.nodeId));
         //     this.privacyhubNode.connectToNode(nodeId).then((node) => {
