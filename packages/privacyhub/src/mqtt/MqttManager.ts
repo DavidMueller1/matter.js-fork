@@ -121,7 +121,7 @@ export default class MqttManager {
         logger.debug(`Publishing proxy location update for proxy ${proxyId}: ${col},${row}`);
         const message = `${proxyId},${row},${col}`;
 
-        this.client.publish(PROXY_LOCATION_UPDATE_TOPIC + proxyId, message, { retain: true });
+        this.client.publish(PROXY_LOCATION_UPDATE_TOPIC, message);
     }
 
     /**
