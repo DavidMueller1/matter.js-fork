@@ -1,5 +1,5 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
-import BaseDevice, { ConnectionStatus, PrivacyState } from "./BaseDevice.js";
+import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
 import { BooleanStateCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
@@ -16,6 +16,7 @@ const logger = Logger.get("ContactSensor");
 export interface IContactSensorState {
     uniqueId: string;
     endpointId: string;
+    changeType: ChangeType;
     connectionStatus: ConnectionStatus;
     booleanState: boolean;
     privacyState: PrivacyState;
@@ -32,6 +33,7 @@ export interface IReturnContactSensorState {
 const contactSensorStateSchema = new Schema<IContactSensorState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
+    changeType: { type: Number, required: true },
     connectionStatus: { type: Number, required: true },
     booleanState: { type: Boolean },
     privacyState: { type: Number, required: true },
@@ -90,7 +92,7 @@ export default class ContactSensor extends BaseDevice {
                             if (this._assignedProxy !== 0) {
                                 this.mqttManager.publishDataUpdate(this._assignedProxy, false);
                             }
-                            this.updateSocketAndDB();
+                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
                             this.virtualDevice?.setContactState(state);
                             logger.info(`Boolean state changed to ${this._booleanState}`);
                         }, 1, 10).then(() => {
@@ -115,24 +117,16 @@ export default class ContactSensor extends BaseDevice {
         });
     }
 
-    override updateSocketAndDB() {
-        this.io.emit('booleanState', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            state: this._booleanState
-        });
+    override updateSocketAndDB(changeType: ChangeType) {
+        super.updateSocketAndDB(changeType);
 
-        this.io.emit('connectionStatus', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            connectionStatus: this.connectionStatus
-        });
-
-        this.io.emit('privacyState', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            privacyState: this.privacyState
-        });
+        if (changeType in [ChangeType.DEVICE_EVENT_DEVICE, ChangeType.DEVICE_EVENT_THIRD_PARTY, ChangeType.DEVICE_EVENT_HUB]) {
+            this.io.emit('booleanState', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                state: this._booleanState
+            });
+        }
 
         // Check if the state is different from the last db entry
         ContactSensorState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
@@ -145,6 +139,7 @@ export default class ContactSensor extends BaseDevice {
                 const newDoc = new ContactSensorState({
                     uniqueId: this._uniqueId.toString(),
                     endpointId: this._endpointId.toString(),
+                    changeType: changeType,
                     connectionStatus: this.connectionStatus,
                     booleanState: this._booleanState,
                     privacyState: this.privacyState,
@@ -165,7 +160,7 @@ export default class ContactSensor extends BaseDevice {
         return new Promise<void>((resolve, reject) => {
             ContactSensorState.findOne<IContactSensorState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 if (state) {
-                    this.setPrivacyState(state.privacyState);
+                    this.setPrivacyState(state.privacyState, false);
                 }
                 resolve();
             }).catch((error) => {

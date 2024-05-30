@@ -1,5 +1,5 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
-import BaseDevice, { ConnectionStatus, PrivacyState } from "./BaseDevice.js";
+import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
 import { OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
@@ -16,6 +16,7 @@ const logger = Logger.get("OnOffPluginUnit");
 export interface IOnOffPluginUnitState {
     uniqueId: string;
     endpointId: string;
+    changeType: ChangeType;
     connectionStatus: ConnectionStatus;
     onOffState: boolean;
     privacyState: PrivacyState;
@@ -32,6 +33,7 @@ export interface IReturnOnOffPluginUnitState {
 const onOffPluginUnitStateSchema = new Schema<IOnOffPluginUnitState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
+    changeType: { type: Number, required: true },
     connectionStatus: { type: Number, required: true },
     onOffState: { type: Boolean },
     privacyState: { type: Number, required: true },
@@ -71,7 +73,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                 DeviceTypeId(this.type),
                 this.pairedNode,
                 (state) => {
-                    this.switchOnOff(state).then(() => {
+                    this.switchOnOff(state, false).then(() => {
                         logger.info(`Successfully set OnOff state to ${state}`);
                     }).catch((error) => {
                         logger.error(`Failed to set OnOff state to ${state}: ${error}`);
@@ -92,7 +94,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                             if (this._assignedProxy !== 0) {
                                 this.mqttManager.publishDataUpdate(this._assignedProxy, false);
                             }
-                            this.updateSocketAndDB();
+                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
                             this.virtualDevice?.setOnOffState(state);
                             logger.info(`OnOff state from device changed to ${this._onOffState}`);
                         }, 1, 10).then(() => {
@@ -116,7 +118,7 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
-    switchOnOff(state: boolean): Promise<void> {
+    switchOnOff(state: boolean, isHubUpdate: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
             if (onOffCluster !== undefined) {
@@ -127,7 +129,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                 if (this._assignedProxy !== 0) {
                     this.mqttManager.publishDataUpdate(this._assignedProxy, true);
                 }
-                this.updateSocketAndDB();
+                this.updateSocketAndDB(isHubUpdate ? ChangeType.DEVICE_EVENT_HUB : ChangeType.DEVICE_EVENT_THIRD_PARTY);
                 this.virtualDevice?.setOnOffState(state);
                 logger.info(`OnOff state externally switched to ${this._onOffState}`);
                 (state ? onOffCluster.on() : onOffCluster.off()).then(() => {
@@ -142,24 +144,16 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
-    override updateSocketAndDB() {
-        this.io.emit('booleanState', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            state: this._onOffState
-        });
+    override updateSocketAndDB(changeType: ChangeType) {
+        super.updateSocketAndDB(changeType);
 
-        this.io.emit('connectionStatus', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            connectionStatus: this.connectionStatus
-        });
-
-        this.io.emit('privacyState', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            privacyState: this.privacyState
-        });
+        if (changeType in [ChangeType.DEVICE_EVENT_DEVICE, ChangeType.DEVICE_EVENT_THIRD_PARTY, ChangeType.DEVICE_EVENT_HUB]) {
+            this.io.emit('booleanState', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                state: this._onOffState
+            });
+        }
 
         // Check if the state is different from the last db entry
         OnOffPluginUnitState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
@@ -172,6 +166,7 @@ export default class OnOffPluginUnit extends BaseDevice {
                 const newDoc = new OnOffPluginUnitState({
                     uniqueId: this._uniqueId.toString(),
                     endpointId: this._endpointId.toString(),
+                    changeType: changeType,
                     connectionStatus: this.connectionStatus,
                     onOffState: this._onOffState,
                     privacyState: this.privacyState,
@@ -193,7 +188,7 @@ export default class OnOffPluginUnit extends BaseDevice {
             OnOffPluginUnitState.findOne<IOnOffPluginUnitState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 logger.info(`Setting last known privacy state to ${JSON.stringify(state)}`);
                 if (state) {
-                    this.setPrivacyState(state.privacyState);
+                    this.setPrivacyState(state.privacyState, false);
                 }
                 resolve();
             }).catch((error) => {

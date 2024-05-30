@@ -21,6 +21,15 @@ export enum PrivacyState {
     ONLINE_SHARED,
 }
 
+export enum ChangeType {
+    CONNECTION_STATUS,
+    PRIVACY_STATE_HUB,
+    PRIVACY_STATE_PROXY,
+    DEVICE_EVENT_HUB,
+    DEVICE_EVENT_THIRD_PARTY,
+    DEVICE_EVENT_DEVICE,
+}
+
 // DB schema
 interface IDevice {
     uniqueId: string;
@@ -42,6 +51,7 @@ const Device = model<IDevice>('Device', deviceSchema);
 export interface IBaseDeviceState {
     uniqueId: string;
     endpointId: string;
+    changeType: ChangeType;
     connectionStatus: ConnectionStatus;
     privacyState: PrivacyState;
     timestamp: number;
@@ -56,6 +66,7 @@ export interface IReturnBaseDeviceState {
 const baseDeviceStateSchema = new Schema<IBaseDeviceState>({
     uniqueId: { type: String, required: true },
     endpointId: { type: String, required: true },
+    changeType: { type: Number, required: true },
     connectionStatus: { type: Number, required: true },
     privacyState: { type: Number, required: true },
     timestamp: { type: Number, required: true },
@@ -204,19 +215,19 @@ export default class BaseDevice {
         this.connectionStatus = status;
 
         this.updateVirtualDeviceState();
-        this.updateSocketAndDB();
+        this.updateSocketAndDB(ChangeType.CONNECTION_STATUS);
     }
 
     getConnectionStatus(): ConnectionStatus {
         return this.connectionStatus;
     }
 
-    setPrivacyState(state: PrivacyState) {
+    setPrivacyState(state: PrivacyState, isProxyUpdate: boolean) {
         logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
         this.privacyState = state;
 
         this.updateVirtualDeviceState();
-        this.updateSocketAndDB();
+        this.updateSocketAndDB(isProxyUpdate ? ChangeType.PRIVACY_STATE_PROXY : ChangeType.PRIVACY_STATE_HUB);
     }
 
     getPrivacyState(): PrivacyState {
@@ -246,28 +257,36 @@ export default class BaseDevice {
         }
     }
 
-    protected updateSocketAndDB() {
-        // Notify the client
-        this.io.emit('connectionStatus', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            connectionStatus: this.connectionStatus,
-        });
+    protected updateSocketAndDB(changeType: ChangeType) {
+        // Notify the socket clients
+        if (changeType === ChangeType.CONNECTION_STATUS) {
+            this.io.emit('connectionStatus', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                connectionStatus: this.connectionStatus,
+            });
+        }
 
-        this.io.emit('privacyState', {
-            nodeId: this.nodeId.toString(),
-            endpointId: this.endpointId.toString(),
-            privacyState: this.privacyState,
-        });
+        if (changeType in [ChangeType.PRIVACY_STATE_HUB, ChangeType.PRIVACY_STATE_PROXY]) {
+            this.io.emit('privacyState', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                privacyState: this.privacyState,
+            });
+        }
 
         // Add state change to DB
         if (this.isBaseDevice) {
             BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 if (state) {
-                    if (state.connectionStatus !== this.connectionStatus) {
+                    if (
+                        state.connectionStatus !== this.connectionStatus
+                        || state.privacyState !== this.privacyState
+                    ) {
                         const newState = new BaseDeviceState({
                             uniqueId: this._uniqueId,
                             endpointId: this._endpointId.toString(),
+                            changeType: changeType,
                             connectionStatus: this.connectionStatus,
                             privacyState: this.privacyState,
                             timestamp: Date.now(),
@@ -278,18 +297,6 @@ export default class BaseDevice {
                             logger.error(`Failed to save new state: ${error}`);
                         });
                     }
-                } else {
-                    const newState = new BaseDeviceState({
-                        uniqueId: this._uniqueId,
-                        endpointId: this._endpointId.toString(),
-                        connectionStatus: this.connectionStatus,
-                        timestamp: Date.now(),
-                    });
-                    newState.save().then(() => {
-                        logger.info(`Saved new state ${this.connectionStatus}`);
-                    }).catch((error) => {
-                        logger.error(`Failed to save new state: ${error}`);
-                    });
                 }
             }).catch((error) => {
                 logger.error(`Failed to get state: ${error}`);
@@ -301,7 +308,7 @@ export default class BaseDevice {
         return new Promise<void>((resolve, reject) => {
             BaseDeviceState.findOne<IBaseDeviceState>({ uniqueId: this._uniqueId }).sort({ timestamp: -1 }).then((state) => {
                 if (state) {
-                    this.setPrivacyState(state.privacyState);
+                    this.setPrivacyState(state.privacyState, false);
                 }
                 resolve();
             }).catch((error) => {

@@ -331,7 +331,7 @@ export default class PrivacyhubBackend {
                     res.status(401).send(`Unauthorized`);
                     return;
                 }
-                device.switchOnOff(newState).then(() => {
+                device.switchOnOff(newState, true).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
                     this.logger.error(`Error setting state: ${error}`);

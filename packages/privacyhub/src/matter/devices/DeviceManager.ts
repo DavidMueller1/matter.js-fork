@@ -162,14 +162,14 @@ export default class DeviceManager {
     public setPrivacyState(nodeId: NodeId, endpointId: EndpointNumber, state: PrivacyState) {
         const device = this.getDevice(nodeId, endpointId);
         if (device) {
-            device.setPrivacyState(state);
+            device.setPrivacyState(state, false);
         }
     }
 
     public setPrivacyStateProxy(proxyId: number, state: PrivacyState) {
         this.devices.forEach((device) => {
             if (device.assignedProxy === proxyId) {
-                device.setPrivacyState(state);
+                device.setPrivacyState(state, true);
             }
         });
     }
