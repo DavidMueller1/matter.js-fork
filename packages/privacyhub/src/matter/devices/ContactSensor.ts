@@ -120,7 +120,11 @@ export default class ContactSensor extends BaseDevice {
     override updateSocketAndDB(changeType: ChangeType) {
         super.updateSocketAndDB(changeType);
 
-        if (changeType in [ChangeType.DEVICE_EVENT_DEVICE, ChangeType.DEVICE_EVENT_THIRD_PARTY, ChangeType.DEVICE_EVENT_HUB]) {
+        if (
+            changeType === ChangeType.DEVICE_EVENT_DEVICE
+            || changeType === ChangeType.DEVICE_EVENT_THIRD_PARTY
+            || changeType === ChangeType.DEVICE_EVENT_HUB
+        ) {
             this.io.emit('booleanState', {
                 nodeId: this.nodeId.toString(),
                 endpointId: this.endpointId.toString(),
