@@ -89,10 +89,16 @@ export default class MqttManager {
                 if (messageArray[3] === undefined || messageArray[3] === "x") {
                     return;
                 }
-                const state = parseInt(messageArray[3]);
-                if (isNaN(state) || state < 0 || state > PrivacyState.ONLINE) {
+                let state = parseInt(messageArray[3]);
+                if (isNaN(state) || state < 0 || state > PrivacyState.ONLINE_SHARED) {
                     logger.error(`Invalid state: ${state}`);
                     return;
+                }
+                // Swap enum 1 and 2
+                if (state === 1) {
+                    state = 2;
+                } else if (state === 2) {
+                    state = 1;
                 }
                 this.setStateCallback(proxy, state);
             }
@@ -131,7 +137,15 @@ export default class MqttManager {
      */
     public publishPrivacyStateUpdate = (proxyId: number, newPrivacyState: PrivacyState): void => {
         logger.debug(`Publishing privacy state update for proxy ${proxyId}: ${newPrivacyState}`);
-        const message = `${newPrivacyState}`;
+
+        let correctedState = newPrivacyState;
+        if (newPrivacyState === PrivacyState.ONLINE) {
+            correctedState = 2;
+        } else if (newPrivacyState === PrivacyState.ONLINE_SHARED) {
+            correctedState = 1;
+        }
+
+        const message = `${correctedState}`;
 
         this.client.publish(IS_STATE_TOPIC + proxyId, message, { retain: true });
     }

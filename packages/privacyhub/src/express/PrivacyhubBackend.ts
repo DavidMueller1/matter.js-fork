@@ -327,7 +327,7 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
-                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
                     res.status(401).send(`Unauthorized`);
                     return;
                 }
@@ -358,7 +358,7 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
-                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
                     res.status(401).send(`Unauthorized`);
                     return;
                 }
@@ -407,7 +407,7 @@ export default class PrivacyhubBackend {
                 res.status(500).send(`Device not found`);
                 return;
             }
-            if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+            if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
                 res.status(401).send(`Unauthorized`);
                 return;
             }

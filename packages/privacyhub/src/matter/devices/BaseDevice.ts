@@ -17,8 +17,8 @@ export enum ConnectionStatus {
 
 export enum PrivacyState {
     LOCAL,
-    THIRD_PARTY,
     ONLINE,
+    ONLINE_SHARED,
 }
 
 // DB schema
@@ -239,7 +239,7 @@ export default class BaseDevice {
     }
 
     protected updateVirtualDeviceState() {
-        if (this.connectionStatus !== ConnectionStatus.CONNECTED || this.privacyState === PrivacyState.LOCAL) {
+        if (this.connectionStatus !== ConnectionStatus.CONNECTED || this.privacyState !== PrivacyState.ONLINE_SHARED) {
             this.stopVirtualDevice();
         } else {
             this.startVirtualDevice();

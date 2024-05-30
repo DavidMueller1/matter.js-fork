@@ -135,7 +135,7 @@ export default class DeviceManager {
             return this.devices;
         } else {
             return this.devices.filter((device) => {
-                return device.getPrivacyState() === PrivacyState.ONLINE;
+                return device.getPrivacyState() >= PrivacyState.ONLINE;
             });
         }
     }
