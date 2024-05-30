@@ -201,16 +201,25 @@ export default class OnOffPluginUnit extends BaseDevice {
         });
     }
 
-    override getHistory(from: number, to: number): Promise<IReturnOnOffPluginUnitState[]> {
+    override getHistory(from: number, to: number, onlineVersion: boolean): Promise<IReturnOnOffPluginUnitState[]> {
         return new Promise<IReturnOnOffPluginUnitState[]>((resolve, reject) => {
             OnOffPluginUnitState.find<IOnOffPluginUnitState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
                 resolve(docs.map((doc) => {
-                    return {
-                        connectionStatus: doc.connectionStatus,
-                        onOffState: doc.onOffState,
-                        privacyState: doc.privacyState,
-                        timestamp: doc.timestamp
-                    };
+                    if (onlineVersion && doc.privacyState === PrivacyState.LOCAL) {
+                        return {
+                            connectionStatus: ConnectionStatus.DISCONNECTED,
+                            onOffState: false,
+                            privacyState: PrivacyState.LOCAL,
+                            timestamp: doc.timestamp
+                        };
+                    } else {
+                        return {
+                            connectionStatus: doc.connectionStatus,
+                            onOffState: doc.onOffState,
+                            privacyState: doc.privacyState,
+                            timestamp: doc.timestamp
+                        };
+                    }
                 }));
             }).catch((error) => {
                 reject(error);

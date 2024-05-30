@@ -1,10 +1,10 @@
-import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
+import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
 import { BooleanStateCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
-import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/datatype";
+import { DeviceTypeId, EndpointNumber, NodeId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualContactSensor from "../virtualDevices/VirtualContactSensor.js";
@@ -173,16 +173,25 @@ export default class ContactSensor extends BaseDevice {
         });
     }
 
-    override getHistory(from: number, to: number): Promise<IReturnContactSensorState[]> {
+    override getHistory(from: number, to: number, onlineVersion: boolean): Promise<IReturnContactSensorState[]> {
         return new Promise<IReturnContactSensorState[]>((resolve, reject) => {
             ContactSensorState.find<IContactSensorState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).sort({ timestamp: 1 }).then((docs) => {
                 resolve(docs.map((doc) => {
-                    return {
-                        connectionStatus: doc.connectionStatus,
-                        booleanState: doc.booleanState,
-                        privacyState: doc.privacyState,
-                        timestamp: doc.timestamp
-                    };
+                    if (onlineVersion && doc.privacyState === PrivacyState.LOCAL) {
+                        return {
+                            connectionStatus: ConnectionStatus.DISCONNECTED,
+                            booleanState: false,
+                            privacyState: PrivacyState.LOCAL,
+                            timestamp: doc.timestamp
+                        };
+                    } else {
+                        return {
+                            connectionStatus: doc.connectionStatus,
+                            booleanState: doc.booleanState,
+                            privacyState: doc.privacyState,
+                            timestamp: doc.timestamp
+                        };
+                    }
                 }));
             }).catch((error) => {
                 reject(error);

@@ -425,10 +425,10 @@ export default class PrivacyhubBackend {
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
-            if (accessLevel !== AccessLevel.PRIVATE) {
-                res.status(401).send(`Unauthorized`);
-                return;
-            }
+            // if (accessLevel !== AccessLevel.PRIVATE) {
+            //     res.status(401).send(`Unauthorized`);
+            //     return;
+            // }
 
             // const from = req.query.from ? parseInt(req.query.from as string) : 0;
             // const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
@@ -439,7 +439,7 @@ export default class PrivacyhubBackend {
                 return;
             }
 
-            device.getHistory(0, Date.now()).then((history) => {
+            device.getHistory(0, Date.now(), accessLevel !== AccessLevel.PRIVATE).then((history) => {
                 res.send(JSON.stringify(history));
             }).catch((error) => {
                 res.status(500).send(`Error getting history: ${error}`);

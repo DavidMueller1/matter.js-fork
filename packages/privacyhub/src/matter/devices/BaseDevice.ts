@@ -324,15 +324,23 @@ export default class BaseDevice {
         });
     }
 
-    getHistory(from: number, to: number): Promise<IReturnBaseDeviceState[]> {
+    getHistory(from: number, to: number, onlineVersion: boolean): Promise<IReturnBaseDeviceState[]> {
         return new Promise<IReturnBaseDeviceState[]>((resolve, reject) => {
             BaseDeviceState.find<IBaseDeviceState>({ uniqueId: this._uniqueId, endpointId: this._endpointId.toString(), timestamp: { $gte: from, $lte: to } }).then((docs) => {
                 resolve(docs.map((doc) => {
-                    return {
-                        connectionStatus: doc.connectionStatus,
-                        privacyState: doc.privacyState,
-                        timestamp: doc.timestamp
-                    };
+                    if (onlineVersion && doc.privacyState === PrivacyState.LOCAL) {
+                        return {
+                            connectionStatus: ConnectionStatus.DISCONNECTED,
+                            privacyState: PrivacyState.LOCAL,
+                            timestamp: doc.timestamp
+                        };
+                    } else {
+                        return {
+                            connectionStatus: doc.connectionStatus,
+                            privacyState: doc.privacyState,
+                            timestamp: doc.timestamp
+                        };
+                    }
                 }));
             }).catch((error) => {
                 reject(error);
