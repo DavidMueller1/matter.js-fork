@@ -8,18 +8,21 @@ import { require } from "@project-chip/matter-node-ble.js/require";
 import { BLE_MATTER_SERVICE_UUID } from "@project-chip/matter.js/ble";
 import { Logger } from "@project-chip/matter.js/log";
 import { ByteArray } from "@project-chip/matter.js/util";
-import type { Peripheral } from "@stoprocent/noble";
+import type { Peripheral } from "@abandonware/noble";
 import { BleOptions } from "./BleNode.js";
 
 const logger = Logger.get("NobleBleClient");
-let noble: typeof import("@stoprocent/noble");
+// // process.env.NOBLE_HCI_DEVICE_ID = "1";
+// const noble = require("@stoprocent/noble");
+let noble: typeof import("@abandonware/noble");
 
 function loadNoble(hciId?: number) {
+    logger.info(`Loading Noble with hciId ${hciId} ...`);
     // load noble driver with the correct device selected
     if (hciId !== undefined) {
         process.env.NOBLE_HCI_DEVICE_ID = hciId.toString();
     }
-    noble = require("@stoprocent/noble");
+    noble = require("@abandonware/noble");
     if (typeof noble.on !== "function") {
         // The following commit broke the default exported instance of noble:
         // https://github.com/abandonware/noble/commit/b67eea246f719947fc45b1b52b856e61637a8a8e
@@ -48,7 +51,8 @@ export class NobleBleClient {
                 }`,
             );
         }
-        noble.on("stateChange", state => {
+
+        noble.on("stateChange", (state: string) => {
             this.nobleState = state;
             logger.debug(`Noble state changed to ${state}`);
             if (state === "poweredOn") {
@@ -59,7 +63,7 @@ export class NobleBleClient {
                 void this.stopScanning();
             }
         });
-        noble.on("discover", peripheral => this.handleDiscoveredDevice(peripheral));
+        noble.on("discover", (peripheral: Peripheral) => this.handleDiscoveredDevice(peripheral));
         noble.on("scanStart", () => (this.isScanning = true));
         noble.on("scanStop", () => (this.isScanning = false));
     }

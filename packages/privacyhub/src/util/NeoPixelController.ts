@@ -39,17 +39,6 @@ export default class NeoPixelController {
         this.logger.debug("Environment: " + process.env.ENVIRONMENT);
 
         const NUM_LEDS = parseInt(process.env.NUM_LEDS || "24");
-        const options = {
-            dma: 10,
-            freq: 800000,
-            gpio: 18,
-            invert: false,
-            brightness: 100,
-            stripType: ws281x.stripType.SK6812W
-        }
-
-        this.channel = ws281x(NUM_LEDS, options);
-        this.colors = this.channel.array;
 
         this.targetColor = 0x000000;
         this.currentState = LedState.OFF;
@@ -62,6 +51,19 @@ export default class NeoPixelController {
             this.logger.warn("This module is only supported on a Raspberry Pi");
             return;
         }
+
+        const options = {
+            dma: 10,
+            freq: 800000,
+            gpio: 18,
+            invert: false,
+            brightness: 100,
+            stripType: ws281x.stripType.SK6812W
+        }
+
+        this.channel = ws281x(NUM_LEDS, options);
+
+        this.colors = this.channel.array;
 
         this.logger.debug("Setup NeoPixelController...")
 
@@ -94,6 +96,10 @@ export default class NeoPixelController {
     }
 
     private displaySingleColor(options: LedStateOptions) {
+        if (this.channel == undefined || this.colors == undefined) {
+            return;
+        }
+
         this.targetColor = options.color;
 
         for (let i = 0; i < this.channel.count; i++) {
@@ -249,6 +255,9 @@ export default class NeoPixelController {
 
 
     private renderLoadingSpinner(options: LedStateOptions, spinupEffect = false) {
+        if (this.channel == undefined || this.colors == undefined) {
+            return;
+        }
         this.logger.debug("Rendering loading spinner...")
         this.busy = true;
         let hsvColor = NeoPixelController.hexToHsv(options.color);
@@ -263,6 +272,9 @@ export default class NeoPixelController {
         const tailRotationPart = tailLength / this.channel.count;
 
         new Promise<void>((resolve) => {
+            if (this.channel == undefined || this.colors == undefined) {
+                return;
+            }
             if (spinupEffect) {
                 let spinupElapsed = Date.now() - start;
                 while (spinupElapsed < rotationDuration) {
@@ -281,6 +293,9 @@ export default class NeoPixelController {
             }
         }).then(() => {
             const spinnerInterval = setInterval(() => {
+                if (this.channel == undefined || this.colors == undefined) {
+                    return;
+                }
                 const elapsed = Date.now() - start;
 
                 for (let i = 0; i < this.channel.count; i++) {
@@ -352,6 +367,9 @@ export default class NeoPixelController {
         const startTime = Date.now();
 
         const interval = setInterval(() => {
+            if (this.channel == undefined || this.colors == undefined) {
+                return;
+            }
             const elapsed = Date.now() - startTime;
             const progress = elapsed / blinkDuration;
 
@@ -383,6 +401,9 @@ export default class NeoPixelController {
     }
 
     private fadeToColor(options: LedStateOptions) {
+        if (this.channel == undefined || this.colors == undefined) {
+            return;
+        }
         this.busy = true;
 
         const duration = options.fadeDuration || 1000;
@@ -396,6 +417,9 @@ export default class NeoPixelController {
 
         const startTime = Date.now();
         const interval = setInterval(() => {
+            if (this.channel == undefined || this.colors == undefined) {
+                return;
+            }
             const elapsed = Date.now() - startTime;
             const progress = elapsed / duration;
 

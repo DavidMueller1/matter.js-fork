@@ -2,25 +2,33 @@ import { Logger } from "@project-chip/matter-node.js/log";
 
 import express, { Application, Request, Response } from "express";
 import PrivacyhubNode, { knownTypes } from "../matter/PrivacyhubNode.js";
-import { stringifyIgnoreCircular } from "../util/Util.js";
+import { stringifyIgnoreCircular, stringifyWithBigint } from "../util/Util.js";
 import NeoPixelController, { LedState } from "../util/NeoPixelController.js";
-import cors from 'cors';
-import { NodeId, EndpointNumber } from "@project-chip/matter.js/datatype";
+import cors from "cors";
+import { EndpointNumber, NodeId } from "@project-chip/matter.js/datatype";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 // import SocketServer from "../websocket/SocketServer.js";
 // import { OnOffCluster } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 // import expressJSDocSwagger from "express-jsdoc-swagger";
-
 import dotenv from "dotenv";
 // import BaseDevice from "../matter/devices/BaseDevice.js";
 import { CommissioningController } from "@project-chip/matter.js";
 import OnOffPluginUnit from "../matter/devices/OnOffPluginUnit.js";
 import DeviceManager from "../matter/devices/DeviceManager.js";
+import MqttManager from "../mqtt/MqttManager.js";
+import os from "os";
+import { PrivacyState } from "../matter/devices/BaseDevice.js";
+
 dotenv.config();
 
 const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
 const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
+
+export enum AccessLevel {
+    PRIVATE,
+    PUBLIC,
+}
 
 const WEBSOCKET_CORS = {
     origin: "*",
@@ -41,6 +49,7 @@ export default class PrivacyhubBackend {
     private readonly neoPixelController: NeoPixelController;
 
     private readonly deviceManager: DeviceManager;
+    private readonly mqttManager: MqttManager;
 
     constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
         this.logger = Logger.get("PrivacyhubBackend");
@@ -91,21 +100,19 @@ export default class PrivacyhubBackend {
         });
 
         // Setup devices
-        this.deviceManager = DeviceManager.getInstance();
+        this.deviceManager = new DeviceManager();
+
+        this.mqttManager = new MqttManager((proxyId, state) => {
+            this.deviceManager.setPrivacyStateProxy(proxyId, state);
+        });
+
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
-            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io).then((devices) => {
+            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
             }).catch((error) => {
                 this.logger.error(`Error generating devices: ${error}`);
             });
         });
-        // this.app.listen(this.port, () => {
-        //     this.logger.info(`Server is Fire at http://localhost:${this.port}`);
-        //     this.neoPixelController.switchToState({
-        //         state: LedState.BLINKING,
-        //         color: NeoPixelController.hsvToHex(120, 1, 1)
-        //     });
-        // });
     }
 
     // private setupEventCallbacks(): Promise<void> {
@@ -231,14 +238,14 @@ export default class PrivacyhubBackend {
                 threadNetworkName,
                 threadNetworkOperationalDataset
             ).then((node) => {
-                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io).then((devices) => {
+                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                     this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
                     this.neoPixelController.switchToState({
                         state: LedState.BLINKING,
                         color: NeoPixelController.hsvToHex(120, 1, 1)
                     });
 
-                    res.status(201).send(JSON.stringify({
+                    res.status(201).send(stringifyWithBigint({
                         nodeId: node.nodeId
                     }));
                 }).catch((error) => {
@@ -263,14 +270,22 @@ export default class PrivacyhubBackend {
          *
          * @apiSuccess {Object[]} nodes List of nodes
          */
-        this.app.get('/nodes', (_, res: Response) => {
-            const nodes = this.deviceManager.getDevices().map((device) => {
+        this.app.get('/nodes', (req, res: Response) => {
+            // get accessLevel query param
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
                 return {
                     nodeId: device.nodeId,
                     endpointId: device.endpointId,
                     vendor: device.vendor,
                     product: device.product,
                     type: knownTypes[device.type] ?? "Unknown",
+                    manualPairingCode: device.getManualPairingCode(),
+                    qrCode: device.getQRCode(),
+                    connectionStatus: device.getConnectionStatus(),
+                    privacyState: device.getPrivacyState(),
+                    connectedProxy: device.getAssignedProxy()
                 }
             });
             res.send(stringifyIgnoreCircular(nodes));
@@ -290,14 +305,17 @@ export default class PrivacyhubBackend {
         this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             this.logger.info("Received OnOff state change request:");
             console.log(req.params)
-            let toggle = false;
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
             let newState = false;
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
-            if (!req.body.state) {
-                toggle = true;
+            if (req.body.state === undefined) {
+                res.status(400).send(`Missing required field 'state'`);
+                return;
             } else {
                 newState = req.body.state;
             }
@@ -309,18 +327,27 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
-                device.switchOnOff(newState, toggle).then(() => {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
+                device.switchOnOff(newState).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
+                    this.logger.error(`Error setting state: ${error}`);
+                    this.logger.error(error.stack);
                     res.status(500).send(`Error setting state: ${error}`);
                 });
             } else {
+                this.logger.error(`Device is not an OnOffPluginUnit`);
                 res.status(500).send(`Device is not an OnOffPluginUnit`);
             }
         });
 
 
         this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
 
@@ -331,6 +358,10 @@ export default class PrivacyhubBackend {
             }
 
             if (device instanceof OnOffPluginUnit) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
                 res.send(JSON.stringify({
                     state: device.onOffState
                 }));
@@ -339,9 +370,65 @@ export default class PrivacyhubBackend {
             }
         });
 
+        this.app.post('/nodes/:nodeId/:endpointId/connectedProxy', (req: Request, res: Response) => {
+            this.logger.info("Received connected proxy change request:");
+            console.log(req.params)
+            const connectedProxy = req.body.connectedProxy;
+
+            // TODO: Maybe restrict to local access?
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            this.deviceManager.setConnectedProxy(nodeId, endpointId, connectedProxy).then(() => {
+                res.send("Set connected proxy successfully");
+                const devicePrivacyState = this.deviceManager.getDevice(nodeId, endpointId)?.getPrivacyState();
+                if (devicePrivacyState !== undefined) {
+                    this.mqttManager.publishPrivacyStateUpdate(connectedProxy, devicePrivacyState);
+                }
+            }).catch((error) => {
+                res.status(500).send(`Error setting connected proxy: ${error}`);
+            });
+        });
+
+        this.app.post('/nodes/:nodeId/:endpointId/privacyState', (req: Request, res: Response) => {
+            this.logger.info("Received privacy state change request:");
+            console.log(req.params)
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const privacyState = req.body.privacyState;
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+            if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() !== PrivacyState.ONLINE) {
+                res.status(401).send(`Unauthorized`);
+                return;
+            }
+
+            this.deviceManager.setPrivacyState(nodeId, endpointId, privacyState); // TODO: Check if this succeeds
+            const assignedProxy = device.getAssignedProxy();
+            if (assignedProxy !== 0) {
+                this.mqttManager.publishPrivacyStateUpdate(assignedProxy, privacyState);
+            }
+            res.send("Set privacy state successfully");
+        });
+
         this.app.get('/nodes/:nodeId/:endpointId/history', (req: Request, res: Response) => {
             const nodeId = NodeId(BigInt(req.params.nodeId));
             const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+            if (accessLevel !== AccessLevel.PRIVATE) {
+                res.status(401).send(`Unauthorized`);
+                return;
+            }
 
             // const from = req.query.from ? parseInt(req.query.from as string) : 0;
             // const to = req.query.to ? parseInt(req.query.to as string) : Date.now();
@@ -357,6 +444,39 @@ export default class PrivacyhubBackend {
             }).catch((error) => {
                 res.status(500).send(`Error getting history: ${error}`);
             });
+        });
+
+
+        this.app.post('/proxy/:proxyId/updatepos', (req: Request, res: Response) => {
+            const proxyId = parseInt(req.params.proxyId);
+
+            const row = req.body.row;
+            const col = req.body.col;
+
+            this.logger.info(`Received proxy location update for proxy ${proxyId}: ${row},${col}`);
+
+            if (proxyId > parseInt(process.env.NUM_PROXIES ?? "999")) {
+                res.status(400).send(`Invalid proxy id`);
+                return;
+            }
+
+            if (row === undefined || col === undefined) {
+                res.status(400).send(`Missing required fields 'row' or 'col'`);
+                return;
+            }
+
+            if (row < 1 || row > 16) {
+                res.status(400).send(`Invalid row. Must be between 1 and 16`);
+                return;
+            }
+
+            if (col < 1 || col > 16) {
+                res.status(400).send(`Invalid col. Must be between 1 and 16`);
+                return;
+            }
+
+            this.mqttManager.publishProxyLocationUpdate(proxyId, row, col);
+            res.send("Published proxy location update successfully");
         });
 
 
@@ -433,10 +553,53 @@ export default class PrivacyhubBackend {
 
     private setupWebSocket(): void {
         this.io.on('connection', (socket) => {
+
+            // get host
+            const host = socket.handshake.headers.host;
+            this.logger.info(`========== New socket connection from ${host}`);
+
             this.logger.info('a user connected');
             socket.on('disconnect', () => {
                 this.logger.info('user disconnected');
             });
         });
+    }
+
+    private checkAccessLevel(req: Request): AccessLevel {
+        const host = req.get('host');
+        if (host === undefined) {
+            return AccessLevel.PUBLIC;
+        }
+        const substrings = host.split(':');
+        const ip = substrings[0];
+        const addresses = this.getLocalIpAddresses();
+        if (addresses.includes(ip)) {
+            return AccessLevel.PRIVATE;
+        } else {
+            return AccessLevel.PUBLIC;
+        }
+    }
+
+    /**
+     * Get local IP addresses of the machine
+     * @private
+     */
+    private getLocalIpAddresses(): string[] {
+        const networkInterfaces = os.networkInterfaces();
+
+        const addresses: string[] = [];
+
+        for (const [_, interfaces] of Object.entries(networkInterfaces)) {
+            if (interfaces === undefined) {
+                continue;
+            }
+            for (const iface of interfaces) {
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    addresses.push(iface.address);
+                }
+            }
+        }
+
+        return addresses;
     }
 }

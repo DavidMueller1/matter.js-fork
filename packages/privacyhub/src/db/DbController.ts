@@ -13,17 +13,7 @@ export default class DbController {
     // private readonly client: MongoClient;
     private readonly logger: Logger = Logger.get("DbController");
 
-    // Make it singleton
-    private static _instance: DbController;
-
-    public static getInstance = (): DbController => {
-        if (!DbController._instance) {
-            DbController._instance = new DbController();
-        }
-        return DbController._instance;
-    }
-
-    private constructor() {
+    constructor() {
         if (!process.env.MONGO_URI) {
             throw new Error("MONGO_URI environment variable is not set");
         }

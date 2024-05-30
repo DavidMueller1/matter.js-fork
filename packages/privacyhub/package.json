@@ -29,6 +29,8 @@
     "matter-controller": "matter-run src/matter/ControllerNode.ts",
     "privacyhub-backend": "matter-run src/express/PrivacyhubBackend.ts",
     "privacyhub-app": "matter-run src/app.ts",
+    "privacyhub-mqtt": "matter-run src/testing/MqttTest.ts",
+    "privacyhub-noble": "matter-run src/testing/NobleTest.ts",
     "test-device": "matter-run src/testing/DeviceNode.ts",
     "test-device-full": "matter-run src/testing/DeviceNodeFull.ts",
     "noble-test": "matter-run src/NobleTest.ts",
@@ -72,7 +74,9 @@
     "express-oas-validator": "^3.0.1",
     "socket.io": "^4.7.5",
     "mongodb": "^6.5.0",
-    "mongoose": "^8.3.1"
+    "mongoose": "^8.3.1",
+    "mqtt": "^5.6.0",
+    "@abandonware/noble": "^1.9.2-25"
   },
   "engines": {
     "_comment": "For Crypto.hkdf support",
