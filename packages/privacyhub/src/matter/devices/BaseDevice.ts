@@ -224,10 +224,17 @@ export default class BaseDevice {
 
     setPrivacyState(state: PrivacyState, isProxyUpdate: boolean) {
         logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
+        const lastPrivacyState = this.privacyState;
         this.privacyState = state;
 
         this.updateVirtualDeviceState();
         this.updateSocketAndDB(isProxyUpdate ? ChangeType.PRIVACY_STATE_PROXY : ChangeType.PRIVACY_STATE_HUB);
+        if (
+            (lastPrivacyState == PrivacyState.LOCAL && state > PrivacyState.LOCAL)
+            || (lastPrivacyState > PrivacyState.LOCAL && state == PrivacyState.LOCAL)
+        ) {
+            this.io.emit('onlinePrivacyStateChange');
+        }
     }
 
     getPrivacyState(): PrivacyState {
