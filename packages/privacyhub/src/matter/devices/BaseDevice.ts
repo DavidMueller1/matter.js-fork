@@ -34,7 +34,7 @@ export enum ChangeType {
 export const stateColorMapping = {
     [PrivacyState.LOCAL]: { h: 103, s: 0.9, v: 0.5 },
     [PrivacyState.ONLINE]: { h: 34, s: 0.9, v: 0.5 },
-    [PrivacyState.ONLINE_SHARED]: { h: 103, s: 0.9, v: 0.5 },
+    [PrivacyState.ONLINE_SHARED]: { h: 8, s: 0.9, v: 0.5 },
 }
 
 // DB schema
