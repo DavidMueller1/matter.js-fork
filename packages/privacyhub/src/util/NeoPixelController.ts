@@ -2,6 +2,8 @@ import ws281x from "rpi-ws281x-native";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { mod } from "./Util.js";
 
+const logger = Logger.get("NeoPixelController");
+
 export enum LedState {
     OFF = "off",
     SINGLE = "single",
@@ -23,7 +25,6 @@ export interface LedStateOptions {
 }
 
 export default class NeoPixelController {
-    private readonly logger: Logger;
     private readonly channel;
     private readonly colors;
 
@@ -35,8 +36,7 @@ export default class NeoPixelController {
     private stateSwitchQueue: LedStateOptions[]
 
     constructor() {
-        this.logger = Logger.get("NeoPixelController");
-        this.logger.debug("Environment: " + process.env.ENVIRONMENT);
+        logger.debug("Environment: " + process.env.ENVIRONMENT);
 
         const NUM_LEDS = parseInt(process.env.NUM_LEDS || "24");
 
@@ -48,7 +48,7 @@ export default class NeoPixelController {
         this.stateSwitchQueue = [];
 
         if (process.env.ENVIRONMENT !== "pi") {
-            this.logger.warn("This module is only supported on a Raspberry Pi");
+            logger.warn("This module is only supported on a Raspberry Pi");
             return;
         }
 
@@ -65,7 +65,7 @@ export default class NeoPixelController {
 
         this.colors = this.channel.array;
 
-        this.logger.debug("Setup NeoPixelController...")
+        logger.debug("Setup NeoPixelController...")
 
         // this.spinnerOptions = {
         //     rotationDuration: parseInt(process.env.SPINNER_ROTATION_DURATION || "1000"),
@@ -111,10 +111,10 @@ export default class NeoPixelController {
 
     switchToState(options: LedStateOptions) {
         if (process.env.ENVIRONMENT !== "pi") {
-            this.logger.warn("This module is only supported on a Raspberry Pi");
+            logger.warn("This module is only supported on a Raspberry Pi");
             return;
         }
-        this.logger.debug(`Switching to state: ${options.state}`);
+        logger.debug(`Switching to state: ${options.state}`);
 
         if (this.switchingState) {
             this.stateSwitchQueue.push(options);
@@ -215,7 +215,7 @@ export default class NeoPixelController {
     }
 
     private switchFromLoading(options: LedStateOptions) {
-        this.logger.debug(`Switching from loading: ${JSON.stringify(options)}`);
+        logger.debug(`Switching from loading: ${JSON.stringify(options)}`);
         switch (this.currentState) {
             case LedState.OFF:
                 this.targetColor = 0x000000;
@@ -258,14 +258,14 @@ export default class NeoPixelController {
         if (this.channel == undefined || this.colors == undefined) {
             return;
         }
-        this.logger.debug("Rendering loading spinner...")
+        logger.debug("Rendering loading spinner...")
         this.busy = true;
         let hsvColor = NeoPixelController.hexToHsv(options.color);
         const rotationDuration = options.loadingRotationDuration || 1000;
         const tailLength = options.loadingTailLength || 12;
-        this.logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
-        this.logger.debug(`Tail length: ${tailLength}`);
-        this.logger.debug(`Total channel count: ${this.channel.count}`);
+        logger.debug(`HSV color: ${JSON.stringify(hsvColor)}`);
+        logger.debug(`Tail length: ${tailLength}`);
+        logger.debug(`Total channel count: ${this.channel.count}`);
 
         const start = Date.now();
         const durationPerIndex = rotationDuration / this.channel.count;
@@ -335,7 +335,7 @@ export default class NeoPixelController {
                                 value = value * Math.max(0, 1 - (currentRotation / tailRotationPart));
                             }
                             // if (i == 0) {
-                            //     this.logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
+                            //     logger.debug(`Hue: ${hue}, Saturation: ${saturation}, Value: ${value}`);
                             // }
                             this.colors[i] = NeoPixelController.hsvToHex(hue, saturation, value);
                         }
@@ -355,7 +355,7 @@ export default class NeoPixelController {
 
     private renderBlinking(options: LedStateOptions, startOn = false, finishOn = false) {
         this.busy = true;
-        let blinkDuration = options.blinkDuration || 600;
+        let blinkDuration = options.blinkDuration || 1000;
         const blinkCount = options.blinkCount || 2;
         const cycleDuration = blinkDuration / blinkCount;
         if (startOn) blinkDuration += cycleDuration / 2;

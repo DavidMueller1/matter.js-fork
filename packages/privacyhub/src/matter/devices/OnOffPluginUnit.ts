@@ -9,6 +9,7 @@ import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 import MqttManager from "../../mqtt/MqttManager.js";
+import NeoPixelController from "../../util/NeoPixelController.js";
 
 const logger = Logger.get("OnOffPluginUnit");
 
@@ -57,9 +58,10 @@ export default class OnOffPluginUnit extends BaseDevice {
         commissioningController: CommissioningController,
         io: Server,
         mqttManager: MqttManager,
+        neoPixelController: NeoPixelController,
         stateInformationCallback?: (peerNodeId: NodeId, state: NodeStateInformation) => void
     ) {
-        super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, mqttManager, stateInformationCallback);
+        super(uniqueId, type, nodeId, endpointId, pairedNode, endpoint, commissioningController, io, mqttManager, neoPixelController, stateInformationCallback);
     }
 
     override setBaseDevice() {

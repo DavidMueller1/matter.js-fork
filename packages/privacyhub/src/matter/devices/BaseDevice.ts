@@ -1,12 +1,13 @@
-import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
+import { NodeStateInformation, PairedNode } from "@project-chip/matter-node.js/device";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter-node.js";
-import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter-node.js/datatype";
+import { DeviceTypeId, EndpointNumber, NodeId } from "@project-chip/matter-node.js/datatype";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import { Server } from "socket.io";
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
 import VirtualBaseDevice from "../virtualDevices/VirtualBaseDevice.js";
 import MqttManager from "../../mqtt/MqttManager.js";
+import NeoPixelController, { LedState } from "../../util/NeoPixelController.js";
 
 const logger = Logger.get("BaseDevice");
 
@@ -28,6 +29,12 @@ export enum ChangeType {
     DEVICE_EVENT_HUB,
     DEVICE_EVENT_THIRD_PARTY,
     DEVICE_EVENT_DEVICE,
+}
+
+export const stateColorMapping = {
+    [PrivacyState.LOCAL]: 0x00FF00,
+    [PrivacyState.ONLINE]: 0xFF0000,
+    [PrivacyState.ONLINE_SHARED]: 0xFFA500,
 }
 
 // DB schema
@@ -80,6 +87,7 @@ export default class BaseDevice {
     protected commissioningController: CommissioningController;
     protected io: Server;
     protected mqttManager: MqttManager;
+    protected neoPixelController: NeoPixelController;
 
     protected _uniqueId: string;
     protected _nodeId: NodeId;
@@ -109,6 +117,7 @@ export default class BaseDevice {
         commissioningController: CommissioningController,
         io: Server,
         mqttManager: MqttManager,
+        neoPixelController: NeoPixelController,
         stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void
     ){
         this._uniqueId = uniqueId;
@@ -122,6 +131,7 @@ export default class BaseDevice {
         this.commissioningController = commissioningController;
         this.io = io;
         this.mqttManager = mqttManager;
+        this.neoPixelController = neoPixelController;
         this.stateInformationCallback = stateInformationCallback;
 
         this.setBaseDevice();
@@ -226,6 +236,13 @@ export default class BaseDevice {
         logger.debug(`Privacy state of ${this.nodeId.toString()} changed to ${state}`);
         const lastPrivacyState = this.privacyState;
         this.privacyState = state;
+
+        if (lastPrivacyState !== this.privacyState) {
+            this.neoPixelController.switchToState({
+                state: LedState.BLINKING,
+                color: stateColorMapping[state],
+            })
+        }
 
         this.updateVirtualDeviceState();
         this.updateSocketAndDB(isProxyUpdate ? ChangeType.PRIVACY_STATE_PROXY : ChangeType.PRIVACY_STATE_HUB);

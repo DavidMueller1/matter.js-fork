@@ -12,13 +12,17 @@ import ContactSensor from "./ContactSensor.js";
 import { stringifyWithBigint } from "../../util/Util.js";
 import { AccessLevel } from "../../express/PrivacyhubBackend.js";
 import MqttManager from "../../mqtt/MqttManager.js";
+import NeoPixelController from "../../util/NeoPixelController.js";
 
 export default class DeviceManager {
 
     private logger: Logger = Logger.get("DeviceManager");
+    private neoPixelController: NeoPixelController;
     private devices: BaseDevice[] = [];
 
-    constructor() {}
+    constructor(neoPixelController: NeoPixelController) {
+        this.neoPixelController = neoPixelController;
+    }
 
     public generateDevices(
         nodeId: NodeId,
@@ -70,7 +74,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(onOffPluginUnit);
                                             devices.push(onOffPluginUnit);
@@ -85,7 +90,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(contactSensor);
                                             devices.push(contactSensor);
@@ -101,7 +107,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(unknownDevice);
                                             devices.push(unknownDevice);

@@ -100,7 +100,7 @@ export default class PrivacyhubBackend {
         });
 
         // Setup devices
-        this.deviceManager = new DeviceManager();
+        this.deviceManager = new DeviceManager(this.neoPixelController);
 
         this.mqttManager = new MqttManager((proxyId, state) => {
             this.deviceManager.setPrivacyStateProxy(proxyId, state);
