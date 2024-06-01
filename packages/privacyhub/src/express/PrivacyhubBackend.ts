@@ -59,7 +59,7 @@ export default class PrivacyhubBackend {
         this.neoPixelController = new NeoPixelController()
         this.neoPixelController.switchToState({
             state: LedState.LOADING,
-            color: NeoPixelController.hsvToHex(30, 1, 1)
+            color: NeoPixelController.hsvToHex(30, 0.5, 0.6)
         });
 
 
@@ -93,10 +93,6 @@ export default class PrivacyhubBackend {
 
         this.httpServer.listen(this.port, () => {
             this.logger.info(`Server is Fire at http://localhost:${this.port}`);
-            this.neoPixelController.switchToState({
-                state: LedState.BLINKING,
-                color: NeoPixelController.hsvToHex(120, 1, 1)
-            });
         });
 
         // Setup devices
@@ -106,12 +102,26 @@ export default class PrivacyhubBackend {
             this.deviceManager.setPrivacyStateProxy(proxyId, state);
         });
 
+        const devicePomises: Promise<void>[] = [];
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
-            this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
+            const promise = this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
                 this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
             }).catch((error) => {
                 this.logger.error(`Error generating devices: ${error}`);
             });
+            devicePomises.push(promise);
+        });
+        Promise.all(devicePomises).then(() => {
+            this.logger.info("Devices generated successfully");
+            this.neoPixelController.switchToState({
+                state: LedState.BLINKING,
+                color: NeoPixelController.hsvToHex(110, 0.9, 0.5),
+                blinkDuration: 1000,
+                blinkCount: 1,
+                fadeDuration: 500
+            });
+        }).catch((error) => {
+            this.logger.error(`Error generating devices: ${error}`);
         });
     }
 
