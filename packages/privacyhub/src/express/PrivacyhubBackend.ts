@@ -531,7 +531,7 @@ export default class PrivacyhubBackend {
             this.logger.info(JSON.stringify(req.body, null, 2));
 
             // Get LedState enum from ledState string
-            const targetState: LedState = LedState[req.body.ledState as keyof typeof LedState];
+            const targetState: LedState = req.body.ledState;
             const color = NeoPixelController.hsvToHex(req.body.colorHsv.hue, req.body.colorHsv.saturation, req.body.colorHsv.value);
             const options = {
                 state: targetState,
@@ -544,6 +544,8 @@ export default class PrivacyhubBackend {
                 pulsingSecondColor: req.body.pulsingSecondColor,
                 fadeDuration: req.body.fadeDuration
             }
+            this.logger.info(`Setting LED state to ${targetState} with color ${color}`);
+            this.logger.info(options);
 
             // Set LED state
             this.neoPixelController.switchToState(options);
