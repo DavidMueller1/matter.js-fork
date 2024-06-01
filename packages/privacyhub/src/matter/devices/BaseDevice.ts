@@ -238,9 +238,10 @@ export default class BaseDevice {
         this.privacyState = state;
 
         if (lastPrivacyState !== this.privacyState) {
+            const hsv = stateColorMapping[this.privacyState];
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
-                color: NeoPixelController.hsvToHex(30, 1, 1)
+                color: NeoPixelController.hsvToHex(hsv.h, hsv.s, hsv.v),
             })
         }
 
