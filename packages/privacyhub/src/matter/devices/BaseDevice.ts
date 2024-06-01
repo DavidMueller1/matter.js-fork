@@ -32,9 +32,9 @@ export enum ChangeType {
 }
 
 export const stateColorMapping = {
-    [PrivacyState.LOCAL]: 0x00FF00,
-    [PrivacyState.ONLINE]: 0xFF0000,
-    [PrivacyState.ONLINE_SHARED]: 0xFFA500,
+    [PrivacyState.LOCAL]: 0x53b870,
+    [PrivacyState.ONLINE]: 0x41a6f2,
+    [PrivacyState.ONLINE_SHARED]: 0x495ce0,
 }
 
 // DB schema
