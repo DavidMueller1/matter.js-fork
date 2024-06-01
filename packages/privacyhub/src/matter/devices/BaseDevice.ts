@@ -32,9 +32,9 @@ export enum ChangeType {
 }
 
 export const stateColorMapping = {
-    [PrivacyState.LOCAL]: 0x53b870,
-    [PrivacyState.ONLINE]: 0x41a6f2,
-    [PrivacyState.ONLINE_SHARED]: 0x495ce0,
+    [PrivacyState.LOCAL]: { h: 103, s: 0.9, v: 0.5 },
+    [PrivacyState.ONLINE]: { h: 34, s: 0.9, v: 0.5 },
+    [PrivacyState.ONLINE_SHARED]: { h: 103, s: 0.9, v: 0.5 },
 }
 
 // DB schema
@@ -240,7 +240,7 @@ export default class BaseDevice {
         if (lastPrivacyState !== this.privacyState) {
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
-                color: stateColorMapping[state],
+                color: NeoPixelController.hsvToHex(30, 1, 1)
             })
         }
 
