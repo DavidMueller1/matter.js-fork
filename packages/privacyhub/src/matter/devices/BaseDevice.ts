@@ -83,6 +83,7 @@ const BaseDeviceState = model<IBaseDeviceState>('BaseDeviceState', baseDeviceSta
 
 export default class BaseDevice {
     protected isBaseDevice = true;
+    protected initialized = false;
 
     protected commissioningController: CommissioningController;
     protected io: Server;
@@ -140,6 +141,7 @@ export default class BaseDevice {
 
         this.initialize().then(() => {
             logger.info(`Initialized device ${this._nodeId} with unique ID ${this._uniqueId}`);
+            this.initialized = true;
         }).catch((error) => {
             logger.error(`Failed to connect to node: ${error}`);
             this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
@@ -237,7 +239,7 @@ export default class BaseDevice {
         const lastPrivacyState = this.privacyState;
         this.privacyState = state;
 
-        if (lastPrivacyState !== this.privacyState) {
+        if (this.initialized && lastPrivacyState !== this.privacyState) {
             const hsv = stateColorMapping[this.privacyState];
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
