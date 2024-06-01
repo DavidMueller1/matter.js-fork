@@ -20,10 +20,33 @@ import MqttManager from "../mqtt/MqttManager.js";
 import os from "os";
 import { PrivacyState } from "../matter/devices/BaseDevice.js";
 
+const logger = Logger.get("PrivacyhubBackend");
+
 dotenv.config();
 
-const threadNetworkName = process.env.THREAD_NETWORK_NAME || "GuguGaga";
-const threadNetworkOperationalDataset = process.env.THREAD_NETWORK_OPERATIONAL_DATASET || "";
+if (!process.env.THREAD_NETWORK_NAME) {
+    logger.error("Missing required environment variable THREAD_NETWORK_NAME");
+    process.exit(1);
+}
+const THREAD_NETWORK_NAME = process.env.THREAD_NETWORK_NAME;
+
+if (!process.env.THREAD_NETWORK_OPERATIONAL_DATASET) {
+    logger.error("Missing required environment variable THREAD_NETWORK_OPERATIONAL_DATASET");
+    process.exit(1);
+}
+const THREAD_NETWORK_OPERATIONAL_DATASET = process.env.THREAD_NETWORK_OPERATIONAL_DATASET;
+
+if (!process.env.WIFI_SSID) {
+    logger.error("Missing required environment variable WIFI_SSID");
+    process.exit(1);
+}
+const WIFI_SSID = process.env.WIFI_SSID;
+
+if (!process.env.WIFI_PASSWORD) {
+    logger.error("Missing required environment variable WIFI_PASSWORD");
+    process.exit(1);
+}
+const WIFI_PASSWORD = process.env.WIFI_PASSWORD;
 
 export enum AccessLevel {
     PRIVATE,
@@ -42,7 +65,6 @@ export default class PrivacyhubBackend {
     private readonly io;
 
     private readonly port: number;
-    private readonly logger: Logger;
 
     private readonly privacyhubNode: PrivacyhubNode;
     private readonly commissioningController: CommissioningController;
@@ -52,8 +74,7 @@ export default class PrivacyhubBackend {
     private readonly mqttManager: MqttManager;
 
     constructor(privacyhubNode: PrivacyhubNode, commissioningController: CommissioningController) {
-        this.logger = Logger.get("PrivacyhubBackend");
-        this.logger.info("Starting Privacyhub backend...")
+        logger.info("Starting Privacyhub backend...")
 
         // Setup NeoPixelController
         this.neoPixelController = new NeoPixelController()
@@ -86,13 +107,13 @@ export default class PrivacyhubBackend {
         // this.setupSwagger();
         this.setupWebSocket();
         // this.setupEventCallbacks().then(() => {
-        //     this.logger.info("Event callbacks setup successfully");
+        //     logger.info("Event callbacks setup successfully");
         // }).catch((error) => {
-        //     this.logger.error(`Error setting up event callbacks: ${error}`);
+        //     logger.error(`Error setting up event callbacks: ${error}`);
         // });
 
         this.httpServer.listen(this.port, () => {
-            this.logger.info(`Server is Fire at http://localhost:${this.port}`);
+            logger.info(`Server is Fire at http://localhost:${this.port}`);
         });
 
         // Setup devices
@@ -105,14 +126,14 @@ export default class PrivacyhubBackend {
         const devicePomises: Promise<void>[] = [];
         this.commissioningController.getCommissionedNodes().forEach((nodeId) => {
             const promise = this.deviceManager.generateDevices(nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
-                this.logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
+                logger.info(`Generated ${devices.length} devices for node ${nodeId.toString()}`);
             }).catch((error) => {
-                this.logger.error(`Error generating devices: ${error}`);
+                logger.error(`Error generating devices: ${error}`);
             });
             devicePomises.push(promise);
         });
         Promise.all(devicePomises).then(() => {
-            this.logger.info("Devices generated successfully");
+            logger.info("Devices generated successfully");
             this.neoPixelController.switchToState({
                 state: LedState.BLINKING,
                 color: NeoPixelController.hsvToHex(110, 0.9, 0.5),
@@ -121,7 +142,7 @@ export default class PrivacyhubBackend {
                 fadeDuration: 500
             });
         }).catch((error) => {
-            this.logger.error(`Error generating devices: ${error}`);
+            logger.error(`Error generating devices: ${error}`);
         });
     }
 
@@ -135,7 +156,7 @@ export default class PrivacyhubBackend {
     //                     const deviceType = types[0].code;
     //                     // Check if the device type is a key of knownTypes
     //                     if (!knownTypes[deviceType]) {
-    //                         this.logger.warn(`Unknown device type: ${deviceType}`);
+    //                         logger.warn(`Unknown device type: ${deviceType}`);
     //                     } else {
     //                         switch (deviceType) {
     //                             case 266:
@@ -144,20 +165,20 @@ export default class PrivacyhubBackend {
     //
     //                                 if (onOffCluster !== undefined) {
     //                                     onOffCluster.subscribeOnOffAttribute((state) => {
-    //                                         this.logger.info(`OnOff state changed to ${state}`);
+    //                                         logger.info(`OnOff state changed to ${state}`);
     //                                         this.io.emit('onOffState', {
     //                                             nodeId: node.nodeId.toString(),
     //                                             state: state
     //                                         });
     //                                     }, 1, 10).then(() => {
-    //                                         this.logger.debug(`Subscribed to OnOff attribute`);
+    //                                         logger.debug(`Subscribed to OnOff attribute`);
     //                                         resolve();
     //                                     }).catch((error) => {
-    //                                         this.logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
+    //                                         logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
     //                                         reject();
     //                                     });
     //                                 } else {
-    //                                     this.logger.error(`Device does not have OnOff cluster`);
+    //                                     logger.error(`Device does not have OnOff cluster`);
     //                                     reject();
     //                                 }
     //                                 break;
@@ -228,8 +249,8 @@ export default class PrivacyhubBackend {
 
         this.app.post('/pairing/ble-thread', (req: Request, res: Response) => {
             // Log JSON body
-            this.logger.info("Received BLE Thread pairing request:");
-            this.logger.info(JSON.stringify(req.body, null, 2));
+            logger.info("Received BLE Thread pairing request:");
+            logger.info(JSON.stringify(req.body, null, 2));
 
             // Check if the request body has the required fields
             if (!req.body.pairingCode) {
@@ -245,11 +266,11 @@ export default class PrivacyhubBackend {
 
             this.privacyhubNode.commissionNodeBLEThread(
                 req.body.pairingCode,
-                threadNetworkName,
-                threadNetworkOperationalDataset
+                THREAD_NETWORK_NAME,
+                THREAD_NETWORK_OPERATIONAL_DATASET
             ).then((node) => {
                 this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
-                    this.logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
+                    logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
                     this.neoPixelController.switchToState({
                         state: LedState.BLINKING,
                         color: NeoPixelController.hsvToHex(120, 1, 1)
@@ -259,7 +280,53 @@ export default class PrivacyhubBackend {
                         nodeId: node.nodeId
                     }));
                 }).catch((error) => {
-                    this.logger.error(`Error generating devices: ${error}`);
+                    logger.error(`Error generating devices: ${error}`);
+                });
+
+
+            }).catch((error) => {
+                this.neoPixelController.switchToState({
+                    state: LedState.BLINKING,
+                    color: NeoPixelController.hsvToHex(0, 1, 1)
+                });
+                res.status(500).send(`Error commissioning node: ${error}`);
+            });
+        });
+
+        this.app.post('/pairing/ble-wifi', (req: Request, res: Response) => {
+            // Log JSON body
+            logger.info("Received BLE WiFi pairing request:");
+            logger.info(JSON.stringify(req.body, null, 2));
+
+            // Check if the request body has the required fields
+            if (!req.body.pairingCode) {
+                res.status(400).send(JSON.stringify({
+                    message: "Missing required field 'pairingCode'"
+                }));
+                return;
+            }
+            this.neoPixelController.switchToState({
+                state: LedState.LOADING,
+                color: NeoPixelController.hsvToHex(235, 1, 1)
+            });
+
+            this.privacyhubNode.commissionNodeBLEWiFi(
+                req.body.pairingCode,
+                WIFI_SSID,
+                WIFI_PASSWORD
+            ).then((node) => {
+                this.deviceManager.generateDevices(node.nodeId, this.commissioningController, this.io, this.mqttManager).then((devices) => {
+                    logger.info(`Generated ${devices.length} devices for node ${node.nodeId.toString()}`);
+                    this.neoPixelController.switchToState({
+                        state: LedState.BLINKING,
+                        color: NeoPixelController.hsvToHex(120, 1, 1)
+                    });
+
+                    res.status(201).send(stringifyWithBigint({
+                        nodeId: node.nodeId
+                    }));
+                }).catch((error) => {
+                    logger.error(`Error generating devices: ${error}`);
                 });
 
 
@@ -313,7 +380,7 @@ export default class PrivacyhubBackend {
 
 
         this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
-            this.logger.info("Received OnOff state change request:");
+            logger.info("Received OnOff state change request:");
             console.log(req.params)
 
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
@@ -344,12 +411,12 @@ export default class PrivacyhubBackend {
                 device.switchOnOff(newState, true).then(() => {
                     res.send("Set state successfully");
                 }).catch((error) => {
-                    this.logger.error(`Error setting state: ${error}`);
-                    this.logger.error(error.stack);
+                    logger.error(`Error setting state: ${error}`);
+                    logger.error(error.stack);
                     res.status(500).send(`Error setting state: ${error}`);
                 });
             } else {
-                this.logger.error(`Device is not an OnOffPluginUnit`);
+                logger.error(`Device is not an OnOffPluginUnit`);
                 res.status(500).send(`Device is not an OnOffPluginUnit`);
             }
         });
@@ -381,7 +448,7 @@ export default class PrivacyhubBackend {
         });
 
         this.app.post('/nodes/:nodeId/:endpointId/connectedProxy', (req: Request, res: Response) => {
-            this.logger.info("Received connected proxy change request:");
+            logger.info("Received connected proxy change request:");
             console.log(req.params)
             const connectedProxy = req.body.connectedProxy;
 
@@ -402,7 +469,7 @@ export default class PrivacyhubBackend {
         });
 
         this.app.post('/nodes/:nodeId/:endpointId/privacyState', (req: Request, res: Response) => {
-            this.logger.info("Received privacy state change request:");
+            logger.info("Received privacy state change request:");
             console.log(req.params)
 
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
@@ -463,7 +530,7 @@ export default class PrivacyhubBackend {
             const row = req.body.row;
             const col = req.body.col;
 
-            this.logger.info(`Received proxy location update for proxy ${proxyId}: ${row},${col}`);
+            logger.info(`Received proxy location update for proxy ${proxyId}: ${row},${col}`);
 
             if (proxyId > parseInt(process.env.NUM_PROXIES ?? "999")) {
                 res.status(400).send(`Invalid proxy id`);
@@ -498,7 +565,7 @@ export default class PrivacyhubBackend {
         //         for (const device of devices) {
         //             const deviceTypes = device.getDeviceTypes()
         //             // const clusterServer = device.getClusterServerById(ClusterId(6));
-        //             this.logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
+        //             logger.info(`Device ${device.name}: ${stringifyIgnoreCircular(deviceTypes)}`);
         //             endpoints.push(deviceTypes);
         //         }
         //         res.send(stringifyIgnoreCircular(endpoints));
@@ -537,8 +604,8 @@ export default class PrivacyhubBackend {
          */
         this.app.post('/debug/led/state', (req: Request, res: Response) => {
             // Log JSON body
-            this.logger.info("Received LED state change request:");
-            this.logger.info(JSON.stringify(req.body, null, 2));
+            logger.info("Received LED state change request:");
+            logger.info(JSON.stringify(req.body, null, 2));
 
             // Get LedState enum from ledState string
             const targetState: LedState = req.body.ledState;
@@ -554,8 +621,8 @@ export default class PrivacyhubBackend {
                 pulsingSecondColor: req.body.pulsingSecondColor,
                 fadeDuration: req.body.fadeDuration
             }
-            this.logger.info(`Setting LED state to ${targetState} with color ${color}`);
-            this.logger.info(options);
+            logger.info(`Setting LED state to ${targetState} with color ${color}`);
+            logger.info(options);
 
             // Set LED state
             this.neoPixelController.switchToState(options);
@@ -566,10 +633,10 @@ export default class PrivacyhubBackend {
     private setupWebSocket(): void {
         this.io.on('connection', (socket) => {
             const host = socket.handshake.headers.host;
-            this.logger.info(`User connected from ${host}`);
+            logger.info(`User connected from ${host}`);
 
             socket.on('disconnect', (reason) => {
-                this.logger.info(`User disconnected. Reason: ${reason.toString()}`);
+                logger.info(`User disconnected. Reason: ${reason.toString()}`);
             });
         });
     }

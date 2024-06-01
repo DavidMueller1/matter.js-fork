@@ -33,9 +33,6 @@ export const ignoreTypes: Record<number, string> = {
 //     type: string;
 // };
 
-const wifiSsid = "Rate mal";
-const wifiCredentials = "30484188001738191733";
-
 export default class PrivacyhubNode {
     private readonly logger: Logger;
     private readonly storage;
@@ -148,7 +145,9 @@ export default class PrivacyhubNode {
     }
 
     async commissionNodeBLEWiFi(
-        pairingCode: string
+        pairingCode: string,
+        wifiSsid: string,
+        wifiPassword: string
     ) {
         return new Promise<PairedNode>((resolve, reject) => {
             // Extract data from pairing code
@@ -166,7 +165,7 @@ export default class PrivacyhubNode {
 
             commissioningOptions.wifiNetwork = {
                 wifiSsid: wifiSsid,
-                wifiCredentials: wifiCredentials,
+                wifiCredentials: wifiPassword,
             };
 
             const ble = true
