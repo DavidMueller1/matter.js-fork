@@ -56,8 +56,9 @@ export default class DeviceManager {
                             } else {
                                 deviceDescriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
                                     this.logger.info(`===== Device type list: ${stringifyWithBigint(deviceTypeList)}`);
-
                                     const type = deviceTypeList[0].deviceType;
+
+                                    this.logger.info(`===== Device type: ${type}`);
                                     if (type in ignoreTypes) {
                                         this.logger.debug(`Ignoring device type ${type}`);
                                         return;
