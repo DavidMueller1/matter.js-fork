@@ -37,8 +37,8 @@ export default class DeviceManager {
                     this.deviceStateInformationCallback(peerNodeId, state);
                 },
             }).then((node: PairedNode) => {
-                // this.logger.info(`---------NODE STRUCTURE---------`);
-                // node.logStructure();
+                this.logger.info(`---------NODE STRUCTURE---------`);
+                node.logStructure();
                 const basicInformation = node.getRootClusterClient(BasicInformationCluster);
                 if (basicInformation !== undefined) {
                     basicInformation.getUniqueIdAttribute().then((uniqueId) => {
