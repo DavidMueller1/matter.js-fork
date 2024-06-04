@@ -472,6 +472,51 @@ export default class PrivacyhubBackend {
         });
 
 
+        this.app.post('/nodes/:nodeId/:endpointId/lightLevel', (req: Request, res: Response) => {
+            logger.info("Received lightLevel state change request:");
+            console.log(req.params)
+
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            if (
+                req.body.level === undefined
+            ) {
+                res.status(400).send(`Missing required fields 'level'`);
+                return;
+            }
+
+            const level = req.body.level;
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof ExtendedColorLight) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
+                logger.info(`Setting lightLevel to ${level}`);
+                device.setLevel(level).then(() => {
+                    res.send("Set lightLevel successfully");
+                }).catch((error) => {
+                    logger.error(`Error setting lightLevel: ${error}`);
+                    logger.error(error.stack);
+                    res.status(500).send(`Error setting lightLevel: ${error}`);
+                });
+            } else {
+                logger.error(`Device is not an ExtendedColorLight`);
+                res.status(500).send(`Device is not an ExtendedColorLight`);
+            }
+        });
+
+
         this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
 

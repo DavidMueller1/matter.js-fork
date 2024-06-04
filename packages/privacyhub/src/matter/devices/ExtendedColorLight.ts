@@ -56,7 +56,7 @@ export default class ExtendedColorLight extends BaseDevice {
     private _onOffState: boolean = false;
     // private hue: number = 0;
     // private saturation: number = 0;
-    // private value: number = 0;
+    private value: number = 0;
 
     override virtualDevice: VirtualOnOffPluginUnit | undefined;
 
@@ -128,6 +128,14 @@ export default class ExtendedColorLight extends BaseDevice {
                     const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
                     if (levelControlCluster !== undefined) {
                         subscriptionPromises.push(levelControlCluster.subscribeCurrentLevelAttribute((value) => {
+                            if (this.value === value) return;
+                            this.value = value ?? 0;
+                            // Publish data update to MQTT if assigned to a proxy
+                            if (this._assignedProxy !== 0) {
+                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            }
+                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
+                            // this.virtualDevice?.setOnOffState(state); TODO
                             logger.info(`CurrentLevel attribute changed to ${value}`);
                         }, 1, 10).then(() => {
                             logger.debug(`Subscribed to CurrentLevel attribute`);
@@ -195,6 +203,27 @@ export default class ExtendedColorLight extends BaseDevice {
                     resolve();
                 }).catch((error) => {
                     logger.error(`Failed to set OnOff: ${error}`);
+                    reject(error);
+                });
+            }
+        });
+    }
+
+    setLevel(value: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
+            if (levelControlCluster !== undefined) {
+                if (this.value === value) return;
+                this.value = value;
+
+                levelControlCluster.moveToLevel({
+                    level: value,
+                    transitionTime: 0,
+                    optionsMask: {},
+                    optionsOverride: {}
+                }).then(() => {
+                    resolve();
+                }).catch((error) => {
                     reject(error);
                 });
             }
