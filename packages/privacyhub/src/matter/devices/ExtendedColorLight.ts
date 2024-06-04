@@ -54,9 +54,9 @@ const ExtendedColorLightState = model<IExtendedColorLightState>('ExtendedColorLi
 
 export default class ExtendedColorLight extends BaseDevice {
     private _onOffState: boolean = false;
-    private hue: number = 0;
-    private saturation: number = 0;
-    private value: number = 0;
+    // private hue: number = 0;
+    // private saturation: number = 0;
+    // private value: number = 0;
 
     override virtualDevice: VirtualOnOffPluginUnit | undefined;
 
