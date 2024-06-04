@@ -65,6 +65,22 @@ export default class DeviceManager {
                                     }
 
                                     switch (type) {
+                                        case 269:
+                                            const extendedColorLight = new ExtendedColorLight(
+                                                uniqueId,
+                                                type,
+                                                nodeId,
+                                                device.getNumber(),
+                                                node,
+                                                device,
+                                                commissioningController,
+                                                io,
+                                                mqttManager,
+                                                this.neoPixelController
+                                            );
+                                            this.devices.push(extendedColorLight);
+                                            devices.push(extendedColorLight);
+                                            break;
                                         case 266:
                                             const onOffPluginUnit = new OnOffPluginUnit(
                                                 uniqueId,

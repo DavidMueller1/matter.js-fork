@@ -17,6 +17,7 @@ import { StorageBackendDisk, StorageManager } from "@project-chip/matter-node.js
 // import { stringifyWithBigint } from "../util/Util.js";
 
 export const knownTypes: Record<number, string> = {
+    269: "ExtendedColorLight",
     266: "OnOffPluginUnit",
     21: "ContactSensor"
 };
