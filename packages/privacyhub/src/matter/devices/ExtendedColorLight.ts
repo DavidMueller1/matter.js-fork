@@ -284,6 +284,9 @@ export default class ExtendedColorLight extends BaseDevice {
                     changeType: changeType,
                     connectionStatus: this.connectionStatus,
                     onOffState: this._onOffState,
+                    hue: this.hue,
+                    saturation: this.saturation,
+                    value: this.value,
                     privacyState: this.privacyState,
                     timestamp: Date.now()
                 });
