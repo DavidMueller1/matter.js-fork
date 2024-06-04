@@ -128,6 +128,7 @@ export default class ExtendedColorLight extends BaseDevice {
                     const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
                     if (levelControlCluster !== undefined) {
                         subscriptionPromises.push(levelControlCluster.subscribeCurrentLevelAttribute((value) => {
+                            logger.info(`CurrentLevel attribute event to ${value}`);
                             if (this.value === value) return;
                             this.value = value ?? 0;
                             // Publish data update to MQTT if assigned to a proxy
