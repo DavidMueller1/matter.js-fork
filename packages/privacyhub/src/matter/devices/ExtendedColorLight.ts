@@ -1,6 +1,6 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
-import { ColorControlCluster, LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
+import { LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
