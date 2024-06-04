@@ -265,7 +265,12 @@ export default class ExtendedColorLight extends BaseDevice {
                 endpointId: this.endpointId.toString(),
                 state: this._onOffState
             });
-            // TODO rest
+
+            this.io.emit('lightLevel', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                value: this.value
+            });
         }
 
         // Check if the state is different from the last db entry
