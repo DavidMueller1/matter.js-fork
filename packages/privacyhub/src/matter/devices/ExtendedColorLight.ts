@@ -54,8 +54,8 @@ const ExtendedColorLightState = model<IExtendedColorLightState>('ExtendedColorLi
 
 export default class ExtendedColorLight extends BaseDevice {
     private _onOffState: boolean = false;
-    // private hue: number = 0;
-    // private saturation: number = 0;
+    private hue: number = 0;
+    private saturation: number = 0;
     private value: number = 0;
 
     override virtualDevice: VirtualOnOffPluginUnit | undefined;
@@ -251,50 +251,51 @@ export default class ExtendedColorLight extends BaseDevice {
     //     });
     // }
 
-    override updateSocketAndDB(_: ChangeType) {
-        // super.updateSocketAndDB(changeType);
-        //
-        // if (
-        //     changeType === ChangeType.DEVICE_EVENT_DEVICE
-        //     || changeType === ChangeType.DEVICE_EVENT_THIRD_PARTY
-        //     || changeType === ChangeType.DEVICE_EVENT_HUB
-        // ) {
-        //     this.io.emit('booleanState', {
-        //         nodeId: this.nodeId.toString(),
-        //         endpointId: this.endpointId.toString(),
-        //         state: this._onOffState
-        //     });
-        // }
-        //
-        // // Check if the state is different from the last db entry
-        // ExtendedColorLightState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
-        //     if (
-        //         doc === null ||
-        //         doc.onOffState !== this._onOffState ||
-        //         doc.hue !== this.hue ||
-        //         doc.saturation !== this.saturation ||
-        //         doc.value !== this.value ||
-        //         doc.connectionStatus !== this.connectionStatus ||
-        //         doc.privacyState !== this.privacyState
-        //     ) {
-        //         const newDoc = new ExtendedColorLightState({
-        //             uniqueId: this._uniqueId.toString(),
-        //             endpointId: this._endpointId.toString(),
-        //             changeType: changeType,
-        //             connectionStatus: this.connectionStatus,
-        //             onOffState: this._onOffState,
-        //             privacyState: this.privacyState,
-        //             timestamp: Date.now()
-        //         });
-        //         newDoc.save().then(() => {
-        //             logger.info(`Saved OnOff state to DB`);
-        //         }).catch((error) => {
-        //             logger.error(`Failed to save OnOff state to DB: ${error}`);
-        //         });
-        //     }
-        // }).catch((error) => {
-        //     logger.error(`Failed to query DB: ${error}`);
-        // });
+    override updateSocketAndDB(changeType: ChangeType) {
+        super.updateSocketAndDB(changeType);
+
+        if (
+            changeType === ChangeType.DEVICE_EVENT_DEVICE
+            || changeType === ChangeType.DEVICE_EVENT_THIRD_PARTY
+            || changeType === ChangeType.DEVICE_EVENT_HUB
+        ) {
+            this.io.emit('booleanState', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                state: this._onOffState
+            });
+            // TODO rest
+        }
+
+        // Check if the state is different from the last db entry
+        ExtendedColorLightState.findOne({ uniqueId: this.nodeId.toString(), endpointId: this.endpointId.toString() }).sort({ timestamp: -1 }).then((doc) => {
+            if (
+                doc === null ||
+                doc.onOffState !== this._onOffState ||
+                doc.hue !== this.hue ||
+                doc.saturation !== this.saturation ||
+                doc.value !== this.value ||
+                doc.connectionStatus !== this.connectionStatus ||
+                doc.privacyState !== this.privacyState
+            ) {
+                const newDoc = new ExtendedColorLightState({
+                    uniqueId: this._uniqueId.toString(),
+                    endpointId: this._endpointId.toString(),
+                    changeType: changeType,
+                    connectionStatus: this.connectionStatus,
+                    onOffState: this._onOffState,
+                    privacyState: this.privacyState,
+                    timestamp: Date.now()
+                });
+                newDoc.save().then(() => {
+                    logger.info(`Saved OnOff state to DB`);
+                }).catch((error) => {
+                    logger.error(`Failed to save OnOff state to DB: ${error}`);
+                });
+            }
+        }).catch((error) => {
+            logger.error(`Failed to query DB: ${error}`);
+        });
     }
 
     public override setLastKnownPrivacyState(): Promise<void> {
