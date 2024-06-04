@@ -13,6 +13,7 @@ import { stringifyWithBigint } from "../../util/Util.js";
 import { AccessLevel } from "../../express/PrivacyhubBackend.js";
 import MqttManager from "../../mqtt/MqttManager.js";
 import NeoPixelController from "../../util/NeoPixelController.js";
+import ExtendedColorLight from "./ExtendedColorLight.js";
 
 export default class DeviceManager {
 
