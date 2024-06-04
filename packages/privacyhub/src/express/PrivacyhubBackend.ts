@@ -380,6 +380,32 @@ export default class PrivacyhubBackend {
         });
 
 
+        this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof OnOffPluginUnit || device instanceof ExtendedColorLight) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
+                res.send(JSON.stringify({
+                    state: device.onOffState
+                }));
+            } else {
+                res.status(500).send(`Device is not an OnOffPluginUnit`);
+            }
+        });
+
+
         this.app.post('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
             logger.info("Received OnOff state change request:");
             console.log(req.params)
@@ -404,7 +430,7 @@ export default class PrivacyhubBackend {
                 return;
             }
 
-            if (device instanceof OnOffPluginUnit) {
+            if (device instanceof OnOffPluginUnit || device instanceof ExtendedColorLight) {
                 if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
                     res.status(401).send(`Unauthorized`);
                     return;
@@ -517,31 +543,6 @@ export default class PrivacyhubBackend {
             }
         });
 
-
-        this.app.get('/nodes/:nodeId/:endpointId/onOff', (req: Request, res: Response) => {
-            const accessLevel: AccessLevel = this.checkAccessLevel(req);
-
-            const nodeId = NodeId(BigInt(req.params.nodeId));
-            const endpointId = EndpointNumber(Number(req.params.endpointId));
-
-            const device = this.deviceManager.getDevice(nodeId, endpointId);
-            if (!device) {
-                res.status(500).send(`Device not found`);
-                return;
-            }
-
-            if (device instanceof OnOffPluginUnit) {
-                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
-                    res.status(401).send(`Unauthorized`);
-                    return;
-                }
-                res.send(JSON.stringify({
-                    state: device.onOffState
-                }));
-            } else {
-                res.status(500).send(`Device is not an OnOffPluginUnit`);
-            }
-        });
 
         this.app.post('/nodes/:nodeId/:endpointId/connectedProxy', (req: Request, res: Response) => {
             logger.info("Received connected proxy change request:");
