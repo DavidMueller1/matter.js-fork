@@ -504,6 +504,7 @@ export default class PrivacyhubBackend {
                 }
                 logger.info(`Setting lightLevel to ${level}`);
                 device.setLevel(level).then(() => {
+                    logger.info(`Set lightLevel to ${level}`);
                     res.send("Set lightLevel successfully");
                 }).catch((error) => {
                     logger.error(`Error setting lightLevel: ${error}`);

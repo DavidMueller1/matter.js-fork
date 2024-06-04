@@ -216,11 +216,17 @@ export default class ExtendedColorLight extends BaseDevice {
                 if (this.value === value) return;
                 this.value = value;
 
-                levelControlCluster.moveToLevel({
+                levelControlCluster.moveToLevelWithOnOff({
                     level: value,
                     transitionTime: 0,
-                    optionsMask: {},
-                    optionsOverride: {}
+                    optionsMask: {
+                        executeIfOff: false,
+                        coupleColorTempToLevel: false,
+                    },
+                    optionsOverride: {
+                        executeIfOff: false,
+                        coupleColorTempToLevel: false,
+                    }
                 }).then(() => {
                     resolve();
                 }).catch((error) => {
