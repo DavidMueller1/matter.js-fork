@@ -54,9 +54,9 @@ const ExtendedColorLightState = model<IExtendedColorLightState>('ExtendedColorLi
 
 export default class ExtendedColorLight extends BaseDevice {
     private _onOffState: boolean = false;
-    private hue: number = 0;
-    private saturation: number = 0;
-    private value: number = 0;
+    private _hue: number = 0;
+    private _saturation: number = 0;
+    private _value: number = 0;
 
     override virtualDevice: VirtualOnOffPluginUnit | undefined;
 
@@ -129,8 +129,8 @@ export default class ExtendedColorLight extends BaseDevice {
                     if (levelControlCluster !== undefined) {
                         subscriptionPromises.push(levelControlCluster.subscribeCurrentLevelAttribute((value) => {
                             logger.info(`CurrentLevel attribute event to ${value}`);
-                            if (this.value === value) return;
-                            this.value = value ?? 0;
+                            if (this._value === value) return;
+                            this._value = value ?? 0;
                             // Publish data update to MQTT if assigned to a proxy
                             if (this._assignedProxy !== 0) {
                                 this.mqttManager.publishDataUpdate(this._assignedProxy, false);
@@ -214,8 +214,8 @@ export default class ExtendedColorLight extends BaseDevice {
         return new Promise<void>((resolve, reject) => {
             const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
             if (levelControlCluster !== undefined) {
-                if (this.value === value) return;
-                this.value = value;
+                if (this._value === value) return;
+                this._value = value;
 
                 // levelControlCluster.moveToLevelWithOnOff({
                 levelControlCluster.moveToLevel({
@@ -269,7 +269,7 @@ export default class ExtendedColorLight extends BaseDevice {
             this.io.emit('lightLevel', {
                 nodeId: this.nodeId.toString(),
                 endpointId: this.endpointId.toString(),
-                value: this.value
+                value: this._value
             });
         }
 
@@ -278,9 +278,9 @@ export default class ExtendedColorLight extends BaseDevice {
             if (
                 doc === null ||
                 doc.onOffState !== this._onOffState ||
-                doc.hue !== this.hue ||
-                doc.saturation !== this.saturation ||
-                doc.value !== this.value ||
+                doc.hue !== this._hue ||
+                doc.saturation !== this._saturation ||
+                doc.value !== this._value ||
                 doc.connectionStatus !== this.connectionStatus ||
                 doc.privacyState !== this.privacyState
             ) {
@@ -290,9 +290,9 @@ export default class ExtendedColorLight extends BaseDevice {
                     changeType: changeType,
                     connectionStatus: this.connectionStatus,
                     onOffState: this._onOffState,
-                    hue: this.hue,
-                    saturation: this.saturation,
-                    value: this.value,
+                    hue: this._hue,
+                    saturation: this._saturation,
+                    value: this._value,
                     privacyState: this.privacyState,
                     timestamp: Date.now()
                 });
@@ -355,5 +355,17 @@ export default class ExtendedColorLight extends BaseDevice {
 
     get onOffState(): boolean {
         return this._onOffState;
+    }
+
+    get hue(): number {
+        return this._hue;
+    }
+
+    get saturation(): number {
+        return this._saturation;
+    }
+
+    get value(): number {
+        return this._value;
     }
 }
