@@ -1,6 +1,6 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
-import { ColorControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
+import { ColorControlCluster, LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
@@ -125,22 +125,38 @@ export default class ExtendedColorLight extends BaseDevice {
                         reject();
                     }
 
-                    // Subscribe to ColorControl attributes
-                    const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
-                    if (colorControlCluster !== undefined) {
-                        colorControlCluster.subscribePrimary1XAttribute((value) => {
-                            logger.info(`======Primary1X attribute changed to ${value}`);
+                    const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
+                    if (levelControlCluster !== undefined) {
+                        subscriptionPromises.push(levelControlCluster.subscribeCurrentLevelAttribute((value) => {
+                            logger.info(`CurrentLevel attribute changed to ${value}`);
                         }, 1, 10).then(() => {
-                            logger.debug(`Subscribed to NumberOfPrimaries attribute`);
+                            logger.debug(`Subscribed to CurrentLevel attribute`);
                             // resolve();
                         }).catch((error) => {
-                            logger.error(`Failed to subscribe to NumberOfPrimaries attribute: ${error}`);
+                            logger.error(`Failed to subscribe to CurrentLevel attribute: ${error}`);
                             reject();
-                        });
+                        }));
                     } else {
-                        logger.error(`Device does not have ColorControl cluster`);
+                        logger.error(`Device does not have LevelControl cluster`);
                         reject();
                     }
+
+                    // Subscribe to ColorControl attributes
+                    // const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+                    // if (colorControlCluster !== undefined) {
+                    //     colorControlCluster.subscribePrimary1XAttribute((value) => {
+                    //         logger.info(`======Primary1X attribute changed to ${value}`);
+                    //     }, 1, 10).then(() => {
+                    //         logger.debug(`Subscribed to NumberOfPrimaries attribute`);
+                    //         // resolve();
+                    //     }).catch((error) => {
+                    //         logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
+                    //         reject();
+                    //     });
+                    // } else {
+                    //     logger.error(`Device does not have ColorControl cluster`);
+                    //     reject();
+                    // }
 
                     Promise.all(subscriptionPromises).then(() => {
                         resolve();
