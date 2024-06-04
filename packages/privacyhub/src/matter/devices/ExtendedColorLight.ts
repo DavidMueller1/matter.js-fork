@@ -97,10 +97,13 @@ export default class ExtendedColorLight extends BaseDevice {
                 // this.virtualDevice = virtualDevice;
 
                 super.initialize().then(() => {
+                    // Subscribe attrubutes
+                    const subscriptionPromises: Promise<void>[] = [];
+
                     // Subscribe to OnOff attribute
                     const onOffCluster = this.endpoint.getClusterClient(OnOffCluster);
                     if (onOffCluster !== undefined) {
-                        onOffCluster.subscribeOnOffAttribute((state) => {
+                        subscriptionPromises.push(onOffCluster.subscribeOnOffAttribute((state) => {
                             if (this._onOffState === state) return;
                             this._onOffState = state;
                             // Publish data update to MQTT if assigned to a proxy
@@ -112,32 +115,40 @@ export default class ExtendedColorLight extends BaseDevice {
                             logger.info(`OnOff state from device changed to ${this._onOffState}`);
                         }, 1, 10).then(() => {
                             logger.debug(`Subscribed to OnOff attribute`);
-                            const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
-                            if (colorControlCluster !== undefined) {
-                                colorControlCluster.subscribeNumberOfPrimariesAttribute((primaries) => {
-                                    logger.info(`============== Number of primaries: ${primaries}`);
-                                }, 1, 10).then(() => {
-                                    logger.debug(`Subscribed to NumberOfPrimaries attribute`);
-                                    resolve();
-                                }).catch((error) => {
-                                    logger.error(`Failed to subscribe to NumberOfPrimaries attribute: ${error}`);
-                                    reject();
-                                });
-                            } else {
-                                logger.error(`Device does not have ColorControl cluster`);
-                                reject();
-                            }
                             // resolve();
                         }).catch((error) => {
                             logger.error(`Failed to subscribe to OnOff attribute: ${error}`);
-                            // reject();
-                        }).finally(() => {
-
-                        });
+                            reject();
+                        }));
                     } else {
                         logger.error(`Device does not have OnOff cluster`);
                         reject();
                     }
+
+                    // Subscribe to ColorControl attributes
+                    const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+                    if (colorControlCluster !== undefined) {
+                        colorControlCluster.subscribePrimary1XAttribute((value) => {
+                            logger.info(`======Primary1X attribute changed to ${value}`);
+                        }, 1, 10).then(() => {
+                            logger.debug(`Subscribed to NumberOfPrimaries attribute`);
+                            // resolve();
+                        }).catch((error) => {
+                            logger.error(`Failed to subscribe to NumberOfPrimaries attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        logger.error(`Device does not have ColorControl cluster`);
+                        reject();
+                    }
+
+                    Promise.all(subscriptionPromises).then(() => {
+                        resolve();
+                    }).catch((error) => {
+                        reject(error);
+                    });
+
+
                 }).catch((error) => {
                     reject(error);
                 });
@@ -173,6 +184,20 @@ export default class ExtendedColorLight extends BaseDevice {
             }
         });
     }
+
+    // setHSV(hue: number, saturation: number, value: number): Promise<void> {
+    //     return new Promise<void>((resolve, reject) => {
+    //         const colorControlCluster = this.endpoint.getClusterServer(ColorControlCluster);
+    //         if (colorControlCluster !== undefined) {
+    //             if (this.hue === hue && this.saturation === saturation && this.value === value) return;
+    //             this.hue = hue;
+    //             this.saturation = saturation;
+    //             this.value = value;
+    //
+    //             // colorControlCluster.setColor
+    //         }
+    //     });
+    // }
 
     override updateSocketAndDB(changeType: ChangeType) {
         super.updateSocketAndDB(changeType);
