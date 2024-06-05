@@ -511,7 +511,7 @@ export default class PrivacyhubBackend {
                     return;
                 }
                 logger.info(`Setting hue and saturation to ${hue} and ${saturation}`);
-                device.setHueSaturation(hue, saturation).then(() => {
+                device.setHueSaturation(hue, saturation, true).then(() => {
                     logger.info(`Set hue and saturation to ${hue} and ${saturation}`);
                     res.send("Set hue and saturation successfully");
                 }).catch((error) => {
@@ -583,7 +583,7 @@ export default class PrivacyhubBackend {
                     return;
                 }
                 logger.info(`Setting lightLevel to ${level}`);
-                device.setLevel(level).then(() => {
+                device.setLevel(level, true).then(() => {
                     logger.info(`Set lightLevel to ${level}`);
                     res.send("Set lightLevel successfully");
                 }).catch((error) => {
