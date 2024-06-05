@@ -246,9 +246,9 @@ export default class ExtendedColorLight extends BaseDevice {
                 this._hue = hue;
                 this._saturation = saturation;
 
-                colorControlCluster.moveToHueAndSaturation({
+                colorControlCluster.moveToHue({
                     hue: hue,
-                    saturation: saturation,
+                    direction: 0,
                     transitionTime: 0,
                     optionsMask: {
                         executeIfOff: false,
@@ -258,7 +258,7 @@ export default class ExtendedColorLight extends BaseDevice {
                     }
                 }).then(() => {
                     resolve();
-                }).catch((error) => {
+                }).catch((error: any) => {
                     reject(error);
                 });
             }
