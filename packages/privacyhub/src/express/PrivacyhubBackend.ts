@@ -450,6 +450,8 @@ export default class PrivacyhubBackend {
 
 
         this.app.get('/nodes/:nodeId/:endpointId/colorHueSaturation', (req: Request, res: Response) => {
+            logger.info("Received colorHSV state request:");
+            console.log(req.params)
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
 
             const nodeId = NodeId(BigInt(req.params.nodeId));
