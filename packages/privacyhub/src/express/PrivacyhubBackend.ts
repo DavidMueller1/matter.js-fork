@@ -449,6 +449,33 @@ export default class PrivacyhubBackend {
         });
 
 
+        this.app.get('/nodes/:nodeId/:endpointId/colorHueSaturation', (req: Request, res: Response) => {
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof ExtendedColorLight) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
+                res.send(JSON.stringify({
+                    hue: device.hue,
+                    saturation: device.saturation
+                }));
+            } else {
+                res.status(500).send(`Device is not an ExtendedColorLight`);
+            }
+        });
+
+
         this.app.post('/nodes/:nodeId/:endpointId/colorHueSaturation', (req: Request, res: Response) => {
             logger.info("Received colorHSV state change request:");
             console.log(req.params)
