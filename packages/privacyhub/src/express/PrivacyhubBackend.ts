@@ -449,7 +449,7 @@ export default class PrivacyhubBackend {
         });
 
 
-        this.app.post('/nodes/:nodeId/:endpointId/colorHSV', (req: Request, res: Response) => {
+        this.app.post('/nodes/:nodeId/:endpointId/colorHueSaturation', (req: Request, res: Response) => {
             logger.info("Received colorHSV state change request:");
             console.log(req.params)
 
@@ -460,16 +460,14 @@ export default class PrivacyhubBackend {
 
             if (
                 req.body.hue === undefined ||
-                req.body.saturation === undefined ||
-                req.body.value === undefined
+                req.body.saturation === undefined
             ) {
-                res.status(400).send(`Missing required fields 'hue', 'saturation' or 'value'`);
+                res.status(400).send(`Missing required fields 'hue' or 'saturation'`);
                 return;
             }
 
             const hue = req.body.hue;
             const saturation = req.body.saturation;
-            const value = req.body.value;
 
             const device = this.deviceManager.getDevice(nodeId, endpointId);
 
@@ -483,14 +481,15 @@ export default class PrivacyhubBackend {
                     res.status(401).send(`Unauthorized`);
                     return;
                 }
-                logger.info(`Setting colorHSV to ${hue}, ${saturation}, ${value}`);
-                // device.setColorHSV(hue, saturation, value).then(() => {
-                //     res.send("Set colorHSV successfully");
-                // }).catch((error) => {
-                //     logger.error(`Error setting colorHSV: ${error}`);
-                //     logger.error(error.stack);
-                //     res.status(500).send(`Error setting colorHSV: ${error}`);
-                // });
+                logger.info(`Setting hue and saturation to ${hue} and ${saturation}`);
+                device.setHueSaturation(hue, saturation).then(() => {
+                    logger.info(`Set hue and saturation to ${hue} and ${saturation}`);
+                    res.send("Set hue and saturation successfully");
+                }).catch((error) => {
+                    logger.error(`Error setting hue and saturation: ${error}`);
+                    logger.error(error.stack);
+                    res.status(500).send(`Error setting hue and saturation: ${error}`);
+                });
             } else {
                 logger.error(`Device is not an ExtendedColorLight`);
                 res.status(500).send(`Device is not an ExtendedColorLight`);

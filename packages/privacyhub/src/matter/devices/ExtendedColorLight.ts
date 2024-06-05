@@ -1,6 +1,6 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
-import { LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
+import { ColorControlCluster, LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
@@ -151,21 +151,21 @@ export default class ExtendedColorLight extends BaseDevice {
                     }
 
                     // Subscribe to ColorControl attributes
-                    // const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
-                    // if (colorControlCluster !== undefined) {
-                    //     colorControlCluster.subscribePrimary1XAttribute((value) => {
-                    //         logger.info(`======Primary1X attribute changed to ${value}`);
-                    //     }, 1, 10).then(() => {
-                    //         logger.debug(`Subscribed to NumberOfPrimaries attribute`);
-                    //         // resolve();
-                    //     }).catch((error) => {
-                    //         logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
-                    //         reject();
-                    //     });
-                    // } else {
-                    //     logger.error(`Device does not have ColorControl cluster`);
-                    //     reject();
-                    // }
+                    const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+                    if (colorControlCluster !== undefined) {
+                        colorControlCluster.subscribePrimary1XAttribute((value) => {
+                            logger.info(`======Primary1X attribute changed to ${value}`);
+                        }, 1, 10).then(() => {
+                            logger.debug(`Subscribed to NumberOfPrimaries attribute`);
+                            // resolve();
+                        }).catch((error) => {
+                            logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        logger.error(`Device does not have ColorControl cluster`);
+                        reject();
+                    }
 
                     Promise.all(subscriptionPromises).then(() => {
                         resolve();
@@ -238,19 +238,32 @@ export default class ExtendedColorLight extends BaseDevice {
         });
     }
 
-    // setHSV(hue: number, saturation: number, value: number): Promise<void> {
-    //     return new Promise<void>((resolve, reject) => {
-    //         const colorControlCluster = this.endpoint.getClusterServer(ColorControlCluster);
-    //         if (colorControlCluster !== undefined) {
-    //             if (this.hue === hue && this.saturation === saturation && this.value === value) return;
-    //             this.hue = hue;
-    //             this.saturation = saturation;
-    //             this.value = value;
-    //
-    //             // colorControlCluster.setColor
-    //         }
-    //     });
-    // }
+    setHueSaturation(hue: number, saturation: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+            if (colorControlCluster !== undefined) {
+                if (this._hue === hue && this._saturation === saturation) return;
+                this._hue = hue;
+                this._saturation = saturation;
+
+                colorControlCluster.moveToHueAndSaturation({
+                    hue: hue,
+                    saturation: saturation,
+                    transitionTime: 0,
+                    optionsMask: {
+                        executeIfOff: false,
+                    },
+                    optionsOverride: {
+                        executeIfOff: false,
+                    }
+                }).then(() => {
+                    resolve();
+                }).catch((error) => {
+                    reject(error);
+                });
+            }
+        });
+    }
 
     override updateSocketAndDB(changeType: ChangeType) {
         super.updateSocketAndDB(changeType);
