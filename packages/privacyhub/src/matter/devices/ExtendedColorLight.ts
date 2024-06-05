@@ -137,7 +137,6 @@ export default class ExtendedColorLight extends BaseDevice {
                             }
                             this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
                             // this.virtualDevice?.setOnOffState(state); TODO
-                            logger.info(`CurrentLevel attribute changed to ${value}`);
                         }, 1, 10).then(() => {
                             logger.debug(`Subscribed to CurrentLevel attribute`);
                             // resolve();
@@ -150,22 +149,50 @@ export default class ExtendedColorLight extends BaseDevice {
                         reject();
                     }
 
-                    // Subscribe to ColorControl attributes
-                    // const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
-                    // if (colorControlCluster !== undefined) {
-                    //     colorControlCluster.subscribePrimary1XAttribute((value) => {
-                    //         logger.info(`======Primary1X attribute changed to ${value}`);
-                    //     }, 1, 10).then(() => {
-                    //         logger.debug(`Subscribed to NumberOfPrimaries attribute`);
-                    //         // resolve();
-                    //     }).catch((error) => {
-                    //         logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
-                    //         reject();
-                    //     });
-                    // } else {
-                    //     logger.error(`Device does not have ColorControl cluster`);
-                    //     reject();
-                    // }
+                    // Subscribe to Hue attribute
+                    const colorControlCluster = this.endpoint.getClusterClient(ColorControl.Cluster.with(ColorControl.Feature.HueSaturation));
+                    if (colorControlCluster !== undefined) {
+                        colorControlCluster.subscribeCurrentHueAttribute((hue) => {
+                            logger.info(`CurrentHue attribute event to ${hue}`);
+                            if (this._hue === hue) return;
+                            this._hue = hue ?? 0;
+                            // Publish data update to MQTT if assigned to a proxy
+                            if (this._assignedProxy !== 0) {
+                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            }
+                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
+                            // this.virtualDevice?.setOnOffState(state); TODO
+                            logger.info(`Hue attribute changed to ${hue}`);
+                        }, 1, 10).catch((error) => {
+                            logger.error(`Failed to subscribe to Hue attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        logger.error(`Device does not have ColorControl cluster`);
+                        reject();
+                    }
+
+                    // Subscribe to Saturation attribute
+                    if (colorControlCluster !== undefined) {
+                        colorControlCluster.subscribeCurrentSaturationAttribute((saturation) => {
+                            logger.info(`CurrentSaturation attribute event to ${saturation}`);
+                            if (this._saturation === saturation) return;
+                            this._saturation = saturation ?? 0;
+                            // Publish data update to MQTT if assigned to a proxy
+                            if (this._assignedProxy !== 0) {
+                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            }
+                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
+                            // this.virtualDevice?.setOnOffState(state); TODO
+                            logger.info(`Saturation attribute changed to ${saturation}`);
+                        }, 1, 10).catch((error) => {
+                            logger.error(`Failed to subscribe to Saturation attribute: ${error}`);
+                            reject();
+                        });
+                    } else {
+                        logger.error(`Device does not have ColorControl cluster`);
+                        reject();
+                    }
 
                     Promise.all(subscriptionPromises).then(() => {
                         resolve();
@@ -210,14 +237,20 @@ export default class ExtendedColorLight extends BaseDevice {
         });
     }
 
-    setLevel(value: number): Promise<void> {
+    setLevel(value: number, isHubUpdate: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const levelControlCluster = this.endpoint.getClusterClient(LevelControlCluster);
             if (levelControlCluster !== undefined) {
                 if (this._value === value) return;
                 this._value = value;
 
-                // levelControlCluster.moveToLevelWithOnOff({
+                // Publish data update to MQTT if assigned to a proxy
+                if (this._assignedProxy !== 0) {
+                    this.mqttManager.publishDataUpdate(this._assignedProxy, true);
+                }
+                this.updateSocketAndDB(isHubUpdate ? ChangeType.DEVICE_EVENT_HUB : ChangeType.DEVICE_EVENT_THIRD_PARTY);
+                // this.virtualDevice?.setOnOffState(state);
+
                 levelControlCluster.moveToLevel({
                     level: value,
                     transitionTime: 0,
@@ -238,13 +271,20 @@ export default class ExtendedColorLight extends BaseDevice {
         });
     }
 
-    setHueSaturation(hue: number, saturation: number): Promise<void> {
+    setHueSaturation(hue: number, saturation: number, isHubUpdate: boolean): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const colorControlCluster = this.endpoint.getClusterClient(ColorControl.Cluster.with(ColorControl.Feature.HueSaturation));
             if (colorControlCluster !== undefined) {
                 if (this._hue === hue && this._saturation === saturation) return;
                 this._hue = hue;
                 this._saturation = saturation;
+
+                // Publish data update to MQTT if assigned to a proxy
+                if (this._assignedProxy !== 0) {
+                    this.mqttManager.publishDataUpdate(this._assignedProxy, true);
+                }
+                this.updateSocketAndDB(isHubUpdate ? ChangeType.DEVICE_EVENT_HUB : ChangeType.DEVICE_EVENT_THIRD_PARTY);
+                //this.virtualDevice?.setOnOffState(state);
 
                 colorControlCluster.moveToHueAndSaturation({
                     hue: hue,
@@ -283,6 +323,13 @@ export default class ExtendedColorLight extends BaseDevice {
                 nodeId: this.nodeId.toString(),
                 endpointId: this.endpointId.toString(),
                 value: this._value
+            });
+
+            this.io.emit('colorHueSaturation', {
+                nodeId: this.nodeId.toString(),
+                endpointId: this.endpointId.toString(),
+                hue: this._hue,
+                saturation: this._saturation
             });
         }
 
