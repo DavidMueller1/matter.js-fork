@@ -1,6 +1,6 @@
 import { PairedNode, NodeStateInformation } from "@project-chip/matter-node.js/device";
 import BaseDevice, { ChangeType, ConnectionStatus, PrivacyState } from "./BaseDevice.js";
-import { ColorControlCluster, LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
+import { ColorControl, LevelControlCluster, OnOffCluster } from "@project-chip/matter.js/cluster";
 import { Logger } from "@project-chip/matter-node.js/log";
 import { CommissioningController } from "@project-chip/matter.js";
 import { Server } from "socket.io";
@@ -10,7 +10,6 @@ import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 import MqttManager from "../../mqtt/MqttManager.js";
 import NeoPixelController from "../../util/NeoPixelController.js";
-import { ColorControl } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 
 const logger = Logger.get("ExtendedColorLight");
 
@@ -152,21 +151,21 @@ export default class ExtendedColorLight extends BaseDevice {
                     }
 
                     // Subscribe to ColorControl attributes
-                    const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
-                    if (colorControlCluster !== undefined) {
-                        colorControlCluster.subscribePrimary1XAttribute((value) => {
-                            logger.info(`======Primary1X attribute changed to ${value}`);
-                        }, 1, 10).then(() => {
-                            logger.debug(`Subscribed to NumberOfPrimaries attribute`);
-                            // resolve();
-                        }).catch((error) => {
-                            logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
-                            reject();
-                        });
-                    } else {
-                        logger.error(`Device does not have ColorControl cluster`);
-                        reject();
-                    }
+                    // const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+                    // if (colorControlCluster !== undefined) {
+                    //     colorControlCluster.subscribePrimary1XAttribute((value) => {
+                    //         logger.info(`======Primary1X attribute changed to ${value}`);
+                    //     }, 1, 10).then(() => {
+                    //         logger.debug(`Subscribed to NumberOfPrimaries attribute`);
+                    //         // resolve();
+                    //     }).catch((error) => {
+                    //         logger.error(`Failed to subscribe to Primary1X attribute: ${error}`);
+                    //         reject();
+                    //     });
+                    // } else {
+                    //     logger.error(`Device does not have ColorControl cluster`);
+                    //     reject();
+                    // }
 
                     Promise.all(subscriptionPromises).then(() => {
                         resolve();
@@ -247,9 +246,9 @@ export default class ExtendedColorLight extends BaseDevice {
                 this._hue = hue;
                 this._saturation = saturation;
 
-                colorControlCluster.move({
+                colorControlCluster.moveToHueAndSaturation({
                     hue: hue,
-                    direction: 0,
+                    saturation: saturation,
                     transitionTime: 0,
                     optionsMask: {
                         executeIfOff: false,
