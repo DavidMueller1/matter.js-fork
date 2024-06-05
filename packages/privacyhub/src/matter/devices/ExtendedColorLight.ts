@@ -10,6 +10,7 @@ import { EndpointInterface } from "@project-chip/matter.js/endpoint";
 import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 import MqttManager from "../../mqtt/MqttManager.js";
 import NeoPixelController from "../../util/NeoPixelController.js";
+import { ColorControl } from "@project-chip/matter.js/dist/esm/cluster/definitions/index.js";
 
 const logger = Logger.get("ExtendedColorLight");
 
@@ -240,13 +241,13 @@ export default class ExtendedColorLight extends BaseDevice {
 
     setHueSaturation(hue: number, saturation: number): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const colorControlCluster = this.endpoint.getClusterServer(ColorControlCluster);
+            const colorControlCluster = this.endpoint.getClusterClient(ColorControl.Cluster.with(ColorControl.Feature.HueSaturation));
             if (colorControlCluster !== undefined) {
                 if (this._hue === hue && this._saturation === saturation) return;
                 this._hue = hue;
                 this._saturation = saturation;
 
-                colorControlCluster.moveToHue({
+                colorControlCluster.move({
                     hue: hue,
                     direction: 0,
                     transitionTime: 0,
