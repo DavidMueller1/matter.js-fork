@@ -240,7 +240,7 @@ export default class ExtendedColorLight extends BaseDevice {
 
     setHueSaturation(hue: number, saturation: number): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const colorControlCluster = this.endpoint.getClusterClient(ColorControlCluster);
+            const colorControlCluster = this.endpoint.getClusterServer(ColorControlCluster);
             if (colorControlCluster !== undefined) {
                 if (this._hue === hue && this._saturation === saturation) return;
                 this._hue = hue;
