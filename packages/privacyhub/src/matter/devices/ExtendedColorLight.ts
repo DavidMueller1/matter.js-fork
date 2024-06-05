@@ -255,11 +255,11 @@ export default class ExtendedColorLight extends BaseDevice {
                     level: value,
                     transitionTime: 0,
                     optionsMask: {
-                        executeIfOff: false,
+                        executeIfOff: true,
                         coupleColorTempToLevel: false,
                     },
                     optionsOverride: {
-                        executeIfOff: false,
+                        executeIfOff: true,
                         coupleColorTempToLevel: false,
                     }
                 }).then(() => {
@@ -291,10 +291,10 @@ export default class ExtendedColorLight extends BaseDevice {
                     saturation: saturation,
                     transitionTime: 0,
                     optionsMask: {
-                        executeIfOff: false,
+                        executeIfOff: true,
                     },
                     optionsOverride: {
-                        executeIfOff: false,
+                        executeIfOff: true,
                     }
                 }).then(() => {
                     resolve();
@@ -357,9 +357,9 @@ export default class ExtendedColorLight extends BaseDevice {
                     timestamp: Date.now()
                 });
                 newDoc.save().then(() => {
-                    logger.info(`Saved OnOff state to DB`);
+                    logger.info(`Saved HSV state to DB`);
                 }).catch((error) => {
-                    logger.error(`Failed to save OnOff state to DB: ${error}`);
+                    logger.error(`Failed to save HSV state to DB: ${error}`);
                 });
             }
         }).catch((error) => {
