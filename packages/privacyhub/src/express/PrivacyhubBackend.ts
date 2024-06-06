@@ -255,9 +255,7 @@ export default class PrivacyhubBackend {
 
             // Check if the request body has the required fields
             if (!req.body.pairingCode) {
-                res.status(400).send(JSON.stringify({
-                    message: "Missing required field 'pairingCode'"
-                }));
+                res.status(400).send("Missing required field 'pairingCode'");
                 return;
             }
             this.neoPixelController.switchToState({
@@ -301,9 +299,7 @@ export default class PrivacyhubBackend {
 
             // Check if the request body has the required fields
             if (!req.body.pairingCode) {
-                res.status(400).send(JSON.stringify({
-                    message: "Missing required field 'pairingCode'"
-                }));
+                res.status(400).send("Missing required field 'pairingCode'");
                 return;
             }
             this.neoPixelController.switchToState({
