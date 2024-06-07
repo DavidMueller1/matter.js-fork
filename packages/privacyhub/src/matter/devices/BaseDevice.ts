@@ -378,6 +378,14 @@ export default class BaseDevice {
         this.virtualDevice?.stop();
     }
 
+    resetVirtualDevice(): Promise<void> {
+        logger.info(`Resetting virtual device for ${this.nodeId.toString()}`);
+        if (this.virtualDevice) {
+            return this.virtualDevice.reset();
+        }
+        return Promise.resolve();
+    }
+
     getManualPairingCode(): string {
         return this.virtualDevice?.getManualPairingCode() || "0";
     }

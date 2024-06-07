@@ -671,6 +671,24 @@ export default class PrivacyhubBackend {
         });
 
 
+        this.app.get('/nodes/:nodeId/:endpointId/resetVirtualDevice', (req: Request, res: Response) => {
+const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            device.resetVirtualDevice().then(() => {
+                res.send("Reset virtual device successfully");
+            }).catch((error) => {
+                res.status(500).send(`Error resetting virtual device: ${error}`);
+            });
+        });
+
+
         this.app.post('/proxy/:proxyId/updatepos', (req: Request, res: Response) => {
             const proxyId = parseInt(req.params.proxyId);
 
