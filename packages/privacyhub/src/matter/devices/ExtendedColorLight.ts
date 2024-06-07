@@ -255,11 +255,11 @@ export default class ExtendedColorLight extends BaseDevice {
                     level: value,
                     transitionTime: 0,
                     optionsMask: {
-                        executeIfOff: true,
+                        executeIfOff: false,
                         coupleColorTempToLevel: false,
                     },
                     optionsOverride: {
-                        executeIfOff: true,
+                        executeIfOff: false,
                         coupleColorTempToLevel: false,
                     }
                 }).then(() => {
