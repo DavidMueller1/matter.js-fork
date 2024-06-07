@@ -132,10 +132,10 @@ export default class ExtendedColorLight extends BaseDevice {
                             if (this._value === value) return;
                             this._value = value ?? 0;
                             // Publish data update to MQTT if assigned to a proxy
-                            if (this._assignedProxy !== 0) {
-                                this.mqttManager.publishDataUpdate(this._assignedProxy, false);
-                            }
-                            this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
+                            // if (this._assignedProxy !== 0) {
+                            //     this.mqttManager.publishDataUpdate(this._assignedProxy, false);
+                            // }
+                            // this.updateSocketAndDB(ChangeType.DEVICE_EVENT_DEVICE);
                             // this.virtualDevice?.setOnOffState(state); TODO
                         }, 1, 10).then(() => {
                             logger.debug(`Subscribed to CurrentLevel attribute`);
