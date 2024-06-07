@@ -7,9 +7,9 @@ import { Server } from "socket.io";
 import { NodeId, EndpointNumber, DeviceTypeId } from "@project-chip/matter.js/datatype";
 import { model, Schema } from "mongoose";
 import { EndpointInterface } from "@project-chip/matter.js/endpoint";
-import VirtualOnOffPluginUnit from "../virtualDevices/VirtualOnOffPluginUnit.js";
 import MqttManager from "../../mqtt/MqttManager.js";
 import NeoPixelController from "../../util/NeoPixelController.js";
+import VirtualExtendedColorLight from "../virtualDevices/VirtualExtendedColorLight.js";
 
 const logger = Logger.get("ExtendedColorLight");
 
@@ -58,7 +58,7 @@ export default class ExtendedColorLight extends BaseDevice {
     private _saturation: number = 0;
     private _value: number = 0;
 
-    override virtualDevice: VirtualOnOffPluginUnit | undefined;
+    override virtualDevice: VirtualExtendedColorLight | undefined;
 
     constructor(
         uniqueId: string,
@@ -82,19 +82,34 @@ export default class ExtendedColorLight extends BaseDevice {
 
     override initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            // TODO VirtualOnOffPluginUnit.create(
-            //     this.nodeId,
-            //     DeviceTypeId(this.type),
-            //     this.pairedNode,
-            //     (state) => {
-            //         this.switchOnOff(state, false).then(() => {
-            //             logger.info(`Successfully set OnOff state to ${state}`);
-            //         }).catch((error) => {
-            //             logger.error(`Failed to set OnOff state to ${state}: ${error}`);
-            //         });
-            //     }
-            Promise.resolve().then((_) => {
-                // this.virtualDevice = virtualDevice;
+            VirtualExtendedColorLight.create(
+                this.nodeId,
+                DeviceTypeId(this.type),
+                this.pairedNode,
+                (state) => {
+                    this.switchOnOff(state, false).then(() => {
+                        logger.info(`Successfully set OnOff state to ${state}`);
+                    }).catch((error) => {
+                        logger.error(`Failed to set OnOff state to ${state}: ${error}`);
+                    });
+                },
+                (level) => {
+                    this.setLevel(level, false).then(() => {
+                        logger.info(`Successfully set level to ${level}`);
+                    }).catch((error) => {
+                        logger.error(`Failed to set level to ${level}: ${error}`);
+                    });
+                },
+                (hue, saturation) => {
+                    this.setHueSaturation(hue, saturation, false).then(() => {
+                        logger.info(`Successfully set hue and saturation to ${hue} and ${saturation}`);
+                    }).catch((error) => {
+                        logger.error(`Failed to set hue and saturation to ${hue} and ${saturation}: ${error}`);
+                    });
+                }
+            ).then((virtualDevice) => {
+            // Promise.resolve().then((_) => {
+                this.virtualDevice = virtualDevice;
 
                 super.initialize().then(() => {
                     // Subscribe attrubutes
