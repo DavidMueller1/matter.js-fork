@@ -93,20 +93,20 @@ export default class ExtendedColorLight extends BaseDevice {
                         logger.error(`Failed to set OnOff state to ${state}: ${error}`);
                     });
                 },
-                (level) => {
-                    this.setLevel(level, false).then(() => {
-                        logger.info(`Successfully set level to ${level}`);
-                    }).catch((error) => {
-                        logger.error(`Failed to set level to ${level}: ${error}`);
-                    });
-                },
-                (hue, saturation) => {
-                    this.setHueSaturation(hue, saturation, false).then(() => {
-                        logger.info(`Successfully set hue and saturation to ${hue} and ${saturation}`);
-                    }).catch((error) => {
-                        logger.error(`Failed to set hue and saturation to ${hue} and ${saturation}: ${error}`);
-                    });
-                }
+                // (level) => {
+                //     this.setLevel(level, false).then(() => {
+                //         logger.info(`Successfully set level to ${level}`);
+                //     }).catch((error) => {
+                //         logger.error(`Failed to set level to ${level}: ${error}`);
+                //     });
+                // },
+                // (hue, saturation) => {
+                //     this.setHueSaturation(hue, saturation, false).then(() => {
+                //         logger.info(`Successfully set hue and saturation to ${hue} and ${saturation}`);
+                //     }).catch((error) => {
+                //         logger.error(`Failed to set hue and saturation to ${hue} and ${saturation}: ${error}`);
+                //     });
+                // }
             ).then((virtualDevice) => {
             // Promise.resolve().then((_) => {
                 this.virtualDevice = virtualDevice;

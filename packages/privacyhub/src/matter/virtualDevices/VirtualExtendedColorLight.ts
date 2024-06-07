@@ -4,25 +4,25 @@ import { Endpoint } from "@project-chip/matter.js/endpoint";
 import { PairedNode } from "@project-chip/matter-node.js/device";
 import VirtualBaseDevice from "./VirtualBaseDevice.js";
 import { Logger } from "@project-chip/matter-node.js/log";
-import { ExtendedColorLightDevice } from "@project-chip/matter.js/devices/ExtendedColorLightDevice";
+import { OnOffLightDevice } from "@project-chip/matter.js/devices/OnOffLightDevice";
 
 const logger = Logger.get("VirtualExtendedColorLight");
 
 export default class VirtualExtendedColorLight extends VirtualBaseDevice {
-    private endpoint: Endpoint<ExtendedColorLightDevice> | undefined;
+    private endpoint: Endpoint<OnOffLightDevice> | undefined;
     private onOffEventCallback: (state: boolean) => void;
-    // @ts-expect-error No implemented yet
-    private levelEventCallback: (level: number) => void;
-    // @ts-expect-error No implemented yet
-    private colorEventCallback: (hue: number, saturation: number) => void;
+    // // @ts-expect-error No implemented yet
+    // private levelEventCallback: (level: number) => void;
+    // // @ts-expect-error No implemented yet
+    // private colorEventCallback: (hue: number, saturation: number) => void;
 
     private constructor(
         nodeId: NodeId,
         type: DeviceTypeId,
         existingNode: PairedNode,
         onOffEventCallback: (state: boolean) => void,
-        levelEventCallback: (level: number) => void,
-        colorEventCallback: (hue: number, saturation: number) => void
+        // levelEventCallback: (level: number) => void,
+        // colorEventCallback: (hue: number, saturation: number) => void
     ) {
         super(
             nodeId,
@@ -30,8 +30,8 @@ export default class VirtualExtendedColorLight extends VirtualBaseDevice {
             existingNode
         );
         this.onOffEventCallback = onOffEventCallback;
-        this.levelEventCallback = levelEventCallback;
-        this.colorEventCallback = colorEventCallback;
+        // this.levelEventCallback = levelEventCallback;
+        // this.colorEventCallback = colorEventCallback;
     }
 
     static async create(
@@ -39,16 +39,16 @@ export default class VirtualExtendedColorLight extends VirtualBaseDevice {
         type: DeviceTypeId,
         existingNode: PairedNode,
         onOffEventCallback: (state: boolean) => void,
-        levelEventCallback: (level: number) => void,
-        colorEventCallback: (hue: number, saturation: number) => void
+        // levelEventCallback: (level: number) => void,
+        // colorEventCallback: (hue: number, saturation: number) => void
     ): Promise<VirtualExtendedColorLight> {
         const virtualDevice = new VirtualExtendedColorLight(
             nodeId,
             type,
             existingNode,
             onOffEventCallback,
-            levelEventCallback,
-            colorEventCallback
+            // levelEventCallback,
+            // colorEventCallback
         );
         await virtualDevice.setup();
         return virtualDevice;
@@ -77,7 +77,7 @@ export default class VirtualExtendedColorLight extends VirtualBaseDevice {
                 // Optional: If Ommitted some development defaults are used
                 productDescription: {
                     name: this.productName,
-                    deviceType: DeviceTypeId(ExtendedColorLightDevice.deviceType),
+                    deviceType: DeviceTypeId(OnOffLightDevice.deviceType),
                 },
 
                 // Provide defaults for the BasicInformation cluster on the Root endpoint
@@ -96,7 +96,7 @@ export default class VirtualExtendedColorLight extends VirtualBaseDevice {
                 logger.info("ServerNode created");
                 this.serverNode = serverNode;
                 this.endpoint = new Endpoint(
-                    ExtendedColorLightDevice,
+                    OnOffLightDevice,
                     {
                         id: this.uniqueId,
                     }
