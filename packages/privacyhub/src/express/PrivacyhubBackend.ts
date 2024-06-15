@@ -20,6 +20,7 @@ import MqttManager from "../mqtt/MqttManager.js";
 import os from "os";
 import { PrivacyState } from "../matter/devices/BaseDevice.js";
 import ExtendedColorLight from "../matter/devices/ExtendedColorLight.js";
+import ContactSensor from "../matter/devices/ContactSensor.js";
 
 const logger = Logger.get("PrivacyhubBackend");
 
@@ -378,6 +379,32 @@ export default class PrivacyhubBackend {
             }).catch((error) => {
                 res.status(500).send(`Error connecting to node: ${error}`);
             });
+        });
+
+
+        this.app.get('/nodes/:nodeId/:endpointId/booleanState', (req: Request, res: Response) => {
+            const accessLevel: AccessLevel = this.checkAccessLevel(req);
+
+            const nodeId = NodeId(BigInt(req.params.nodeId));
+            const endpointId = EndpointNumber(Number(req.params.endpointId));
+
+            const device = this.deviceManager.getDevice(nodeId, endpointId);
+            if (!device) {
+                res.status(500).send(`Device not found`);
+                return;
+            }
+
+            if (device instanceof ContactSensor) {
+                if (accessLevel !== AccessLevel.PRIVATE && device.getPrivacyState() < PrivacyState.ONLINE) {
+                    res.status(401).send(`Unauthorized`);
+                    return;
+                }
+                res.send(JSON.stringify({
+                    booleanState: device.booleanState
+                }));
+            } else {
+                res.status(500).send(`Device is not a ContactSensor`);
+            }
         });
 
 
