@@ -144,7 +144,7 @@ export default class BaseDevice {
             this.initialized = true;
         }).catch((error) => {
             logger.error(`Failed to connect to node: ${error}`);
-            this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+            // this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
         });
     }
 
