@@ -307,6 +307,9 @@ export default class PrivacyhubBackend {
                 color: NeoPixelController.hsvToHex(235, 1, 1)
             });
 
+            logger.info("SSID: " + WIFI_SSID);
+            logger.info("Password: " + WIFI_PASSWORD);
+
             this.privacyhubNode.commissionNodeBLEWiFi(
                 req.body.pairingCode,
                 WIFI_SSID,
