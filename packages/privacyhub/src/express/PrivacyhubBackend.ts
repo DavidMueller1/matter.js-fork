@@ -43,6 +43,8 @@ if (!process.env.WIFI_SSID) {
 }
 const WIFI_SSID = process.env.WIFI_SSID;
 
+logger.info("SSID: " + WIFI_SSID)
+
 if (!process.env.WIFI_PASSWORD) {
     logger.error("Missing required environment variable WIFI_PASSWORD");
     process.exit(1);
