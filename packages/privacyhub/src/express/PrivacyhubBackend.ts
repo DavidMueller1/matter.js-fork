@@ -355,11 +355,12 @@ export default class PrivacyhubBackend {
             const accessLevel: AccessLevel = this.checkAccessLevel(req);
 
             const nodes = this.deviceManager.getDevicesWithAccessLevel(accessLevel).map((device) => {
+                const customName = device.customName;
                 return {
                     nodeId: device.nodeId,
                     endpointId: device.endpointId,
-                    vendor: device.vendor,
-                    product: device.product,
+                    vendor: customName ? '' : device.vendor,
+                    product: customName ?? device.product,
                     type: knownTypes[device.type] ?? "Unknown",
                     manualPairingCode: device.getManualPairingCode(),
                     qrCode: device.getQRCode(),
