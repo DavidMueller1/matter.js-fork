@@ -12,13 +12,18 @@ import ContactSensor from "./ContactSensor.js";
 import { stringifyWithBigint } from "../../util/Util.js";
 import { AccessLevel } from "../../express/PrivacyhubBackend.js";
 import MqttManager from "../../mqtt/MqttManager.js";
+import NeoPixelController from "../../util/NeoPixelController.js";
+import ExtendedColorLight from "./ExtendedColorLight.js";
 
 export default class DeviceManager {
 
     private logger: Logger = Logger.get("DeviceManager");
+    private neoPixelController: NeoPixelController;
     private devices: BaseDevice[] = [];
 
-    constructor() {}
+    constructor(neoPixelController: NeoPixelController) {
+        this.neoPixelController = neoPixelController;
+    }
 
     public generateDevices(
         nodeId: NodeId,
@@ -52,14 +57,31 @@ export default class DeviceManager {
                             } else {
                                 deviceDescriptor.getDeviceTypeListAttribute().then((deviceTypeList) => {
                                     this.logger.info(`===== Device type list: ${stringifyWithBigint(deviceTypeList)}`);
-
                                     const type = deviceTypeList[0].deviceType;
+
+                                    this.logger.info(`===== Device type: ${type}`);
                                     if (type in ignoreTypes) {
                                         this.logger.debug(`Ignoring device type ${type}`);
                                         return;
                                     }
 
                                     switch (type) {
+                                        case 269:
+                                            const extendedColorLight = new ExtendedColorLight(
+                                                uniqueId,
+                                                type,
+                                                nodeId,
+                                                device.getNumber(),
+                                                node,
+                                                device,
+                                                commissioningController,
+                                                io,
+                                                mqttManager,
+                                                this.neoPixelController
+                                            );
+                                            this.devices.push(extendedColorLight);
+                                            devices.push(extendedColorLight);
+                                            break;
                                         case 266:
                                             const onOffPluginUnit = new OnOffPluginUnit(
                                                 uniqueId,
@@ -70,7 +92,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(onOffPluginUnit);
                                             devices.push(onOffPluginUnit);
@@ -85,7 +108,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(contactSensor);
                                             devices.push(contactSensor);
@@ -101,7 +125,8 @@ export default class DeviceManager {
                                                 device,
                                                 commissioningController,
                                                 io,
-                                                mqttManager
+                                                mqttManager,
+                                                this.neoPixelController
                                             );
                                             this.devices.push(unknownDevice);
                                             devices.push(unknownDevice);
@@ -135,7 +160,7 @@ export default class DeviceManager {
             return this.devices;
         } else {
             return this.devices.filter((device) => {
-                return device.getPrivacyState() === PrivacyState.ONLINE;
+                return device.getPrivacyState() >= PrivacyState.ONLINE;
             });
         }
     }
@@ -162,14 +187,14 @@ export default class DeviceManager {
     public setPrivacyState(nodeId: NodeId, endpointId: EndpointNumber, state: PrivacyState) {
         const device = this.getDevice(nodeId, endpointId);
         if (device) {
-            device.setPrivacyState(state);
+            device.setPrivacyState(state, false);
         }
     }
 
     public setPrivacyStateProxy(proxyId: number, state: PrivacyState) {
         this.devices.forEach((device) => {
             if (device.assignedProxy === proxyId) {
-                device.setPrivacyState(state);
+                device.setPrivacyState(state, true);
             }
         });
     }

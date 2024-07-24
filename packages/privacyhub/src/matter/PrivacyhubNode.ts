@@ -17,6 +17,7 @@ import { StorageBackendDisk, StorageManager } from "@project-chip/matter-node.js
 // import { stringifyWithBigint } from "../util/Util.js";
 
 export const knownTypes: Record<number, string> = {
+    269: "ExtendedColorLight",
     266: "OnOffPluginUnit",
     21: "ContactSensor"
 };
@@ -32,9 +33,6 @@ export const ignoreTypes: Record<number, string> = {
 //     product: string | undefined;
 //     type: string;
 // };
-
-const wifiSsid = "Rate mal";
-const wifiCredentials = "30484188001738191733";
 
 export default class PrivacyhubNode {
     private readonly logger: Logger;
@@ -148,7 +146,9 @@ export default class PrivacyhubNode {
     }
 
     async commissionNodeBLEWiFi(
-        pairingCode: string
+        pairingCode: string,
+        wifiSsid: string,
+        wifiPassword: string
     ) {
         return new Promise<PairedNode>((resolve, reject) => {
             // Extract data from pairing code
@@ -166,7 +166,7 @@ export default class PrivacyhubNode {
 
             commissioningOptions.wifiNetwork = {
                 wifiSsid: wifiSsid,
-                wifiCredentials: wifiCredentials,
+                wifiCredentials: wifiPassword,
             };
 
             const ble = true

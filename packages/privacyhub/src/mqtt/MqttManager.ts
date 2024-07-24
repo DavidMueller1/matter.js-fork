@@ -51,7 +51,7 @@ export default class MqttManager {
 
         this.numProxies = parseInt(NUM_PROXIES);
         this.setStateCallback = ((proxyId: number, state: PrivacyState) => {
-            logger.debug(`Received state update for proxy ${proxyId}: ${state}`);
+            logger.info(`Received state update for proxy ${proxyId}: ${state}`);
             if (setStateCallback) {
                 setStateCallback(proxyId, state);
                 this.publishPrivacyStateUpdate(proxyId, state);
@@ -75,7 +75,7 @@ export default class MqttManager {
         });
 
         this.client.on("message", (topic, message) => {
-            logger.debug(`Received message on topic ${topic}: ${message}`);
+            logger.info(`Received message on topic ${topic}: ${message}`);
 
             // Check if the topic is a set state topic
             if (topic.startsWith(SET_STATE_TOPIC)) {
@@ -89,10 +89,16 @@ export default class MqttManager {
                 if (messageArray[3] === undefined || messageArray[3] === "x") {
                     return;
                 }
-                const state = parseInt(messageArray[3]);
-                if (isNaN(state) || state < 0 || state > PrivacyState.ONLINE) {
+                let state = parseInt(messageArray[3]);
+                if (isNaN(state) || state < 0 || state > PrivacyState.ONLINE_SHARED) {
                     logger.error(`Invalid state: ${state}`);
                     return;
+                }
+                // Swap enum 1 and 2
+                if (state === 1) {
+                    state = 2;
+                } else if (state === 2) {
+                    state = 1;
                 }
                 this.setStateCallback(proxy, state);
             }
@@ -118,7 +124,7 @@ export default class MqttManager {
     }
 
     public publishProxyLocationUpdate = (proxyId: number, row: number, col: number): void => {
-        logger.debug(`Publishing proxy location update for proxy ${proxyId}: ${col},${row}`);
+        logger.info(`Publishing proxy location update for proxy ${proxyId}: ${col},${row}`);
         const message = `${proxyId},${row},${col}`;
 
         this.client.publish(PROXY_LOCATION_UPDATE_TOPIC, message);
@@ -130,8 +136,16 @@ export default class MqttManager {
      * @param newPrivacyState The new privacy state
      */
     public publishPrivacyStateUpdate = (proxyId: number, newPrivacyState: PrivacyState): void => {
-        logger.debug(`Publishing privacy state update for proxy ${proxyId}: ${newPrivacyState}`);
-        const message = `${newPrivacyState}`;
+        logger.info(`Publishing privacy state update for proxy ${proxyId}: ${newPrivacyState}`);
+
+        let correctedState = newPrivacyState;
+        if (newPrivacyState === PrivacyState.ONLINE) {
+            correctedState = 2;
+        } else if (newPrivacyState === PrivacyState.ONLINE_SHARED) {
+            correctedState = 1;
+        }
+
+        const message = `${correctedState}`;
 
         this.client.publish(IS_STATE_TOPIC + proxyId, message, { retain: true });
     }

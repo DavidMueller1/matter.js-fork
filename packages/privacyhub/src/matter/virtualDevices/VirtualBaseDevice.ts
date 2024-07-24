@@ -131,6 +131,23 @@ export default abstract class VirtualBaseDevice {
         });
     }
 
+    public reset(): Promise<void> {
+        logger.debug(`Resetting ServerNode for ${this.productName}`);
+
+        return new Promise<void>((resolve, reject) => {
+            if (this.serverNode !== undefined) {
+                this.serverNode.factoryReset().then(() => {
+                    resolve();
+                }).catch((error) => {
+                    reject(error);
+                });
+            } else {
+                logger.error(`Server Node for ${this.productName} is not initialized`);
+                reject("Server Node is not initialized");
+            }
+        });
+    }
+
     public start(): void {
         logger.debug(`Starting ServerNode for ${this.productName}`);
 
