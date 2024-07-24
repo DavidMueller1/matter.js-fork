@@ -1,3 +1,35 @@
+# PrivacyHub Backend
+
+Welcome to the backend repository for PrivacyHub, a smart home control hub designed to enhance user privacy. This is a fork of the matter.js implementation of the matter standard. The original README can be found below.
+The code for the PrivacyHub backend is located in '*packages/privacyhub*'
+
+## Overview
+The backend of PrivacyHub is built with Node.js and uses the Express framework. It handles device commissioning, control, and privacy management, providing APIs for the frontend to interact with. The backend also integrates with commercial smart home devices using the Matter standard, enabling seamless control and privacy management.
+
+## Key Features
+- Device Commissioning: Add new smart devices to the network using Bluetooth and Thread.
+- Privacy States Management: Control device access with three privacy states—Local, Online, and Online-Shared.
+- Data Persistence: Store device states and historical data using MongoDB.
+- Integration with Third-Party Hubs: Support for pairing devices with third-party hubs like Amazon Alexa and Apple HomeKit.
+
+## Installing dependencies
+
+Refer to the matter.js guides below
+
+## Running the application
+
+Navigate to '*packages/privacyhub*' and execute the following command (try with sudo if it does not work):
+`npm run privacyhub-app`
+
+## Privacy States
+- **Local**: Device accessible only within the local network.
+- **Online**: Device accessible from anywhere with an internet connection.
+- **Online-Shared**: Device can be paired with third-party hubs (e.g., Amazon Alexa).
+
+## Data Management
+The backend uses MongoDB to store persistent data, including device states and historical interaction logs.
+
+
 # JavaScript/TypeScript based Matter Implementation
 
 [![license](https://img.shields.io/badge/license-Apache2-green.svg)](https://raw.githubusercontent.com/project-chip/matter.js/master/LICENSE)
