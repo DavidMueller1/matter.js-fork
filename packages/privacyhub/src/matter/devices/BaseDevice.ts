@@ -43,6 +43,7 @@ interface IDevice {
     endpointId: string;
     type: number;
     assignedProxy?: number;
+    customName?: string;
 }
 
 const deviceSchema = new Schema<IDevice>({
@@ -50,6 +51,7 @@ const deviceSchema = new Schema<IDevice>({
     endpointId: { type: String, required: true },
     type: { type: Number, required: true },
     assignedProxy: { type: Number },
+    customName: { type: String },
 });
 
 const Device = model<IDevice>('Device', deviceSchema);
@@ -97,6 +99,7 @@ export default class BaseDevice {
     protected _product: string | undefined;
     protected _type: DeviceTypeId;
     protected _assignedProxy: number;
+    protected _customName?: string;
 
     protected pairedNode: PairedNode;
     protected endpoint: EndpointInterface;
@@ -177,6 +180,10 @@ export default class BaseDevice {
         return this._assignedProxy;
     }
 
+    get customName(): string | undefined {
+        return this._customName;
+    }
+
     protected initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.setLastKnownPrivacyState().then(() => {
@@ -188,6 +195,7 @@ export default class BaseDevice {
                         // Device exists
                         if (device.assignedProxy) {
                             this._assignedProxy = device.assignedProxy;
+                            this._customName = device.customName;
                         }
                         resolve();
                     } else {
