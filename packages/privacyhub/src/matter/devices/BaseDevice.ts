@@ -106,7 +106,7 @@ export default class BaseDevice {
 
     protected virtualDevice: VirtualBaseDevice | undefined;
 
-    protected connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
+    protected connectionStatus: ConnectionStatus = ConnectionStatus.CONNECTED;
     protected privacyState: PrivacyState = PrivacyState.LOCAL;
 
     protected stateInformationCallback?: (nodeId: NodeId, state: NodeStateInformation) => void;
@@ -187,7 +187,8 @@ export default class BaseDevice {
     protected initialize(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.setLastKnownPrivacyState().then(() => {
-                this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED)
+                // this.setConnectionStatus(this.pairedNode.isConnected ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED)
+                this.setConnectionStatus(ConnectionStatus.CONNECTED)
 
                 // Generate DB document if it does not exist
                 Device.findOne<IDevice>({uniqueId: this._uniqueId}).then((device) => {

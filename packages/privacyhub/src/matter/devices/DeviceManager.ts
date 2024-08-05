@@ -179,7 +179,7 @@ export default class DeviceManager {
             if (state === NodeStateInformation.Connected) {
                 device.setConnectionStatus(ConnectionStatus.CONNECTED)
             } else {
-                device.setConnectionStatus(ConnectionStatus.DISCONNECTED)
+                // device.setConnectionStatus(ConnectionStatus.DISCONNECTED)
             }
         });
     }
